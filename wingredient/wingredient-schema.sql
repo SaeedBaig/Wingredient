@@ -1,10 +1,21 @@
 -- method is an array of text outlining the steps of the recipe
 -- imageRef holds a file path to an image
--- 
+DROP TYPE IF EXISTS MeasurementTypes CASCADE;
+CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count');
+
+DROP TYPE IF EXISTS Difficulty CASCADE;
+CREATE TYPE Difficulty as ENUM('Easy', 'Intermediate', 'Hard');
+
+-- Enum for different dietary traits
+DROP TYPE IF EXISTS DietaryTraits CASCADE;
+CREATE TYPE DietaryTraits as ENUM('None', 'Vegan', 'Vegetarian', 'Caeliac');
+
+-- cook time stored in minutes
+DROP TABLE IF EXISTS Recipe CASCADE;
 CREATE TABLE Recipe (
     id          integer,
     name        varchar(256) not null,
-    time        time(HH:MM),
+    time        integer,
     difficulty  Difficulty,
     method      text[],
     notes       text,
@@ -13,21 +24,17 @@ CREATE TABLE Recipe (
     primary key (id)
 );
 
-CREATE TYPE Difficulty as ENUM('Easy', 'Intermediate', 'Hard');
-
 -- Priority is the importance of the ingredient for cooking
+DROP TABLE IF EXISTS Ingredient CASCADE;
 CREATE TABLE Ingredient (
     id          integer,
     name        varchar(256),
     isMeat      boolean,
     dietary     DietaryTraits,
-    priority    integer,
     primary key (id)
 );
 
--- Enum for different dietary traits
-CREATE TYPE DietaryTraits as ENUM('Vegan', 'Vegetarian', 'Caeliac');
-
+DROP TABLE IF EXISTS RecipeToIngredient;
 CREATE TABLE RecipeToIngredient (
     recipe              integer references Recipe(id),
     ingredient          integer references Ingredient(id),
@@ -37,8 +44,7 @@ CREATE TABLE RecipeToIngredient (
     primary key         (recipe, ingredient, quantity)
 );
 
-CREATE TYPE MeasurementTypes as ENUM('Weight', 'Capacity', 'Count')
-
+DROP TABLE IF EXISTS Equipment CASCADE;
 CREATE TABLE Equipment (
     id          integer,
     name        varchar(256),
@@ -46,11 +52,13 @@ CREATE TABLE Equipment (
 );
 
 -- relationship between recipe and equipment
+DROP TABLE IF EXISTS RecipeToEquipment;
 CREATE Table RecipeToEquipment (
     recipe      integer references Recipe(id),
-    equipment   integer references Equipment(id),
+    equipment   integer references Equipment(id)
 );
 
+DROP TABLE IF EXISTS Account CASCADE;
 CREATE TABLE Account (
     id          integer,
     username    varchar(256),
@@ -59,36 +67,39 @@ CREATE TABLE Account (
     primary key (id)
 );
 
+DROP TABLE IF EXISTS ShoppingList;
 CREATE TABLE ShoppingList (
-    user        integer references Account(id),
+    account     integer references Account(id),
     ingredient  integer references Ingredient(id),
     quantity    integer,
-    primary key (user, ingredient)
+    primary key (account, ingredient)
 );
 
+DROP TABLE IF EXISTS Pantry;
 CREATE TABLE Pantry (
-    user        integer references Account(id),
+    account     integer references Account(id),
     ingredient  integer references Ingredient(id),
     quantity    integer,
-    primary key (user, ingredient)
+    primary key (account, ingredient)
 );
 
+DROP TABLE IF EXISTS Favourites;
 CREATE TABLE Favourites (
-    user        integer references Account(id),
+    account     integer references Account(id),
     recipe      integer references Recipe(id),
-    primary key (user, recipe)
+    primary key (account, recipe)
 );
 
+DROP TABLE IF EXISTS Likes;
 CREATE TABLE Likes (
-    user        integer references Account(id),
+    account     integer references Account(id),
     recipe      integer references Recipe(id),
-    primary key (user, recipe)
+    primary key (account, recipe)
 );
 
+DROP TABLE IF EXISTS Dislikes;
 CREATE TABLE Dislikes (
-    user        integer references Account(id),
+    account     integer references Account(id),
     recipe      integer references Recipe(id),
-    primary key (user, recipe)
+    primary key (account, recipe)
 );
-
-
