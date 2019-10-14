@@ -21,6 +21,7 @@ setup(
         "Jinja2==2.10.1",
         "Mako==1.1.0",
         "MarkupSafe==1.1.1",
+        "psycopg2==2.8.3",
         "Werkzeug==0.16.0",
     ],
     # These are extra/optional requirements which aren't necessary for the application to run, but
