@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<!--Defines main language used by site (English)-->
+<html lang="en">
+
+<head>
+  <!--Defines character encoding (utf-8, which is standard)-->
+  <meta charset="UTF-8">
+
+  <!--Makes webpage size adapt to device's screen size-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Non-Mako dependent styling from this file -->
+  <link rel="stylesheet" href="../static/search.css">
+
+  <!--Bootstrap styling-->
+  <link rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+  crossorigin="anonymous">
+
+  <!--For icons-->
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--
+  To see what other icons are available, go to
+  https://fontawesome.com/v4.7.0/icons/
+  -->
+
+  <title>Wingredient</title>
+</head>
+
+<body>
+  <center>
+    <h1>Search for Recipes</h1>
+    <br>
+
+    <!-- Search form -->
+    <form class="justify-content-center">
+
+      <!-- Search term -->
+      <div class="form-group row">
+        <label for="search-box" class="col-sm-5 col-form-label">
+          <h5>Search Terms:</h5>
+        </label>
+        <div class="col-sm-5">
+          <input type="search" class="form-control" id="search-box" placeholder="e.g. soup">
+        </div>
+      </div>
+      <br>
+
+      <!-- #Servings -->
+      <div class="form-group row">
+        <label for="num-servings" class="col-sm-5 col-form-label">
+          <h5>#Servings:</h5>
+        </label>
+        <div class="col-sm-5">
+          <input type="number" class="form-control" id="num-servings" min="1" max="8">
+        </div>
+      </div>
+      <br>
+
+      <!-- Ingredients -->
+      <div class="form-group">
+        <label for="ingredients">
+          <h5>Ingredients</h5>
+        </label>
+        <select multiple class="form-control" id="ingredients">
+          <option>Eggs</option>
+          <option>Flour</option>
+          <option>Milk</option>
+          <option>Chocolate</option>
+        </select>
+      </div>
+      <br>
+
+      <!-- Minimum Rating -->
+      <div class="form-group row">
+        <label for="min-rating" class="col-sm-5 col-form-label">
+          <h5>Minimum rating:</h5>
+        </label>
+        <div class="col-sm-5">
+          <div class="input-group mb-3">
+            <input id="min-rating" type="number" class="form-control" min="0" max="100">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <!-- Maximum time to cook -->
+      <div class="form-group row">
+        <label for="max-time" class="col-sm-5 col-form-label">
+          <h5>Maximum time to cook:</h5>
+        </label>
+        <div class="col-sm-5">
+          <div class="input-group mb-3">
+            <input id="min-rating" type="number" class="form-control" min="0" max="1440">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">minutes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <!-- Difficulty -->
+      <h5>Difficulty</h5>
+      <div class="custom-control custom-radio">
+        <input type="radio" id="easy" name="difficulty" class="custom-control-input">
+        <label class="custom-control-label" for="easy">Easy</label>
+      </div>
+      <div class="custom-control custom-radio">
+        <input type="radio" id="medium" name="difficulty" class="custom-control-input">
+        <label class="custom-control-label" for="medium">Medium</label>
+      </div>
+      <div class="custom-control custom-radio">
+        <input type="radio" id="hard" name="difficulty" class="custom-control-input">
+        <label class="custom-control-label" for="hard">Hard</label>
+      </div>
+      <br>
+
+
+      <!-- Checkboxes -->
+      <br>
+      <h5>Restrictions</h5>
+      <!-- Pantry only -->
+      <div class="form-group custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="pantry_only">
+        <label class="custom-control-label" for="pantry_only">Pantry only</label>
+      </div>
+
+      <!-- Vegan -->
+      <div class="form-group custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="vegan">
+        <label class="custom-control-label" for="vegan">Vegan</label>
+      </div>
+
+      <!-- Vegetarian -->
+      <div class="form-group custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="vegetarian">
+        <label class="custom-control-label" for="vegetarian">Vegetarian</label>
+      </div>
+
+      <!-- Dairy Free -->
+      <div class="form-group custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="dairy-free">
+        <label class="custom-control-label" for="dairy-free">Dairy-free</label>
+      </div>
+
+      <!-- Gluten free -->
+      <div class="form-group custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="gluten-free">
+        <label class="custom-control-label" for="gluten-free">Gluten-free</label>
+      </div>
+
+      <br>
+      <button class="btn btn-success" type="submit">
+        <i class="fa fa-search" aria-hidden="true"></i> Search
+      </button>
+      &nbsp;
+      <button class="btn btn-danger" type="reset">
+        <i class="fa fa-undo" aria-hidden="true"></i> Reset
+      </button>
+    </form>
+
+  </center>
+  <br>
+</body>
+</html>
