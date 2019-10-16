@@ -1,0 +1,6 @@
+/* Non-Mako dependant styling for search-results.html */
+
+/* Control width of search-result card */
+.card {
+    max-width: 600px;
+}
