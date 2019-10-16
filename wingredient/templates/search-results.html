@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<!--
+Python variables that need to be passed in for this template to render correctly:
+- titles:         list of str (list of recipe titles)
+- image_paths:    list of str (list of image filepaths)
+- image_alts:     list of str (list of text to use if image not found)
+- ratings:        list of int (list of ratings for each recipe)
+- cooking_times_in_minutes: list of int or float or str (self-explanatory)
+- TODO link_str:  str (link to recipe page for given search result)
+-->
+
+<!--Defines main language used by site (English)-->
+<html lang="en">
+
+<head>
+  <!--Defines character encoding (utf-8, which is standard)-->
+  <meta charset="UTF-8">
+
+  <!--Makes webpage size adapt to device's screen size-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Non-Mako dependent styling from this file -->
+  <link rel="stylesheet" href="../static/search-results.css">
+
+  <!--Bootstrap styling-->
+  <link rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+  crossorigin="anonymous">
+
+  <!--For icons-->
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--
+  To see what other icons are available,
+  go to https://fontawesome.com/v4.7.0/icons/
+  -->
+
+  <title>Wingredient Search Results</title>
+</head>
+
+<body>
+  <center>
+    <h1>Search Results</h1>
+    <br>
+
+    <!-- Sort Results By -->
+    <form class="form-inline justify-content-center">
+      <div class="form-group">
+        <label for="sorting_options">
+          <h3>Sort results by:&nbsp;</h3>
+        </label>
+        <select id="sorting_options" class="form-control form-control-lg">
+          <option value="cooking-time">Cooking time</option>
+          <option value="rating">Rating</option>
+        </select>
+      </div>
+    </form>
+    <br>
+
+
+    <!-- Search results -->
+    % for i in range(len(titles)):
+    <div class="card mb-3">
+      <div class="row no-gutters">
+        <div class="col-md-5">
+          <img src="${image_paths[i]}" class="card-img" height="250" alt="${image_alts[i]}">
+        </div>
+        <div class="col-md-7">
+          <div class="card-body">
+            <h5 class="card-title">${titles[i]}</h5>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                ${ratings[i]}% <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+              </li>
+              <li class="list-group-item">
+                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                ${cooking_times_in_minutes[i]} minutes
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <a href="#" class="stretched-link"></a> <!-- Makes the card clickable -->
+    </div>
+    <br>
+    % endfor
+
+
+    <a class="btn btn-primary" href="#" role="button">
+      <i class="fa fa-chevron-left" aria-hidden="true"></i> Back to Search
+    </a>
+    <a class="btn btn-primary" href="#" role="button">
+      <i class="fa fa-chevron-up" aria-hidden="true"></i> Back to top
+    </a>
+
+  </center>
+  <br>
+</body>
+</html>
