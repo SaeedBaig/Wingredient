@@ -2,12 +2,12 @@
 
 <!--
 Python variables that need to be passed in for this template to render correctly:
-- titles:         list of str (list of recipe titles)
-- image_paths:    list of str (list of image filepaths)
-- image_alts:     list of str (list of text to use if image not found)
-- ratings:        list of int (list of ratings for each recipe)
+- titles:           list of str (list of recipe titles)
+- image_paths:      list of str (list of image filepaths)
+- image_alts:       list of str (list of text to use if image not found)
+- ratings:          list of int (list of ratings for each recipe)
 - cooking_times_in_minutes: list of int or float or str (self-explanatory)
-- TODO link_str:  str (link to recipe page for given search result)
+- links_to_recipe:  list of str (list of links to recipe pages)
 -->
 
 <!--Defines main language used by site (English)-->
@@ -82,7 +82,8 @@ Python variables that need to be passed in for this template to render correctly
           </div>
         </div>
       </div>
-      <a href="#" class="stretched-link"></a> <!-- Makes the card clickable -->
+      <!-- Makes the card clickable -->
+      <a href="${links_to_recipe[i]}" class="stretched-link"></a>
     </div>
     <br>
     % endfor
