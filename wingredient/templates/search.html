@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 
+<!--
+Python variables that need to be passed in for this template to render correctly:
+- ingredients:  list of str (e.g. ['Milk', 'Eggs', 'Sugar'])
+-->
+
 <!--Defines main language used by site (English)-->
 <html lang="en">
 
@@ -68,11 +73,9 @@
           Hold Ctrl to select multiple ingredients.
         </small>
         <select multiple class="form-control" id="ingredients">
-          <option>Eggs</option>
-          <option>Flour</option>
-          <option>Milk</option>
-          <option>Sugar</option>
-          <option>Chocolate</option>
+          % for ingredient in ingredients:
+            <option value="${ingredient}">${ingredient}</option>
+          % endfor
         </select>
       </div>
       <br>
