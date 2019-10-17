@@ -16,3 +16,5 @@ Python variables that need to be passed in for this template to render correctly
 ```
 
 This is so that people writing the Python files can easily tell at a glance what paramaters they have to pass into the template.render().
+
+Additionally, just try to keep the templates as tidy as possible, with minimal CSS/JS in them. It's preferrable if styling/JS went into seperate css/js files in the `static/` directory.
