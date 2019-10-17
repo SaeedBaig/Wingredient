@@ -47,7 +47,6 @@
           <input type="search" class="form-control" id="search-box" placeholder="e.g. soup">
         </div>
       </div>
-      <br>
 
       <!-- #Servings -->
       <div class="form-group row">
@@ -65,16 +64,20 @@
         <label for="ingredients">
           <h5>Ingredients</h5>
         </label>
+        <small class="form-text text-muted">
+          Hold Ctrl to select multiple ingredients.
+        </small>
         <select multiple class="form-control" id="ingredients">
           <option>Eggs</option>
           <option>Flour</option>
           <option>Milk</option>
+          <option>Sugar</option>
           <option>Chocolate</option>
         </select>
       </div>
       <br>
 
-      <!-- Minimum Rating -->
+      <!-- Min Rating -->
       <div class="form-group row">
         <label for="min-rating" class="col-sm-5 col-form-label">
           <h5>Minimum rating:</h5>
@@ -88,12 +91,25 @@
           </div>
         </div>
       </div>
-      <br>
+
+      <!-- Max Difficulty -->
+      <div class="form-group row">
+        <label for="max-difficulty" class="col-sm-5 col-form-label">
+          <h5>Max difficulty: </h5>
+        </label>
+        <div class="col-sm-5">
+          <select class="form-control" id="max-difficulty">
+            <option>Easy</option>
+            <option>Medium</option>
+            <option selected>Hard</option>
+          </select>
+        </div>
+      </div>
 
       <!-- Maximum time to cook -->
       <div class="form-group row">
         <label for="max-time" class="col-sm-5 col-form-label">
-          <h5>Maximum time to cook:</h5>
+          <h5>Max time to cook:</h5>
         </label>
         <div class="col-sm-5">
           <div class="input-group mb-3">
@@ -104,24 +120,6 @@
           </div>
         </div>
       </div>
-      <br>
-
-      <!-- Difficulty -->
-      <h5>Difficulty</h5>
-      <div class="custom-control custom-radio">
-        <input type="radio" id="easy" name="difficulty" class="custom-control-input">
-        <label class="custom-control-label" for="easy">Easy</label>
-      </div>
-      <div class="custom-control custom-radio">
-        <input type="radio" id="medium" name="difficulty" class="custom-control-input">
-        <label class="custom-control-label" for="medium">Medium</label>
-      </div>
-      <div class="custom-control custom-radio">
-        <input type="radio" id="hard" name="difficulty" class="custom-control-input">
-        <label class="custom-control-label" for="hard">Hard</label>
-      </div>
-      <br>
-
 
       <!-- Checkboxes -->
       <br>
