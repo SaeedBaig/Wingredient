@@ -15,3 +15,14 @@ INSERT INTO RecipeToIngredient VALUES ('1', '2', '2', 'true', 'Count');
 INSERT INTO RecipeToIngredient VALUES ('1', '3', '1', 'true', 'Count');
 INSERT INTO RecipeToIngredient VALUES ('1', '4', '500', 'false', 'Volume');
 
+INSERT INTO Recipe VALUES ('2', '');
+
+INSERT INTO Ingredient VALUES ('1', 'Chicken', 'true', 'None');
+INSERT INTO Ingredient VALUES ('2', 'Onion', 'false', 'Vegan');
+INSERT INTO Ingredient VALUES ('3', 'Carrot', 'false', 'Vegan');
+INSERT INTO Ingredient VALUES ('4', 'Water', 'false', 'Vegan');
+
+INSERT INTO RecipeToIngredient VALUES ('1', '1', '500', 'false', 'Weight');
+INSERT INTO RecipeToIngredient VALUES ('1', '2', '2', 'true', 'Count');
+INSERT INTO RecipeToIngredient VALUES ('1', '3', '1', 'true', 'Count');
+INSERT INTO RecipeToIngredient VALUES ('1', '4', '500', 'false', 'Volume');
