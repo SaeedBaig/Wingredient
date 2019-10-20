@@ -13,10 +13,12 @@ setup(
     # Primary dependencies:
     # - Flask
     # - Flask-Mako
+    # - Flask-Login
     install_requires=[
         "Click==7.0",
         "Flask==1.1.1",
         "Flask-Mako==0.4",
+        "Flask-Login==0.4.1",
         "itsdangerous==1.1.0",
         "Jinja2==2.10.1",
         "Mako==1.1.0",
