@@ -1,15 +1,15 @@
 -- method is an array of text outlining the steps of the recipe
 -- imageRef holds a file path to an image
 DROP TYPE IF EXISTS MeasurementTypes CASCADE;
-CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count', Tablespoon, );
+CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count', 'Tablespoon', 'Teaspoon', 'Cup');
 
 DROP TYPE IF EXISTS Difficulty CASCADE;
 CREATE TYPE Difficulty as ENUM('Easy', 'Intermediate', 'Hard');
 
 -- Enum for different dietary traits
-DROP TYPE IF EXISTS DietaryTraits CASCADE;
+--DROP TYPE IF EXISTS DietaryTraits CASCADE;
 -- this should be a list not an ENUM  or you can have multiple?
-CREATE TYPE DietaryTraits as ENUM('None', 'Vegan', 'Vegetarian', 'Caeliac');
+--CREATE TYPE DietaryTraits as ENUM('None', 'Vegan', 'Vegetarian', 'Caeliac');
 
 -- cook time stored in minutes
 DROP TABLE IF EXISTS Recipe CASCADE;
@@ -32,7 +32,7 @@ DROP TABLE IF EXISTS Ingredient CASCADE;
 CREATE TABLE Ingredient (
     id          integer,
     name        varchar(256),
-    dietary     DietaryTraits,
+    dietary     text,
     primary key (id)
 );
 
