@@ -2,10 +2,11 @@
 import csv
 with open('recipeToIngredient.csv', mode='w') as recipes:
     recipe_writer = csv.writer(recipes, delimiter = ',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    recipe_writer.writerow(['recipe', 'ingredient', 'quantity', 'measurement', 'description', 'note', 'optional'])
-    ## Description is before ingredient name and note is after
-    ## 
-
+    recipe_writer.writerow(['recipe', 'ingredient', 'quantity', 'measurement', 'description', 'notes', 'optional'])
+    # Description is before ingredient and notes is after 
+    # e.g. 2 medium carrots (chopped)
+    # medium is the description 
+    # chopped is the note
     recipe_writer.writerow(['1', '1', '2', 'Count', 'medium', '', 'true'])
     recipe_writer.writerow(['1', '2', '2', 'Count', 'cloves', '', 'true'])
     recipe_writer.writerow(['1', '3', '2', 'Count', 'medium', '', 'true'])

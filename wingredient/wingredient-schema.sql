@@ -1,13 +1,14 @@
 -- method is an array of text outlining the steps of the recipe
 -- imageRef holds a file path to an image
 DROP TYPE IF EXISTS MeasurementTypes CASCADE;
-CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count');
+CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count', Tablespoon, );
 
 DROP TYPE IF EXISTS Difficulty CASCADE;
 CREATE TYPE Difficulty as ENUM('Easy', 'Intermediate', 'Hard');
 
 -- Enum for different dietary traits
 DROP TYPE IF EXISTS DietaryTraits CASCADE;
+-- this should be a list not an ENUM  or you can have multiple?
 CREATE TYPE DietaryTraits as ENUM('None', 'Vegan', 'Vegetarian', 'Caeliac');
 
 -- cook time stored in minutes
@@ -17,10 +18,12 @@ CREATE TABLE Recipe (
     name        varchar(256) not null,
     time        integer,
     difficulty  Difficulty,
-    method      text[],
     notes       text,
     description text,
-    imageRef   text default null,
+    tags        text,
+    imageRef    text default null,
+    url         text, 
+    method      text,
     primary key (id)
 );
 
@@ -29,7 +32,6 @@ DROP TABLE IF EXISTS Ingredient CASCADE;
 CREATE TABLE Ingredient (
     id          integer,
     name        varchar(256),
-    isMeat      boolean,
     dietary     DietaryTraits,
     primary key (id)
 );
@@ -39,8 +41,10 @@ CREATE TABLE RecipeToIngredient (
     recipe              integer references Recipe(id),
     ingredient          integer references Ingredient(id),
     quantity            integer,
-    optional            boolean,
     measurement_type    MeasurementTypes,
+    description         text,
+    notes               text,
+    optional            boolean,
     primary key         (recipe, ingredient, quantity)
 );
 

@@ -13,16 +13,13 @@ with open('ingredient.csv', mode='w') as recipes:
     recipe_writer.writerow(['8', 'Ground Cumin', 'Vegan, Vegetarian']) 
     recipe_writer.writerow(['9', 'Ground Cinnamon', 'Vegan, Vegetarian']) 
     recipe_writer.writerow(['10', 'Tinned Chickpeas', 'Vegan, Vegetarian']) 
-    recipe_writer.writerow(['11', 'Tinned Kidney Beans', 'Vegan, Vegetarian']) 
+    recipe_writer.writerow(['11', 'Tinned Red Kidney Beans', 'Vegan, Vegetarian']) 
     recipe_writer.writerow(['12', 'Tinned Tomatoes', 'Vegan, Vegetarian']) 
     recipe_writer.writerow(['13', 'Minced Beef', 'Meat']) 
     recipe_writer.writerow(['14', 'Corriader', 'Vegan, Vegetarian']) 
     recipe_writer.writerow(['15', 'Basamic Vinegar', 'Vegan, Vegetarian']) 
 
 
-    #dium onions', '2 cloves garlic', '2 medium carrots', '2 sticks celery', '2 red peppers', 'olive oil', '1 heaped teaspoon chilli powder', '1 heaped teaspoon ground cumin', '1 heaped teaspoon ground cinnamon', '1 x 400 g tin of chickpeas', '1 x 400 g tin of red kidney beans', '2 x 400 g tin of chopped tomatoes', '500 g quality minced beef', '½ a bunch of fresh coriander (15g)', '2 tablespoons balsamic vinegar'] 
-
         
 
-#recipe_writer.writerow(['1', ['2 medium onions', '2 cloves garlic', '2 medium carrots', '2 sticks celery', '2 red peppers', 'olive oil', '1 heaped teaspoon chilli powder', '1 heaped teaspoon ground cumin', '1 heaped teaspoon ground cinnamon', '1 x 400 g tin of chickpeas', '1 x 400 g tin of red kidney beans', '2 x 400 g tin of chopped tomatoes', '500 g quality minced beef', '½ a bunch of fresh coriander (15g)', '2 tablespoons balsamic vinegar'] 
 
