@@ -1,3 +1,10 @@
+from . import config
 from .routes import app
 
-app.run(debug=True)
+
+def run_app():
+    app.run(
+        host=config.server.host,
+        port=config.server.port,
+        debug=True,
+    )
