@@ -15,7 +15,6 @@ The *wingredient* directory is our main Python package. This is strucured like a
     - Visual Studio Code: In workspace settings, set the `python.pythonPath` setting to `${workspaceFolder}/.venv/bin/python` on Mac/Linux or `${workspaceFolder}/.venv/Scripts/python.exe` on Windows.
     - PyCharm: Go to *File* -> *Settings* -> *Project* -> *Project Interpreter*, add a Python interpreter, select *Existing environment*, and set the path to the python executable as above, in the VS Code instructions, where `${workspaceFolder}` is the project root directory.
     - Other editors: Probably a similar process to above, you simply need to tell the editor where to find the Python interpreter executable for this project.
-5. Make sure you have Mako installed. You can install it with `pip3 install Mako`.
 
 ### Running the Web App
 Provided that you set up as described above, can simply run the web app with the `wingredient` command, in an activated terminal. At the moment it just runs on localhost:5000, but this will probably change at some point.
