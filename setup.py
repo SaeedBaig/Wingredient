@@ -22,6 +22,7 @@ setup(
         "Mako==1.1.0",
         "MarkupSafe==1.1.1",
         "psycopg2==2.8.3",
+        "PyYAML==5.1.2",
         "Werkzeug==0.16.0",
     ],
     # These are extra/optional requirements which aren't necessary for the application to run, but
@@ -31,5 +32,7 @@ setup(
     extras_require={"dev": ["appdirs==1.4.3", "attrs==19.1.0", "black==19.3b0", "toml==0.10.0"]},
     # This tells setuptools to create a script called `wingredient` which simply runs the
     # `wingredient.__main__` module.
-    entry_points={"console_scripts": ["wingredient=wingredient.__main__"]},
+    entry_points={"console_scripts": [
+        "wingredient=wingredient.__main__", "wingredient-initdb=wingredient.db:init_db"
+    ]},
 )
