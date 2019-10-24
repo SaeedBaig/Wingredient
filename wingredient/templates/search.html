@@ -5,6 +5,21 @@ Python variables that need to be passed in for this template to render correctly
 - ingredients:  list of str (e.g. ['Milk', 'Eggs', 'Sugar'])
 -->
 
+<!--
+Names of input fields to recieve in the Python backend:
+- terms
+- num_servings
+- ingredients
+- min_rating
+- max_difficulty
+- max_time
+- pantry_only
+- vegan
+- vegetarian
+- dairy_free
+- gluten_free
+-->
+
 <!--Defines main language used by site (English)-->
 <html lang="en">
 
@@ -41,7 +56,7 @@ Python variables that need to be passed in for this template to render correctly
     <br>
 
     <!-- Search form -->
-    <form class="justify-content-center">
+    <form method="POST" class="justify-content-center">
 
       <!-- Search term -->
       <div class="form-group row">
@@ -49,7 +64,7 @@ Python variables that need to be passed in for this template to render correctly
           <h5>Search Terms:</h5>
         </label>
         <div class="col-sm-5">
-          <input type="search" class="form-control" id="search-box" placeholder="e.g. soup">
+          <input name="terms" type="search" class="form-control" id="search-box" placeholder="e.g. soup">
         </div>
       </div>
 
@@ -59,7 +74,7 @@ Python variables that need to be passed in for this template to render correctly
           <h5>#Servings:</h5>
         </label>
         <div class="col-sm-5">
-          <input type="number" class="form-control" id="num-servings" min="1" max="8">
+          <input name="num_servings" type="number" class="form-control" id="num-servings" min="1" max="8">
         </div>
       </div>
       <br>
@@ -70,9 +85,9 @@ Python variables that need to be passed in for this template to render correctly
           <h5>Ingredients</h5>
         </label>
         <small class="form-text text-muted">
-          Hold Ctrl to select multiple ingredients.
+          Hold Ctrl (Windows) or Cmd (Mac) to select multiple ingredients.
         </small>
-        <select multiple class="form-control" id="ingredients">
+        <select name="ingredients" multiple class="form-control" id="ingredients">
           % for ingredient in ingredients:
             <option value="${ingredient}">${ingredient}</option>
           % endfor
@@ -87,7 +102,7 @@ Python variables that need to be passed in for this template to render correctly
         </label>
         <div class="col-sm-5">
           <div class="input-group mb-3">
-            <input id="min-rating" type="number" class="form-control" min="0" max="100">
+            <input name="min_rating" id="min-rating" type="number" class="form-control" min="0" max="100">
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon2">%</span>
             </div>
@@ -101,7 +116,7 @@ Python variables that need to be passed in for this template to render correctly
           <h5>Max difficulty: </h5>
         </label>
         <div class="col-sm-5">
-          <select class="form-control" id="max-difficulty">
+          <select name="max_difficulty" class="form-control" id="max-difficulty">
             <option>Easy</option>
             <option>Medium</option>
             <option selected>Hard</option>
@@ -116,7 +131,7 @@ Python variables that need to be passed in for this template to render correctly
         </label>
         <div class="col-sm-5">
           <div class="input-group mb-3">
-            <input id="min-rating" type="number" class="form-control" min="0" max="1440">
+            <input name="max_time" id="max-time" type="number" class="form-control" min="0" max="1440">
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon2">minutes</span>
             </div>
@@ -129,39 +144,42 @@ Python variables that need to be passed in for this template to render correctly
       <h5>Restrictions</h5>
       <!-- Pantry only -->
       <div class="form-group custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" id="pantry_only">
+        <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
         <label class="custom-control-label" for="pantry_only">Pantry only</label>
       </div>
 
       <!-- Vegan -->
       <div class="form-group custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" id="vegan">
+        <input name="vegan" type="checkbox" class="custom-control-input" id="vegan">
         <label class="custom-control-label" for="vegan">Vegan</label>
       </div>
 
       <!-- Vegetarian -->
       <div class="form-group custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" id="vegetarian">
+        <input name="vegetarian" type="checkbox" class="custom-control-input" id="vegetarian">
         <label class="custom-control-label" for="vegetarian">Vegetarian</label>
       </div>
 
       <!-- Dairy Free -->
       <div class="form-group custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" id="dairy-free">
+        <input name="dairy_free" type="checkbox" class="custom-control-input" id="dairy-free">
         <label class="custom-control-label" for="dairy-free">Dairy-free</label>
       </div>
 
       <!-- Gluten free -->
       <div class="form-group custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" id="gluten-free">
+        <input name="gluten-free" type="checkbox" class="custom-control-input" id="gluten-free">
         <label class="custom-control-label" for="gluten-free">Gluten-free</label>
       </div>
 
+      <!-- Submit button -->
       <br>
       <button class="btn btn-success" type="submit">
         <i class="fa fa-search" aria-hidden="true"></i> Search
       </button>
       &nbsp;
+
+      <!-- Reset button -->
       <button class="btn btn-danger" type="reset">
         <i class="fa fa-undo" aria-hidden="true"></i> Reset
       </button>

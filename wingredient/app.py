@@ -1,9 +1,7 @@
-"""Module for the Flask app object."""
-from flask import Flask
+from .routes import app
 
-app = Flask("Wingredient")
+# Necessary for session to work in routes.py
+app.secret_key = 'super secret key'
+app.config['SESSION_TYPE'] = 'filesystem'
 
-
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
+app.run(debug=True)
