@@ -1,0 +1,6 @@
+/* Non-Mako dependant styling for search.html */
+
+/* Control width of text */
+form {
+    max-width: 600px;
+}

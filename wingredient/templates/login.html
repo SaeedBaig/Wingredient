@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<!--
+Python variables that need to be passed in for this template to render correctly:
+- ingredients:  list of str (e.g. ['Milk', 'Eggs', 'Sugar'])
+-->
+
+<!--
+Names of input fields to recieve in the Python backend:
+- username
+- password
+-->
+
+<!--Defines main language used by site (English)-->
+<html lang="en">
+
+<head>
+  <!--Defines character encoding (utf-8, which is standard)-->
+  <meta charset="UTF-8">
+
+  <!--Makes webpage size adapt to device's screen size-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Non-Mako dependent styling from this file -->
+  <link rel="stylesheet" href="../static/search.css">
+
+  <!--Bootstrap styling-->
+  <link rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+  crossorigin="anonymous">
+
+  <!--For icons-->
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--
+  To see what other icons are available, go to
+  https://fontawesome.com/v4.7.0/icons/
+  -->
+
+  <title>Wingredient</title>
+</head>
+
+<body>
+  <center>
+    <h1>Login</h1>
+    <br>
+
+    <!-- Search form -->
+    <form method="POST" class="justify-content-center">
+
+      <!-- Search term -->
+      <div class="form-group row">
+        <label for="username-box" class="col-sm-5 col-form-label">
+          <h5>Username:</h5>
+        </label>
+        <div class="col-sm-5">
+          <input name="terms" type="search" class="form-control" id="search-box">
+        </div>
+      </div>
+
+      <!-- Search term -->
+      <div class="form-group row">
+        <label for="password-box" class="col-sm-5 col-form-label">
+          <h5>Password:</h5>
+        </label>
+        <div class="col-sm-5">
+          <input name="password" type="password" class="form-control" id="password-box">
+        </div>
+      </div>
+
+      <!-- Login button -->
+      <br>
+      <button class="btn btn-success" type="submit">
+        Submit
+      </button>
+    </form>
+
+  </center>
+  <br>
+</body>
+</html>
