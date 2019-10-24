@@ -94,3 +94,21 @@ def recipe():
         ],
         num_likes=128,
     )
+
+##################
+### LOGIN PAGE ###
+##################
+@app.route('/login')
+def login():
+    template = Template(filename=f'{TEMPLATE_DIR}/login.html')
+    # TODO
+    return template.render()
+
+###################
+### SIGNUP PAGE ###
+###################
+@app.route('/signup')
+def signup():
+    template = Template(filename=f'{TEMPLATE_DIR}/signup.html')
+    # TODO
+    return template.render()
