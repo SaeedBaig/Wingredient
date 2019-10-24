@@ -3,12 +3,17 @@
 from flask import Flask, request, redirect, url_for, session
 from mako.template import Template
 from os.path import abspath
+from flask_login import LoginManager
 
 BASE_DIR = 'wingredient'
 TEMPLATE_DIR = abspath(f'{BASE_DIR}/templates')
 STATIC_DIR = abspath(f'{BASE_DIR}/static')
 
 app = Flask('Wingredient', template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
+
+# initialize login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
 #################
