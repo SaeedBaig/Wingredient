@@ -5,8 +5,9 @@ import psycopg2.pool
 
 from . import config
 
-SCHEMA_SCRIPT = Path(__file__).parent / "wingredient-schema.sql"
-DATA_SCRIPT = Path(__file__).parent / "wingredient-insert.sql"
+DBDATA_DIR = Path(__file__).parent / "dbdata"
+SCHEMA_SCRIPT = DBDATA_DIR / "wingredient-schema.sql"
+DATA_SCRIPT = DBDATA_DIR / "wingredient-insert.sql"
 
 pool = cast(psycopg2.pool.ThreadedConnectionPool, None)
 
