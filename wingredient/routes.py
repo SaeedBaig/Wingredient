@@ -117,3 +117,13 @@ def signup():
     template = Template(filename=f'{TEMPLATE_DIR}/signup.html')
     # TODO
     return template.render()
+
+###################
+### LOGOUT PAGE ###
+###################
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    # NOTE: redirect to home page instead?
+    return redirect(url_for('search'))
