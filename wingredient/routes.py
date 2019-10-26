@@ -5,6 +5,8 @@ from mako.template import Template
 from os.path import abspath
 from flask_login import LoginManager
 
+import .user
+
 BASE_DIR = 'wingredient'
 TEMPLATE_DIR = abspath(f'{BASE_DIR}/templates')
 STATIC_DIR = abspath(f'{BASE_DIR}/static')
@@ -105,6 +107,11 @@ def recipe():
 ##################
 @app.route('/login')
 def login():
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
     template = Template(filename=f'{TEMPLATE_DIR}/login.html')
     # TODO
     return template.render()
@@ -114,6 +121,39 @@ def login():
 ###################
 @app.route('/signup')
 def signup():
+    error = None
+    if request.method == 'POST':
+        username           = request.form['username']
+        password           = request.form['password']
+        password_duplicate = request.form['password_duplicate']
+
+        # first check that the username has only allowed characters
+        # username allowed characters: a-z, A-Z, 0-9, '-', '_'
+        #  capitalisation is preserved for a given user, 
+        #  but duplicate username check is case insensitive
+
+        # TODO move this out side function
+        allowed_chars = set(
+                string.ascii_lowercase + 
+                string.ascii_uppercase + 
+                string.digits + '-' + '_' )
+
+        if not (set(username).issubset(allowed_chars)):
+            error = "Usernames may contain only letters, numbers, dashes, and underscores."
+
+        # TODO Check that the username is not already in use
+        elif False:
+            error = "Username already in use."
+
+        # Check that the two passwords given match
+        elif password != password_duplicate:
+            error = "Passwords do not match."
+
+        
+        # #TODO No error, add the user to the database and sign in
+        if error == None:
+            pass
+
     template = Template(filename=f'{TEMPLATE_DIR}/signup.html')
     # TODO
     return template.render()
