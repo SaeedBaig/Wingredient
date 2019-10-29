@@ -1,0 +1,13 @@
+# Make a copy of this file and name it "wingredient.yml", then you may modify the options.
+# Uncomment any options which you want to set yourself.
+
+server:
+  # host: localhost
+  # port: 5000
+
+database:
+  # host: localhost
+  # port: 5432
+  # user: postgres
+  # password: secret
+  # dbname: wingredient
