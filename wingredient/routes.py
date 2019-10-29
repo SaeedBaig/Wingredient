@@ -5,7 +5,7 @@ from mako.template import Template
 from os.path import abspath
 from flask_login import LoginManager
 
-import .user
+# import .user
 
 BASE_DIR = 'wingredient'
 TEMPLATE_DIR = abspath(f'{BASE_DIR}/templates')
@@ -102,6 +102,7 @@ def recipe():
         num_likes=128,
     )
 
+
 ##################
 ### LOGIN PAGE ###
 ##################
@@ -116,6 +117,7 @@ def login():
     # TODO
     return template.render()
 
+
 ###################
 ### SIGNUP PAGE ###
 ###################
@@ -129,13 +131,13 @@ def signup():
 
         # first check that the username has only allowed characters
         # username allowed characters: a-z, A-Z, 0-9, '-', '_'
-        #  capitalisation is preserved for a given user, 
+        #  capitalisation is preserved for a given user,
         #  but duplicate username check is case insensitive
 
         # TODO move this out side function
         allowed_chars = set(
-                string.ascii_lowercase + 
-                string.ascii_uppercase + 
+                string.ascii_lowercase +
+                string.ascii_uppercase +
                 string.digits + '-' + '_' )
 
         if not (set(username).issubset(allowed_chars)):
@@ -149,7 +151,7 @@ def signup():
         elif password != password_duplicate:
             error = "Passwords do not match."
 
-        
+
         # #TODO No error, add the user to the database and sign in
         if error == None:
             pass
@@ -158,11 +160,11 @@ def signup():
     # TODO
     return template.render()
 
+
 ###################
 ### LOGOUT PAGE ###
 ###################
 @app.route("/logout")
-@login_required
 def logout():
     logout_user()
     # NOTE: redirect to home page instead?
