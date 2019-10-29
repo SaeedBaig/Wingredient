@@ -2,7 +2,7 @@
 
 <!--
 Python variables that need to be passed in for this template to render correctly:
-- ingredients:  list of str (e.g. ['Milk', 'Eggs', 'Sugar'])
+- error: error str to display, or None if there is no error
 -->
 
 <!--
@@ -46,10 +46,10 @@ Names of input fields to recieve in the Python backend:
     <h1>Login</h1>
     <br>
 
-    <!-- Search form -->
+    <!-- Login form -->
     <form method="POST" class="justify-content-center">
 
-      <!-- Search term -->
+      <!-- Username field -->
       <div class="form-group row">
         <label for="username-box" class="col-sm-5 col-form-label">
           <h5>Username:</h5>
@@ -59,7 +59,7 @@ Names of input fields to recieve in the Python backend:
         </div>
       </div>
 
-      <!-- Search term -->
+      <!-- Password field -->
       <div class="form-group row">
         <label for="password-box" class="col-sm-5 col-form-label">
           <h5>Password:</h5>
@@ -69,7 +69,7 @@ Names of input fields to recieve in the Python backend:
         </div>
       </div>
 
-      <!-- Login button -->
+      <!-- Submit button -->
       <br>
       <button class="btn btn-success" type="submit">
         Submit
