@@ -3,7 +3,7 @@
 from flask import Flask, request, redirect, url_for, session
 from mako.template import Template
 from os.path import abspath
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user, login_user, logout_user
 import string
 
 BASE_DIR = 'wingredient'
@@ -16,6 +16,8 @@ app = Flask('Wingredient', template_folder=TEMPLATE_DIR, static_folder=STATIC_DI
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+# must import User after initialising login manager
+from .user import User
 
 #################
 ### HOME PAGE ###
@@ -45,7 +47,10 @@ def search():
 
     # This list of ingredients is hard-coded;
     # it should probably be pulled out of the database
-    return template.render(ingredients=['Milk', 'Flour', 'Sugar', 'Vanilla', 'Eggs'])
+    return template.render(
+            username    = current_user.get_id() if current_user.is_authenticated else None,
+            ingredients = ['Milk', 'Flour', 'Sugar', 'Vanilla', 'Eggs']
+    )
 
 
 ###########################
@@ -111,13 +116,13 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        
-        # TODO: Process details in some way
-        # For now just return to home page
-        return redirect(url_for("search"))
 
-        if False:
-            pass
+        # TODO implement actual login check
+        # PASSWORD FOR ALL ACCOUNTS
+        if password == "guest":
+            #flash("Logged in successfully.")
+            login_user(User(username))
+            return redirect(url_for("search"))
         else:
             error = 'Incorrect username or password.'
 
@@ -145,8 +150,7 @@ def signup():
         # TODO move this out side function
         allowed_chars = set(
                 string.ascii_lowercase +
-                string.ascii_uppercase +
-                string.digits + '-' + '_' )
+                string.ascii_uppercase + string.digits + '-' + '_' ) 
 
         if not (set(username).issubset(allowed_chars)):
             error = 'Usernames may contain only letters, numbers, dashes, and underscores.'
