@@ -4,8 +4,7 @@ from flask import Flask, request, redirect, url_for, session
 from mako.template import Template
 from os.path import abspath
 from flask_login import LoginManager
-
-import .user
+import string
 
 BASE_DIR = 'wingredient'
 TEMPLATE_DIR = abspath(f'{BASE_DIR}/templates')
@@ -105,21 +104,26 @@ def recipe():
 ##################
 ### LOGIN PAGE ###
 ##################
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
 
+        if False:
+            pass
+        else:
+            error = 'Incorrect username or password.'
+
     template = Template(filename=f'{TEMPLATE_DIR}/login.html')
     # TODO
-    return template.render()
+    return template.render(error=error)
 
 ###################
 ### SIGNUP PAGE ###
 ###################
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
     error = None
     if request.method == 'POST':
@@ -139,15 +143,15 @@ def signup():
                 string.digits + '-' + '_' )
 
         if not (set(username).issubset(allowed_chars)):
-            error = "Usernames may contain only letters, numbers, dashes, and underscores."
+            error = 'Usernames may contain only letters, numbers, dashes, and underscores.'
 
         # TODO Check that the username is not already in use
         elif False:
-            error = "Username already in use."
+            error = 'Username already in use.'
 
         # Check that the two passwords given match
         elif password != password_duplicate:
-            error = "Passwords do not match."
+            error = 'Passwords do not match.'
 
         
         # #TODO No error, add the user to the database and sign in
@@ -156,13 +160,12 @@ def signup():
 
     template = Template(filename=f'{TEMPLATE_DIR}/signup.html')
     # TODO
-    return template.render()
+    return template.render(error=error)
 
 ###################
 ### LOGOUT PAGE ###
 ###################
 @app.route("/logout")
-@login_required
 def logout():
     logout_user()
     # NOTE: redirect to home page instead?

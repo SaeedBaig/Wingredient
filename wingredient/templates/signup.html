@@ -80,6 +80,12 @@ Names of input fields to recieve in the Python backend:
         </div>
       </div>
 
+      <!-- Error message -->
+      % if error != None:
+      <br>
+      <p>${error}</p>
+      % endif
+
       <!-- Submit button -->
       <br>
       <button class="btn btn-success" type="submit">
