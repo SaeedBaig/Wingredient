@@ -106,12 +106,16 @@ def recipe():
 ##################
 ### LOGIN PAGE ###
 ##################
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
+        # TODO: Process details in some way
+        # For now just return to home page
+        return redirect(url_for("search"))
 
     template = Template(filename=f'{TEMPLATE_DIR}/login.html')
     # TODO
