@@ -101,6 +101,7 @@ def recipe():
         num_likes=128,
     )
 
+
 ##################
 ### LOGIN PAGE ###
 ##################
@@ -110,6 +111,10 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
+        # TODO: Process details in some way
+        # For now just return to home page
+        return redirect(url_for("search"))
 
         if False:
             pass
@@ -119,6 +124,7 @@ def login():
     template = Template(filename=f'{TEMPLATE_DIR}/login.html')
     # TODO
     return template.render(error=error)
+
 
 ###################
 ### SIGNUP PAGE ###
@@ -133,13 +139,13 @@ def signup():
 
         # first check that the username has only allowed characters
         # username allowed characters: a-z, A-Z, 0-9, '-', '_'
-        #  capitalisation is preserved for a given user, 
+        #  capitalisation is preserved for a given user,
         #  but duplicate username check is case insensitive
 
         # TODO move this out side function
         allowed_chars = set(
-                string.ascii_lowercase + 
-                string.ascii_uppercase + 
+                string.ascii_lowercase +
+                string.ascii_uppercase +
                 string.digits + '-' + '_' )
 
         if not (set(username).issubset(allowed_chars)):
@@ -153,7 +159,7 @@ def signup():
         elif password != password_duplicate:
             error = 'Passwords do not match.'
 
-        
+
         # #TODO No error, add the user to the database and sign in
         if error == None:
             pass
@@ -161,6 +167,7 @@ def signup():
     template = Template(filename=f'{TEMPLATE_DIR}/signup.html')
     # TODO
     return template.render(error=error)
+
 
 ###################
 ### LOGOUT PAGE ###
