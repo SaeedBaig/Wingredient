@@ -3,6 +3,7 @@
 from flask import Flask, request, redirect, url_for, session
 from mako.template import Template
 from os.path import abspath
+from . import db
 
 BASE_DIR = 'wingredient'
 TEMPLATE_DIR = abspath(f'{BASE_DIR}/templates')
@@ -56,7 +57,11 @@ def results():
     print(session['vegan'])
     # Process the variables in whatever way you need to fetch the correct
     # search results
-
+    with db.pool.getconn() as conn:
+        with conn.cursor() as cursor:
+            print(cursor.mogrify("SELECT * FROM recipetoingredient WHERE ingredient IN %s;", tuple(session['ingredients'])))
+            #cursor.execute('SQL QUERY')
+            #res = cursor.fetchall() # returns tuples
     # All these paramaters are hard-coded;
     # they should probably be pulled out of the database
     return template.render(
