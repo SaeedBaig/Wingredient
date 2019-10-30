@@ -4,6 +4,7 @@ from flask import Flask, request, redirect, url_for, session
 from mako.template import Template
 from os.path import abspath
 from . import db
+from collections import Counter
 
 BASE_DIR = 'wingredient'
 TEMPLATE_DIR = abspath(f'{BASE_DIR}/templates')
@@ -40,7 +41,7 @@ def search():
 
     # This list of ingredients is hard-coded;
     # it should probably be pulled out of the database
-    return template.render(ingredients=['Milk', 'Flour', 'Sugar', 'Vanilla', 'Eggs'])
+    return template.render(ingredients=['Milk', 'Bread', 'Avocado', 'Ham', 'Flour', 'Sugar', 'Vanilla', 'Eggs'])
 
 
 ###########################
@@ -57,19 +58,51 @@ def results():
     print(session['vegan'])
     # Process the variables in whatever way you need to fetch the correct
     # search results
+    temp_tuple = tuple(session['ingredients']) # temporary tuple cast for compatability with cursor.execute()
     with db.pool.getconn() as conn:
         with conn.cursor() as cursor:
-            print(cursor.mogrify("SELECT * FROM recipetoingredient WHERE ingredient IN %s;", tuple(session['ingredients'])))
-            #cursor.execute('SQL QUERY')
-            #res = cursor.fetchall() # returns tuples
+            query = "SELECT id FROM ingredient WHERE name IN %s;"   # query for ingredient ids
+            cursor.execute(query, (temp_tuple,))
+            index_result = cursor.fetchall()
+            search_indexes = []
+            for index in index_result:              # extract ingredient id from query result
+                search_indexes.append(index[0])
+            print(search_indexes)
+            search_indexes = tuple(search_indexes)
+
+            query = "SELECT * FROM recipetoingredient WHERE ingredient IN %s;"  # query for matching recipes for the given ingredients
+            cursor.execute(query, (search_indexes,))
+            matched_recipes = cursor.fetchall()
+            print(matched_recipes)
+
+            matched_recipe_indexes = []
+            for listing in matched_recipes:                 # create collection for counter
+                matched_recipe_indexes.append(listing[0])
+            
+            tuple_matched_recipe_indexes = tuple(matched_recipe_indexes)
+            
+            query = "SELECT * from ingredient_counts WHERE recipe IN %s;"
+            cursor.execute(query, (tuple_matched_recipe_indexes,))
+            original_recipes = cursor.fetchall()
+
+            original_recipe_indexes = []
+            for listing in original_recipes:
+                original_recipe_indexes.append(listing[0])
+
+            result_counts = Counter(matched_recipe_indexes)
+            original_counts = Counter(original_recipe_indexes)
+            valid_recipes = original_counts & result_counts         # get intersection of both ingredient count lists (only gets recipes with matching counts to ingredients supplied)
+            print(valid_recipes)                                    # Counter object of all the valid
+
+
     # All these paramaters are hard-coded;
     # they should probably be pulled out of the database
     return template.render(
-        titles=['Bowl of Cereal', 'Omellete', 'Stir Fry'],
-        image_paths=['static/bowl of cereal.jpg', 'static/omellete.jpg', 'static/stir fry.jpg'],
-        image_alts=['bowl of cereal', 'omellete', 'stir fry'],
+        titles=['Bowl of Cereal', 'Omellete', 'Stir Fry'],  #name from recipe
+        image_paths=['static/bowl of cereal.jpg', 'static/omellete.jpg', 'static/stir fry.jpg'],    # imageRef from recipe
+        image_alts=['bowl of cereal', 'omellete', 'stir fry'],  # set to description from recipe
         ratings=[74, 86, 91],
-        cooking_times_in_minutes=[2, 18, 34],
+        cooking_times_in_minutes=[2, 18, 34],                   #time from recipe
         links_to_recipe=['/recipe', '/recipe', '/recipe'],
     )
 
