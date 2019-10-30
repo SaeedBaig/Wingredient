@@ -1,9 +1,10 @@
 from .routes import login_manager
 
+
 class User:
     def __init__(self, username):
-        self.username           = username
-        self.authenticated      = True
+        self.username = username
+        self.authenticated = True
 
     # user_id is just the username
     def get_id(self):
@@ -17,13 +18,12 @@ class User:
     @property
     def is_active(self):
         return True
-    
+
     # Any logged in user is not anonymous
     @property
     def is_anonymous(self):
         return False
 
-        
 
 @login_manager.user_loader
 def load_user(user_id):
