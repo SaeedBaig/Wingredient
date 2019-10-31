@@ -52,7 +52,7 @@ def search():
 
     # This list of ingredients is hard-coded;
     # it should probably be pulled out of the database
-    with db.pool.getconn() as conn:
+    with db.getconn() as conn:
         with conn.cursor() as cursor:
             query = "SELECT name FROM ingredient;"   # query for ingredient ids
             cursor.execute(query)
@@ -80,7 +80,7 @@ def results():
     # Process the variables in whatever way you need to fetch the correct
     # search results
     temp_tuple = tuple(session['ingredients']) # temporary tuple cast for compatability with cursor.execute()
-    with db.pool.getconn() as conn:
+    with db.getconn() as conn:
         with conn.cursor() as cursor:
             query = "SELECT id FROM ingredient WHERE name IN %s;"   # query for ingredient ids
             cursor.execute(query, (temp_tuple,))
@@ -99,9 +99,9 @@ def results():
             matched_recipe_indexes = []
             for listing in matched_recipes:                 # create collection for counter
                 matched_recipe_indexes.append(listing[0])
-            
+
             tuple_matched_recipe_indexes = tuple(matched_recipe_indexes)
-            
+
             query = "SELECT * from ingredient_counts WHERE recipe IN %s;"
             cursor.execute(query, (tuple_matched_recipe_indexes,))
             original_recipes = cursor.fetchall()
