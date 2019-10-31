@@ -60,16 +60,16 @@ CREATE Table RecipeToEquipment (
 
 DROP TABLE IF EXISTS Account CASCADE;
 CREATE TABLE Account (
-    id          integer,
-    username    varchar(256),
-    password    varchar(256),
+    username    varchar(32),
+    pwhash      bytea,
+    pwsalt      bytea,
     details     text,
-    primary key (id)
+    primary key (username)
 );
 
 DROP TABLE IF EXISTS ShoppingList;
 CREATE TABLE ShoppingList (
-    account     integer references Account(id),
+    account     varchar(32) references Account(username),
     ingredient  integer references Ingredient(id),
     quantity    integer,
     primary key (account, ingredient)
@@ -77,7 +77,7 @@ CREATE TABLE ShoppingList (
 
 DROP TABLE IF EXISTS Pantry;
 CREATE TABLE Pantry (
-    account     integer references Account(id),
+    account     varchar(32) references Account(username),
     ingredient  integer references Ingredient(id),
     quantity    integer,
     primary key (account, ingredient)
@@ -85,21 +85,21 @@ CREATE TABLE Pantry (
 
 DROP TABLE IF EXISTS Favourites;
 CREATE TABLE Favourites (
-    account     integer references Account(id),
+    account     varchar(32) references Account(username),
     recipe      integer references Recipe(id),
     primary key (account, recipe)
 );
 
 DROP TABLE IF EXISTS Likes;
 CREATE TABLE Likes (
-    account     integer references Account(id),
+    account     varchar(32) references Account(username),
     recipe      integer references Recipe(id),
     primary key (account, recipe)
 );
 
 DROP TABLE IF EXISTS Dislikes;
 CREATE TABLE Dislikes (
-    account     integer references Account(id),
+    account     varchar(32) references Account(username),
     recipe      integer references Recipe(id),
     primary key (account, recipe)
 );
