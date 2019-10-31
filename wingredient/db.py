@@ -1,4 +1,3 @@
-from contextlib import contextmanager
 from pathlib import Path
 from typing import cast
 
@@ -46,12 +45,3 @@ def init_pool():
 def close_pool():
     if pool is not None:
         pool.closeall()
-
-
-@contextmanager
-def getconn():
-    conn = pool.getconn()
-    try:
-        yield conn
-    finally:
-        pool.putconn(conn)
