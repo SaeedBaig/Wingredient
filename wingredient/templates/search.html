@@ -34,11 +34,14 @@ Names of input fields to recieve in the Python backend:
   <!-- Non-Mako dependent styling from this file -->
   <link rel="stylesheet" href="../static/search.css">
 
+  <!-- Tags-input typeahead -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>
+  <link href="../static/tags-input-typeahead/typeahead.tagging.css" rel="stylesheet">
+  <script src="../static/tags-input-typeahead/typeahead.tagging.js"></script>
+
   <!--Bootstrap stuff-->
   <!-- Bootstrap dropdown -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-  integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-  crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
   integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
   crossorigin="anonymous"></script>
@@ -149,15 +152,16 @@ Names of input fields to recieve in the Python backend:
           <h5>Ingredients</h5>
         </label>
         <small class="form-text text-muted">
-          Hold Ctrl (Windows) or Cmd (Mac) to select multiple ingredients.
+          Note: So far, only ingredients are milk, flour, sugar, vanilla, eggs
         </small>
-        <select name="ingredients" multiple class="form-control" id="ingredients">
-          % for ingredient in ingredients:
-            <option value="${ingredient}">${ingredient}</option>
-          % endfor
-        </select>
+        <input name="ingredients" id="ingredients" class="tags-input form-control">
+        <script>
+          'use strict';
+          $('#ingredients').tagging(${ingredients});
+        </script>
       </div>
       <br>
+
 
       <!-- Min Rating -->
       <div class="form-group row">

@@ -36,7 +36,10 @@ def search():
 
         # list of str
         # No user input = empty list
-        session["ingredients"] = request.form.getlist("ingredients")
+        ingredients = request.form['ingredients'].split(',')
+        if ingredients == ['']: # no user input
+            ingredients = []
+        session["ingredients"] = ingredients
 
         # All of these are bool
         # Unselected = False
