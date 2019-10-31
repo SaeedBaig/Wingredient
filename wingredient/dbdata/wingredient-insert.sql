@@ -3,10 +3,10 @@
 -- Ingredient VALUES (<id>, <name>, <isMeat>, <dietary>);
 -- RecipeToIngredient VALUES (<recipe>, <ingredient>, <quantity>, <optional>, <measurement>);
 
-INSERT INTO Recipe VALUES ('1', 'Chicken Soup', '30', 'Easy', '{"Prep chicken", "Boil water", "Cook chicken", "Serve"}', 'Eat hot', 'Creamy delicious chicken soup');
-INSERT INTO Recipe VALUES ('2', 'Avocado Toast', '10', 'Easy', '{"Toast bread", "SCrape out avocado", "Spread avocado on toast", "Serve"}', 'Add pepper as a garnish', 'Healthy breakfast avocado toast');
-INSERT INTO Recipe VALUES ('3', 'Ham Sandwich', '15', 'Easy', '{"Prepare lettuce, tomato", "Stack lettuce, tomato, ham onto bread", "Serve"}', 'None', 'Healthy, simple ham sandwich');
-INSERT INTO Recipe VALUES ('4', 'Bowl of Cereal', '5', 'Easy', '{"Pour cereal into bowl", "Pour milk on top of cereal up to above cereal level", "Serve"}', 'Eat immediately', 'Basic bowl of cereal'. 'static/bowl of cereal.jpg');
+INSERT INTO Recipe VALUES ('1', 'Chicken Soup', '30', 'Easy', '{"Prep chicken", "Boil water", "Cook chicken", "Serve"}', 'Eat hot', 'Creamy delicious chicken soup', 'static/chicken_soup.jpg');
+INSERT INTO Recipe VALUES ('2', 'Avocado Toast', '10', 'Easy', '{"Toast bread", "SCrape out avocado", "Spread avocado on toast", "Serve"}', 'Add pepper as a garnish', 'Healthy breakfast avocado toast', 'static/avocado_toast.jpg');
+INSERT INTO Recipe VALUES ('3', 'Ham Sandwich', '15', 'Easy', '{"Prepare lettuce, tomato", "Stack lettuce, tomato, ham onto bread", "Serve"}', 'None', 'Healthy, simple ham sandwich', 'static/ham_sandwich.jpeg');
+INSERT INTO Recipe VALUES ('4', 'Bowl of Cereal', '5', 'Easy', '{"Pour cereal into bowl", "Pour milk on top of cereal up to above cereal level", "Serve"}', 'Eat immediately', 'Basic bowl of cereal', 'static/bowl of cereal.jpg');
 
 
 
@@ -45,4 +45,16 @@ INSERT INTO RecipeToIngredient VALUES ('4', '5', '200', 'false', 'Volume'); -- m
 
 
 
+-- modifications made to the database to assist with SQL queries
+CREATE OR REPLACE VIEW compulsory_recipetoingredient as
+select *
+from recipetoingredient
+where optional = 'false'
+;
 
+
+CREATE OR REPLACE VIEW ingredient_counts as
+select recipe, count(recipe)
+from compulsory_recipetoingredient
+group by recipe
+;

@@ -41,7 +41,13 @@ def search():
 
     # This list of ingredients is hard-coded;
     # it should probably be pulled out of the database
-    return template.render(ingredients=['Milk', 'Bread', 'Avocado', 'Ham', 'Flour', 'Sugar', 'Vanilla', 'Eggs'])
+    with db.pool.getconn() as conn:
+        with conn.cursor() as cursor:
+            query = "SELECT name FROM ingredient;"   # query for ingredient ids
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+    return template.render(ingredients=[r[0] for r in results])
 
 
 ###########################
@@ -85,24 +91,31 @@ def results():
             cursor.execute(query, (tuple_matched_recipe_indexes,))
             original_recipes = cursor.fetchall()
 
-            original_recipe_indexes = []
+            original_recipe_counts = {}
             for listing in original_recipes:
-                original_recipe_indexes.append(listing[0])
+                original_recipe_counts[listing[0]] = listing[1]
 
+            print(original_recipe_counts)
             result_counts = Counter(matched_recipe_indexes)
-            original_counts = Counter(original_recipe_indexes)
-            valid_recipes = original_counts & result_counts         # get intersection of both ingredient count lists (only gets recipes with matching counts to ingredients supplied)
-            print(valid_recipes)                                    # Counter object of all the valid
+            valid_recipes = []
+            for key in original_recipe_counts.keys():
+                if result_counts[key] == original_recipe_counts[key]:
+                    valid_recipes.append(key)
 
+            valid_recipes = tuple(valid_recipes)                                  # Counter object of all the valid
+
+            query = "SELECT * from recipe WHERE id IN %s;"
+            cursor.execute(query, (valid_recipes,))
+            results = cursor.fetchall()
 
     # All these paramaters are hard-coded;
     # they should probably be pulled out of the database
     return template.render(
-        titles=['Bowl of Cereal', 'Omellete', 'Stir Fry'],  #name from recipe
-        image_paths=['static/bowl of cereal.jpg', 'static/omellete.jpg', 'static/stir fry.jpg'],    # imageRef from recipe
-        image_alts=['bowl of cereal', 'omellete', 'stir fry'],  # set to description from recipe
+        titles=[r[1] for r in results],  #name from recipe
+        image_paths=[r[7] for r in results],    # imageRef from recipe
+        image_alts=[r[6] for r in results],  # set to description from recipe
         ratings=[74, 86, 91],
-        cooking_times_in_minutes=[2, 18, 34],                   #time from recipe
+        cooking_times_in_minutes=[r[2] for r in results],                   #time from recipe
         links_to_recipe=['/recipe', '/recipe', '/recipe'],
     )
 
