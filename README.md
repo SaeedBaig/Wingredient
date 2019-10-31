@@ -17,4 +17,32 @@ The *wingredient* directory is our main Python package. This is strucured like a
     - Other editors: Probably a similar process to above, you simply need to tell the editor where to find the Python interpreter executable for this project.
 
 ### Running the Web App
+
+#### Setting up the database
+Make sure your user account has privileges on the database you're connecting to.
+
+On Linux (replace <username> with your Linux username):
+```bash
+$ sudo -u postgres psql
+postgres=# DROP DATABASE IF EXISTS wingredient;
+postgres=# CREATE DATABASE wingredient;
+postgres=# CREATE USER <username>;
+postgres=# GRANT ALL PRIVILEGES ON DATABASE wingredient TO <username>;
+```
+
+Now, set up the config file. Whilst in the project root directory:
+```bash
+$ cp config_template.yml wingredient.yml
+```
+Then, edit `wingredient.yml` to change to the correct configuration. All you should need to do is uncomment the `dbname: wingredient` line.
+
+Now, populate the database with the command:
+```bash
+$ wingredient-initdb
+```
+
+#### Running the app
+
+If the command isn't found, run `make syncenv` again.
+
 Provided that you set up as described above, can simply run the web app with the `wingredient` command, in an activated terminal. At the moment it just runs on localhost:5000, but this will probably change at some point.
