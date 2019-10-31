@@ -56,6 +56,50 @@ def results():
     print(session['vegan'])
     # Process the variables in whatever way you need to fetch the correct
     # search results
+    temp_tuple = tuple(session['ingredients']) # temporary tuple cast for compatability with cursor.execute()
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+            query = "SELECT id FROM ingredient WHERE name IN %s;"   # query for ingredient ids
+            cursor.execute(query, (temp_tuple,))
+            index_result = cursor.fetchall()
+            print(index_result)
+            search_indexes = []
+            for index in index_result:              # extract ingredient id from query result
+                search_indexes.append(index[0])
+            print(search_indexes)
+            search_indexes = tuple(search_indexes)
+
+            query = "SELECT * FROM recipetoingredient WHERE ingredient IN %s;"  # query for matching recipes for the given ingredients
+            cursor.execute(query, (search_indexes,))
+            matched_recipes = cursor.fetchall()
+            print(matched_recipes)
+
+            matched_recipe_indexes = []
+            for listing in matched_recipes:                 # create collection for counter
+                matched_recipe_indexes.append(listing[0])
+
+            tuple_matched_recipe_indexes = tuple(matched_recipe_indexes)
+
+            query = "SELECT * from ingredient_counts WHERE recipe IN %s;"
+            cursor.execute(query, (tuple_matched_recipe_indexes,))
+            original_recipes = cursor.fetchall()
+
+            original_recipe_counts = {}
+            for listing in original_recipes:
+                original_recipe_counts[listing[0]] = listing[1]
+
+            print(original_recipe_counts)
+            result_counts = Counter(matched_recipe_indexes)
+            valid_recipes = []
+            for key in original_recipe_counts.keys():
+                if result_counts[key] == original_recipe_counts[key]:
+                    valid_recipes.append(key)
+
+            valid_recipes = tuple(valid_recipes)                                  # Counter object of all the valid
+
+            query = "SELECT * from recipe WHERE id IN %s;"
+            cursor.execute(query, (valid_recipes,))
+            results = cursor.fetchall()
 
     # All these paramaters are hard-coded;
     # they should probably be pulled out of the database
@@ -64,33 +108,34 @@ def results():
         image_paths=['static/bowl of cereal.jpg', 'static/omellete.jpg', 'static/stir fry.jpg'],
         image_alts=['bowl of cereal', 'omellete', 'stir fry'],
         ratings=[74, 86, 91],
-        cooking_times_in_minutes=[2, 18, 34],
-        links_to_recipe=['/recipe', '/recipe', '/recipe'],
+        cooking_times_in_minutes=[r[2] for r in results],                   #time from recipe
+        recipe_ids=[r[0] for r in results],
     )
 
 
 ###########################
 ### SEARCH RECIPE PAGE ####
 ###########################
-@app.route('/recipe')
-def recipe():
-    template = Template(filename=f'{TEMPLATE_DIR}/recipe.html')
-
+@app.route("/recipe/<int:recipe_id>")
+def recipe(recipe_id):
+    template = Template(filename=f"{TEMPLATE_DIR}/recipe.html")
     # All these paramaters are hard-coded;
     # they should probably be pulled out of the database
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+            query = "SELECT * from recipe WHERE id = %s;"
+            cursor.execute(query, (recipe_id,))
+            results = cursor.fetchone()
+
+    print(results)
     return template.render(
-        title='Bowl of Cereal',
-        image_path='static/bowl of cereal.jpg',
-        image_alt='bowl of cereal',
-        cooking_time_in_minutes=2.5,
-        difficulty='Medium',  # can be 'Easy', 'Medium', or 'Hard'
-        ingredients=['Milk', 'Cereal'],
-        equipment=['Bowl', 'Cup', 'Microwave'],
-        method=[
-            'Fill bowl with cereal.',
-            'Fill cup with milk.',
-            'Warm up cup in microwave for 1 minute.',
-            'Pour cup of milk into bowl of cereal.',
-        ],
+        title=results[1],
+        image_path=results[7],
+        image_alt=results[6],
+        cooking_time_in_minutes=results[2],
+        difficulty=results[3],  # can be 'Easy', 'Medium', or 'Hard'
+        ingredients=["Milk", "Cereal"],
+        equipment=["Bowl", "Cup", "Microwave"],
+        method=results[4],
         num_likes=128,
     )
