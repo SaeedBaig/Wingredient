@@ -85,6 +85,7 @@ def results():
             query = "SELECT id FROM ingredient WHERE name IN %s;"   # query for ingredient ids
             cursor.execute(query, (temp_tuple,))
             index_result = cursor.fetchall()
+            print(index_result)
             search_indexes = []
             for index in index_result:              # extract ingredient id from query result
                 search_indexes.append(index[0])
@@ -131,32 +132,34 @@ def results():
         image_alts=[r[6] for r in results],  # set to description from recipe
         ratings=[74, 86, 91],
         cooking_times_in_minutes=[r[2] for r in results],                   #time from recipe
-        links_to_recipe=['/recipe', '/recipe', '/recipe'],
+        recipe_ids=[r[0] for r in results],
     )
 
 ###########################
 ### SEARCH RECIPE PAGE ####
 ###########################
-@app.route("/recipe")
-def recipe():
+@app.route("/recipe/<int:recipe_id>")
+def recipe(recipe_id):
     template = Template(filename=f"{TEMPLATE_DIR}/recipe.html")
 
     # All these paramaters are hard-coded;
     # they should probably be pulled out of the database
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+            query = "SELECT * from recipe WHERE id = %s;"
+            cursor.execute(query, (recipe_id,))
+            results = cursor.fetchone()
+
+    print(results)
     return template.render(
-        title="Bowl of Cereal",
-        image_path="static/bowl of cereal.jpg",
-        image_alt="bowl of cereal",
-        cooking_time_in_minutes=2.5,
-        difficulty="Medium",  # can be 'Easy', 'Medium', or 'Hard'
+        title=results[1],
+        image_path=results[7],
+        image_alt=results[6],
+        cooking_time_in_minutes=results[2],
+        difficulty=results[3],  # can be 'Easy', 'Medium', or 'Hard'
         ingredients=["Milk", "Cereal"],
         equipment=["Bowl", "Cup", "Microwave"],
-        method=[
-            "Fill bowl with cereal.",
-            "Fill cup with milk.",
-            "Warm up cup in microwave for 1 minute.",
-            "Pour cup of milk into bowl of cereal.",
-        ],
+        method=results[4],
         num_likes=128,
     )
 
