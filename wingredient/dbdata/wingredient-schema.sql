@@ -11,6 +11,13 @@ CREATE TYPE Difficulty as ENUM('Easy', 'Intermediate', 'Hard');
 -- should this be a list not an ENUM  or you can have multiple?
 --CREATE TYPE DietaryTraits as ENUM('None', 'Vegan', 'Vegetarian', 'Caeliac');
 
+-- Dietary bits
+--0000 = none
+--0001 = veg
+--0010 = vegan
+--0100 = gluten
+--1000 = 
+
 -- cook time stored in minutes
 DROP TABLE IF EXISTS Recipe CASCADE;
 CREATE TABLE Recipe (
@@ -20,7 +27,8 @@ CREATE TABLE Recipe (
     difficulty  Difficulty,
     notes       text,
     description text,
-    tags        text,
+    cuisine_tagstext,
+    dietary_tags bit(4),
     imageRef    text default null,
     url         text, 
     method      text,
@@ -32,7 +40,6 @@ DROP TABLE IF EXISTS Ingredient CASCADE;
 CREATE TABLE Ingredient (
     id          integer,
     name        varchar(256),
-    dietary     text,
     primary key (id)
 );
 
