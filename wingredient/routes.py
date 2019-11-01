@@ -19,7 +19,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # must import User after initialising login manager
-from .user import User
+from .user import User, create_account, load_user
 
 #################
 ### HOME PAGE ###
@@ -57,6 +57,8 @@ def search():
             query = "SELECT name FROM ingredient;"   # query for ingredient ids
             cursor.execute(query)
             results = cursor.fetchall()
+
+    print("user: %s, auth: %r" % (current_user.get_id(), current_user.is_authenticated))
 
     return template.render(
         username=current_user.get_id() if current_user.is_authenticated else None,
@@ -170,18 +172,16 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        user = load_user(username)
 
-        # TODO implement actual login check
-        # PASSWORD FOR ALL ACCOUNTS
-        if password == "guest":
+        if user != None and user.authenticate(password):
             # flash("Logged in successfully.")
-            login_user(User(username))
+            login_user(user)
             return redirect(url_for("search"))
         else:
             error = "Incorrect username or password."
 
     template = Template(filename=f"{TEMPLATE_DIR}/login.html")
-    # TODO
     return template.render(error=error)
 
 
@@ -201,7 +201,6 @@ def signup():
         #  capitalisation is preserved for a given user,
         #  but duplicate username check is case insensitive
 
-        # TODO move this out side function
         allowed_chars = set(
             string.ascii_lowercase + string.ascii_uppercase + string.digits + "-" + "_"
         )
@@ -209,20 +208,24 @@ def signup():
         if not (set(username).issubset(allowed_chars)):
             error = "Usernames may contain only letters, numbers, dashes, and underscores."
 
-        # TODO Check that the username is not already in use
-        elif False:
+        # Check that the username is not already in use
+        elif load_user(username) != None:
             error = "Username already in use."
 
         # Check that the two passwords given match
         elif password != password_duplicate:
             error = "Passwords do not match."
 
-        # #TODO No error, add the user to the database and sign in
+        # No error, add the user to the database and sign in
         if error == None:
-            pass
+            create_account(username, password)
+            user = load_user(username)
+            auth_success = user.authenticate(password)
+            assert(auth_success) # this must succeed
+            login_user(user)
+            return redirect(url_for("search"))
 
     template = Template(filename=f"{TEMPLATE_DIR}/signup.html")
-    # TODO
     return template.render(error=error)
 
 
