@@ -234,6 +234,7 @@ def signup():
 ###################
 @app.route("/logout")
 def logout():
+    current_user.logout()
     logout_user()
     # NOTE: redirect to home page instead?
     return redirect(url_for("search"))
