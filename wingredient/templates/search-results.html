@@ -46,15 +46,29 @@ Python variables that need to be passed in for this template to render correctly
     <br>
 
     <!-- Sort Results By -->
-    <form class="form-inline justify-content-center">
+    <form class="form-inline justify-content-center", method="POST">
       <div class="form-group">
         <label for="sorting_options">
           <h3>Sort results by:&nbsp;</h3>
         </label>
-        <select id="sorting_options" class="form-control form-control-lg">
-          <option value="cooking-time">Cooking time</option>
-          <option value="rating">Rating</option>
+        <select name="sorting_options" id="sorting_options" class="form-control form-control-lg">
+          <option value="alphabetical" 
+            % if default=='alphabetical':
+              selected
+            % endif
+          >Alphabetical</option>
+          <option value="cooking-time"
+            % if default=='cooking-time':
+              selected
+            % endif
+          >Cooking time</option>
+          <option value="rating"
+            % if default=='rating':
+              selected
+            % endif
+          >Rating</option>
         </select>
+        <input type="submit", value="Sort">
       </div>
     </form>
     <br>
