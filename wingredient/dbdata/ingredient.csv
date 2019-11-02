@@ -1,16 +1,16 @@
-id,name,dietary
-1,Onion,"Vegan, Vegetarian"
-2,Garlic,"Vegan, Vegetarian"
-3,Carrot,"Vegan, Vegetarian"
-4,Celerly,"Vegan, Vegetarian"
-5,Capsicum,"Vegan, Vegetarian"
-6,Olive Oil,"Vegan, Vegetarian"
-7,Chilli Powder,"Vegan, Vegetarian"
-8,Ground Cumin,"Vegan, Vegetarian"
-9,Ground Cinnamon,"Vegan, Vegetarian"
-10,Tinned Chickpeas,"Vegan, Vegetarian"
-11,Tinned Kidney Beans,"Vegan, Vegetarian"
-12,Tinned Tomatoes,"Vegan, Vegetarian"
-13,Minced Beef,Meat
-14,Corriader,"Vegan, Vegetarian"
-15,Basamic Vinegar,"Vegan, Vegetarian"
+id,name
+1,Onion
+2,Garlic
+3,Carrot
+4,Celerly
+5,Capsicum
+6,Olive Oil
+7,Chilli Powder
+8,Ground Cumin
+9,Ground Cinnamon
+10,Tinned Chickpeas
+11,Tinned Red Kidney Beans
+12,Tinned Tomatoes
+13,Minced Beef
+14,Corriader
+15,Basamic Vinegar

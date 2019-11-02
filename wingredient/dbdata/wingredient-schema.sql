@@ -27,7 +27,7 @@ CREATE TABLE Recipe (
     difficulty  Difficulty,
     notes       text,
     description text,
-    cuisine_tagstext,
+    cuisine_tags text,
     dietary_tags bit(4),
     imageRef    text default null,
     url         text, 
