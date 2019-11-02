@@ -82,8 +82,10 @@ def results():
     
     results = get_search(session["ingredients"])
     if results == -1:
-        #HANDLE INVALID SEARCH ERROR
-        pass
+        return template.render(
+            titles=""
+        )
+
 
     # All these paramaters are hard-coded;
     # they should probably be pulled out of the database
@@ -103,8 +105,9 @@ def results_post():
 
     results = get_search(session["ingredients"])
     if results == -1:
-        #HANDLE INVALID SEARCH ERROR
-        pass
+        return template.render(
+            titles=""
+        )
 
     sort_option = request.form['sorting_options']
     print(sort_option)

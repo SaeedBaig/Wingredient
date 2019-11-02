@@ -43,41 +43,41 @@ Python variables that need to be passed in for this template to render correctly
 <body>
   <center>
     <h1>Search Results</h1>
-    <br>
 
-    <!-- Sort Results By -->
-    <form class="form-inline justify-content-center", method="POST">
-      <div class="form-group">
-        <label for="sorting_options">
-          <h3>Sort results by:&nbsp;</h3>
-        </label>
-        <select name="sorting_options" id="sorting_options" class="form-control form-control-lg">
-          <option value="alphabetical" 
-            % if default=='alphabetical':
-              selected
-            % endif
-          >Alphabetical</option>
-          <option value="cooking-time"
-            % if default=='cooking-time':
-              selected
-            % endif
-          >Cooking time</option>
-          <option value="rating"
-            % if default=='rating':
-              selected
-            % endif
-          >Rating</option>
-        </select>
-        <input type="submit", value="Sort">
-      </div>
-    </form>
+    <br>
+    % if len(titles) == 0:
+      <h3>Sorry, no recipes found matching your search</h3>
+    % else:
+      <!-- Sort Results By -->
+      <form class="form-inline justify-content-center", method="POST">
+        <div class="form-group">
+          <label for="sorting_options">
+            <h3>Sort results by:&nbsp;</h3>
+          </label>
+          <select name="sorting_options" id="sorting_options" class="form-control form-control-lg">
+            <option value="alphabetical" 
+              % if default=='alphabetical':
+                selected
+              % endif
+            >Alphabetical</option>
+            <option value="cooking-time"
+              % if default=='cooking-time':
+                selected
+              % endif
+            >Cooking time</option>
+            <option value="rating"
+              % if default=='rating':
+                selected
+              % endif
+            >Rating</option>
+          </select>
+          <input type="submit", value="Sort">
+        </div>
+      </form>
     <br>
 
 
     <!-- Search results -->
-    % if len(titles) == 0:
-      <h3>Sorry, no recipes found matching your search</h3>
-    % else:
       % for i in range(len(titles)):
         <div class="card mb-3">
           <div class="row no-gutters">
