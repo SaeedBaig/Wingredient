@@ -68,7 +68,7 @@ def search():
 ###########################
 ### SEARCH RESULTS PAGE ###
 ###########################
-@app.route("/results")
+@app.route("/results",)
 def results():
     template = Template(filename=f"{TEMPLATE_DIR}/search-results.html")
 
@@ -79,31 +79,88 @@ def results():
     print(session["vegan"])
     # Process the variables in whatever way you need to fetch the correct
     # search results
-    temp_tuple = tuple(session['ingredients']) # temporary tuple cast for compatability with cursor.execute()
+    
+    results = get_search(session["ingredients"])
+    if results == -1:
+        #HANDLE INVALID SEARCH ERROR
+        pass
+
+    # All these paramaters are hard-coded;
+    # they should probably be pulled out of the database
+    return template.render(
+        titles=[r[1] for r in results],  #name from recipe
+        image_paths=[r[4] for r in results],    # imageRef from recipe
+        image_alts=[r[3] for r in results],  # set to description from recipe
+        ratings=[74, 86, 91],
+        cooking_times_in_minutes=[r[2] for r in results],                   #time from recipe
+        recipe_ids=[r[0] for r in results],
+        default='alphabetical'
+    )
+
+@app.route("/results", methods=['POST'])
+def results_post():
+    template = Template(filename=f"{TEMPLATE_DIR}/search-results.html")
+
+    results = get_search(session["ingredients"])
+    if results == -1:
+        #HANDLE INVALID SEARCH ERROR
+        pass
+
+    sort_option = request.form['sorting_options']
+    print(sort_option)
+    if sort_option == "rating":
+        pass
+    elif sort_option == "cooking-time":
+        results = sorted(results, key = lambda a : a[2])   # sort results by cooking time
+
+    return template.render(
+        titles=[r[1] for r in results],  #name from recipe
+        image_paths=[r[4] for r in results],    # imageRef from recipe
+        image_alts=[r[3] for r in results],  # set to description from recipe
+        ratings=[74, 86, 91],
+        cooking_times_in_minutes=[r[2] for r in results],                   #time from recipe
+        recipe_ids=[r[0] for r in results],
+        default=sort_option
+    )
+    
+
+def get_search(ingredients):
+    temp_tuple = tuple(ingredients) # temporary tuple cast for compatability with cursor.execute()
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             query = "SELECT id FROM ingredient WHERE name IN %s;"   # query for ingredient ids
+            if not temp_tuple:  # if there's no input into search
+                print("INVALID SEARCH")
+                return -1
+                
             cursor.execute(query, (temp_tuple,))
             index_result = cursor.fetchall()
             print(index_result)
+
             search_indexes = []
             for index in index_result:              # extract ingredient id from query result
                 search_indexes.append(index[0])
             print(search_indexes)
             search_indexes = tuple(search_indexes)
+            if not search_indexes:  #if there's no returned ingredient ids (shouldn't ever happen)
+                print("INVALID SEARCH")
+                return -1
 
-            query = "SELECT * FROM recipetoingredient WHERE ingredient IN %s;"  # query for matching recipes for the given ingredients
+            #CHANGE TO SPECIFY EXACT COLUMNS
+            query = "SELECT recipe, ingredient FROM recipetoingredient WHERE ingredient IN %s;"  # query for matching recipes for the given ingredients
             cursor.execute(query, (search_indexes,))
             matched_recipes = cursor.fetchall()
+            print("matched recipes: ")
             print(matched_recipes)
 
-            matched_recipe_indexes = []
-            for listing in matched_recipes:                 # create collection for counter
-                matched_recipe_indexes.append(listing[0])
+            matched_recipe_indexes = [listing[0] for listing in matched_recipes]
 
             tuple_matched_recipe_indexes = tuple(matched_recipe_indexes)
+            if not tuple_matched_recipe_indexes:    # no matched recipes
+                print("INVALID SEARCH")
+                return -1
 
-            query = "SELECT * from ingredient_counts WHERE recipe IN %s;"
+            query = "SELECT recipe, count FROM ingredient_counts WHERE recipe IN %s;"
             cursor.execute(query, (tuple_matched_recipe_indexes,))
             original_recipes = cursor.fetchall()
 
@@ -113,27 +170,24 @@ def results():
 
             print(original_recipe_counts)
             result_counts = Counter(matched_recipe_indexes)
+            print(result_counts)
+
             valid_recipes = []
             for key in original_recipe_counts.keys():
-                if result_counts[key] == original_recipe_counts[key]:
+                if result_counts[key] >= original_recipe_counts[key]:
                     valid_recipes.append(key)
 
             valid_recipes = tuple(valid_recipes)                                  # Counter object of all the valid
+            if not valid_recipes:   # no recipes that match
+                print("INVALID SEARCH")
+                return -1
 
-            query = "SELECT * from recipe WHERE id IN %s;"
+            query = "SELECT id, name, time, description, imageRef FROM recipe WHERE id IN %s;"
             cursor.execute(query, (valid_recipes,))
             results = cursor.fetchall()
-
-    # All these paramaters are hard-coded;
-    # they should probably be pulled out of the database
-    return template.render(
-        titles=[r[1] for r in results],  #name from recipe
-        image_paths=[r[7] for r in results],    # imageRef from recipe
-        image_alts=[r[6] for r in results],  # set to description from recipe
-        ratings=[74, 86, 91],
-        cooking_times_in_minutes=[r[2] for r in results],                   #time from recipe
-        recipe_ids=[r[0] for r in results],
-    )
+            results = sorted(results, key = lambda a : str(a[1]).lower())   # sort by alphabetical by name
+            print(results)
+            return results
 
 ###########################
 ### SEARCH RECIPE PAGE ####
@@ -146,20 +200,36 @@ def recipe(recipe_id):
     # they should probably be pulled out of the database
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            query = "SELECT * from recipe WHERE id = %s;"
+            query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
             cursor.execute(query, (recipe_id,))
             results = cursor.fetchone()
 
+            query = "SELECT ingredient FROM recipetoingredient WHERE recipe = %s;"
+            cursor.execute(query, (recipe_id,))
+            ingredient_index_tuple = tuple([i[0] for i in cursor.fetchall()])   # tuple of ingredient indexes in recipe
+            query = "SELECT name FROM ingredient WHERE id in %s;"
+            cursor.execute(query, (ingredient_index_tuple,))
+            ingredient_names = tuple([i[0] for i in cursor.fetchall()])
+            print(ingredient_names)
+
+            query = "SELECT equipment FROM recipetoequipment WHERE recipe = %s;"
+            cursor.execute(query, (recipe_id,))
+            equipment_index_tuple = tuple([e[0] for e in cursor.fetchall()])    # tuple of equipment indexes in recipe
+            query = "SELECT name FROM equipment WHERE id in %s;"
+            cursor.execute(query, (equipment_index_tuple,))
+            equipment_names = tuple([e[0] for e in cursor.fetchall()])
+
+
     print(results)
     return template.render(
-        title=results[1],
-        image_path=results[7],
-        image_alt=results[6],
-        cooking_time_in_minutes=results[2],
-        difficulty=results[3],  # can be 'Easy', 'Medium', or 'Hard'
-        ingredients=["Milk", "Cereal"],
-        equipment=["Bowl", "Cup", "Microwave"],
-        method=results[4],
+        title=results[0],
+        image_path=results[5],
+        image_alt=results[4],
+        cooking_time_in_minutes=results[1],
+        difficulty=results[2],  # can be 'Easy', 'Medium', or 'Hard'
+        ingredients=ingredient_names,
+        equipment=equipment_names,
+        method=results[3],
         num_likes=128,
     )
 
