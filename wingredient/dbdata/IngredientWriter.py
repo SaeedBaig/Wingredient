@@ -25,16 +25,24 @@ with open('ingredient.csv', mode='w') as recipes:
     recipe_writer.writerow(['21', 'Vegatable stock'])
     recipe_writer.writerow(['22', 'Cocounut Milk'])
     recipe_writer.writerow(['23', 'Lime'])
+    recipe_writer.writerow(['24', 'Spaghetti'])
+    recipe_writer.writerow(['25', 'Chicken Thigh Fillets'])
+    recipe_writer.writerow(['26', 'Butter'])
+    recipe_writer.writerow(['27', 'Zucchini Noodles'])
+    recipe_writer.writerow(['28', 'Chilli Flakes'])
+    recipe_writer.writerow(['29', 'Parsley'])
+    recipe_writer.writerow(['30', 'Parmesan'])
 
-   # recipe_writer.writerow(['', '')]
-   # recipe_writer.writerow(['', '')]
-   # recipe_writer.writerow(['', '')]
-   # recipe_writer.writerow(['', '')]
+
+
+   # recipe_writer.writerow(['', ''])
+   # recipe_writer.writerow(['', ''])
+   # recipe_writer.writerow(['', ''])
     
-   # recipe_writer.writerow(['', '')]
-   # recipe_writer.writerow(['', '')]
-   # recipe_writer.writerow(['', '')]
-   # recipe_writer.writerow(['', '')]
+   # recipe_writer.writerow(['', ''])
+   # recipe_writer.writerow(['', ''])
+   # recipe_writer.writerow(['', ''])
+   # recipe_writer.writerow(['', ''])
 
 
 

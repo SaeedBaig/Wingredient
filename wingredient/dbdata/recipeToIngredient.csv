@@ -15,7 +15,7 @@ recipe,ingredient,quantity,measurement,description,notes,optional
 1,14,15,Weight,,,true
 1,15,2,Tablespoon,,,true
 2,16,1000,Weight,,,false
-2,17,2,Count,Count,,true
+2,17,2,Count,,,true
 2,18,75,Weight,,,false
 2,19,0.33,Teaspoon,fresh,,true
 2,20,0.33,Teaspoon,fresh,,true
@@ -24,3 +24,12 @@ recipe,ingredient,quantity,measurement,description,notes,optional
 2,22,125,Volume,,plus extra to serve,false
 2,7,0.5,Tablespoon,,,true
 2,23,1,Count,,,true
+3,24,200,Weight,dried,,false
+3,6,2,Teaspoon,,,false
+3,25,600,Weight,,trimmed,false
+3,26,80,Weight,,chopped,false
+3,2,4,Count,cloves,finely chopped,true
+3,27,250,Weight,packet,,false
+3,28,0.25,Teaspoon,pinch of dried,plus extra to serve,true
+3,29,0.33,Cup,finely chopped fresh continental,leaves,true
+3,30,50,Weight,finely shredded,to serve,
