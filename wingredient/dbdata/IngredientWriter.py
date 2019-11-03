@@ -17,10 +17,24 @@ with open('ingredient.csv', mode='w') as recipes:
     recipe_writer.writerow(['13', 'Minced Beef']) 
     recipe_writer.writerow(['14', 'Corriader']) 
     recipe_writer.writerow(['15', 'Basamic Vinegar']) 
-    recipe_writer.writerow(['16', 'Pumpkin', '  
+    recipe_writer.writerow(['16', 'Pumpkin'])
+    recipe_writer.writerow(['17', 'Shallots'])
+    recipe_writer.writerow(['18', 'Ginger'])
+    recipe_writer.writerow(['19', 'Chives'])
+    recipe_writer.writerow(['20', 'Mint'])
+    recipe_writer.writerow(['21', 'Vegatable stock'])
+    recipe_writer.writerow(['22', 'Cocounut Milk'])
+    recipe_writer.writerow(['23', 'Lime'])
 
-
+   # recipe_writer.writerow(['', '')]
+   # recipe_writer.writerow(['', '')]
+   # recipe_writer.writerow(['', '')]
+   # recipe_writer.writerow(['', '')]
     
+   # recipe_writer.writerow(['', '')]
+   # recipe_writer.writerow(['', '')]
+   # recipe_writer.writerow(['', '')]
+   # recipe_writer.writerow(['', '')]
 
 
 

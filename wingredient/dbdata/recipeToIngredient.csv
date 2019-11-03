@@ -14,3 +14,13 @@ recipe,ingredient,quantity,measurement,description,notes,optional
 1,13,500,Weight,,,false
 1,14,15,Weight,,,true
 1,15,2,Tablespoon,,,true
+2,16,1000,Weight,,,false
+2,17,2,Count,Count,,true
+2,18,75,Weight,,,false
+2,19,0.33,Teaspoon,fresh,,true
+2,20,0.33,Teaspoon,fresh,,true
+2,6,2 ,Tablespoon,extra virgin,,false
+2,21,1000,Volume,organic,,false
+2,22,125,Volume,,plus extra to serve,false
+2,7,0.5,Tablespoon,,,true
+2,23,1,Count,,,true
