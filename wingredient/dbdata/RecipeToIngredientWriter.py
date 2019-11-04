@@ -41,7 +41,60 @@ with open('recipeToIngredient.csv', mode='w') as recipes:
     recipe_writer.writerow(['3', '28', '0.25', 'Teaspoon', 'pinch of dried', 'plus extra to serve', 'true'])
     recipe_writer.writerow(['3', '29', '0.33', 'Cup', 'finely chopped fresh continental', 'leaves', 'true'])
     recipe_writer.writerow(['3', '30', '50', 'Weight', 'finely shredded', 'to serve', ''])
-    
+
+
+    recipe_writer.writerow(['4', '31', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+, 'Count', '', '', 'true'])
+    recipe_writer.writerow(['2', '18', '75', 'Weight', '', '', 'false'])
+    recipe_writer.writerow(['2', '19', '0.33', 'Teaspoon', 'fresh', '', 'true'])
+    recipe_writer.writerow(['2', '20', '0.33', 'Teaspoon', 'fresh', '', 'true'])
+    recipe_writer.writerow(['2', '6', '2 ', 'Tablespoon', 'extra virgin', '', 'false'])
+    recipe_writer.writerow(['2', '21', '1000', 'Volume', 'organic', '', 'false'])
+    recipe_writer.writerow(['2', '22', '125', 'Volume', '', 'plus extra to serve', 'false'])
+    recipe_writer.writerow(['2', '7', '0.5', 'Tablespoon', '', '', 'true'])
+    recipe_writer.writerow(['2', '23', '1', 'Count', '', '', 'true'])
+   
+    # Lazy garlic chicken with butter noodles
+    recipe_writer.writerow(['3', '24', '200', 'Weight', 'dried', '', 'false'])
+    recipe_writer.writerow(['3', '6', '2', 'Teaspoon', '', '', 'false'])
+    recipe_writer.writerow(['3', '25', '600', 'Weight', '', 'trimmed', 'false'])
+    recipe_writer.writerow(['3', '26', '80', 'Weight', '', 'chopped', 'false'])
+    recipe_writer.writerow(['3', '2', '4', 'Count', 'cloves', 'finely chopped', 'true'])
+    recipe_writer.writerow(['3', '27', '250', 'Weight', 'packet', '', 'false'])
+    recipe_writer.writerow(['3', '28', '0.25', 'Teaspoon', 'pinch of dried', 'plus extra to serve', 'true'])
+    recipe_writer.writerow(['3', '29', '0.33', 'Cup', 'finely chopped fresh continental', 'leaves', 'true'])
+    recipe_writer.writerow(['3', '30', '50', 'Weight', 'finely shredded', 'to serve', ''])
+
+
+    recipe_writer.writerow(['4', '31', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+     recipe_writer.writerow(['4', '', '', '', '', '', ''])
+    recipe_writer.writerow(['4', '', '', '', '', '', ''])
+
+
+    # recipe_writer.writerow(['3', '', '', '', '', '', ''])
+    # recipe_writer.writerow(['3', '', '', '', '', '', ''])
+    # recipe_writer.writerow(['3', '', '', '', '', '', ''])
+    # recipe_writer.writerow(['3', '', '', '', '', '', ''])
+    # recipe_writer.writerow(['3', '', '', '', '', '', ''])
+    # recipe_writer.writerow(['3', '', '', '', '', '', ''])
+    # recipe_writer.writerow(['3', '', '', '', '', '', ''])
+
+
     # recipe_writer.writerow(['3', '', '', '', '', '', ''])
     # recipe_writer.writerow(['3', '', '', '', '', '', ''])
 
