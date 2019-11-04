@@ -55,7 +55,6 @@ with open('recipe.csv', mode='w') as recipe:
 
     
      
-
      # recipe_writer.writerow(['', '', '', '', '', "", '', '0000', '/images/recipe_images/', '', ""])
      # recipe_writer.writerow(['', '', '', '', '', "", '', '0000', '/images/recipe_images/', '', ""])
      # recipe_writer.writerow(['', '', '', '', '', "", '', '0000', '/images/recipe_images/', '', ""])
