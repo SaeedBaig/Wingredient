@@ -17,8 +17,8 @@ python IngredientWriter.py
 python RecipeToIngredientWriter.py 
 
 # drop and create db
-echo dropdb wingredient
-echo creatdb wingredient
+#echo dropdb wingredient
+#echo creatdb wingredient
 
 psql -d wingredient --user=${THE_USER} -c "\i wingredient-schema.sql" 
 psql -d wingredient --user=${THE_USER} -c "\copy recipe FROM 'recipe.csv' DELIMITER ',' CSV HEADER"
