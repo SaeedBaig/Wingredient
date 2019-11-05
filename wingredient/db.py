@@ -12,8 +12,11 @@ SCHEMA_SCRIPT = DBDATA_DIR / "wingredient-schema.sql"
 
 
 SQLCOPY1 = DBDATA_DIR / "recipe.csv"
-SQLCOPY2 =  DBDATA_DIR / "ingredient.csv"
+SQLCOPY2 = DBDATA_DIR / "ingredient.csv"
 SQLCOPY3 = DBDATA_DIR / "recipeToIngredient.csv"
+SQLCOPY4 = DBDATA_DIR / "equipment.csv"
+SQLCOPY5 = DBDATA_DIR / "recipeToEquipment.csv"
+
 pool = cast(psycopg2.pool.ThreadedConnectionPool, None)
 
 
@@ -31,6 +34,10 @@ def init_db() -> int:
                 cu.copy_expert("COPY ingredient FROM stdin DELIMITER ',' CSV HEADER", f);
             with open(SQLCOPY3, 'r') as f: 
                 cu.copy_expert("COPY recipeToIngredient FROM stdin DELIMITER ',' CSV HEADER", f);
+            with open(SQLCOPY4, 'r') as f: 
+                cu.copy_expert("COPY equipment FROM stdin DELIMITER ',' CSV HEADER", f);
+            with open(SQLCOPY5, 'r') as f: 
+                cu.copy_expert("COPY recipeToEquipment FROM stdin DELIMITER ',' CSV HEADER", f);
             #with DATA_SCRIPT.open() as f:
             #    cu.execute(f.read())
 
