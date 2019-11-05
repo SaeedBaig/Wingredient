@@ -8,8 +8,12 @@ from . import config
 
 DBDATA_DIR = Path(__file__).parent / "dbdata"
 SCHEMA_SCRIPT = DBDATA_DIR / "wingredient-schema.sql"
-DATA_SCRIPT = DBDATA_DIR / "wingredient-insert.sql"
+#DATA_SCRIPT = DBDATA_DIR / "wingredient-insert.sql"
 
+
+SQLCOPY1 = DBDATA_DIR / "recipe.csv"
+SQLCOPY2 =  DBDATA_DIR / "ingredient.csv"
+SQLCOPY3 = DBDATA_DIR / "recipeToIngredient.csv"
 pool = cast(psycopg2.pool.ThreadedConnectionPool, None)
 
 
@@ -21,8 +25,14 @@ def init_db() -> int:
         with conn.cursor() as cu:
             with SCHEMA_SCRIPT.open() as f:
                 cu.execute(f.read())
-            with DATA_SCRIPT.open() as f:
-                cu.execute(f.read())
+            with open(SQLCOPY1, 'r') as f: 
+                cu.copy_expert("COPY recipe FROM stdin DELIMITER ',' CSV HEADER", f);
+            with open(SQLCOPY2, 'r') as f: 
+                cu.copy_expert("COPY ingredient FROM stdin DELIMITER ',' CSV HEADER", f);
+            with open(SQLCOPY3, 'r') as f: 
+                cu.copy_expert("COPY recipeToIngredient FROM stdin DELIMITER ',' CSV HEADER", f);
+            #with DATA_SCRIPT.open() as f:
+            #    cu.execute(f.read())
 
     print("Database initialized!")
 

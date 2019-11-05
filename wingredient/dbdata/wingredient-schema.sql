@@ -4,7 +4,7 @@ DROP TYPE IF EXISTS MeasurementTypes CASCADE;
 CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count');
 
 DROP TYPE IF EXISTS Difficulty CASCADE;
-CREATE TYPE Difficulty as ENUM('Easy', 'Medium', 'Hard');
+CREATE TYPE Difficulty as ENUM('Easy', 'Intermediate', 'Hard');
 
 -- Enum for different dietary traits
 DROP TYPE IF EXISTS DietaryTraits CASCADE;
