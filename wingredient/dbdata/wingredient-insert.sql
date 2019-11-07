@@ -52,7 +52,8 @@ INSERT INTO RecipeToEquipment VALUES ('3', '4'); -- plate for ham sandwich
 INSERT INTO RecipeToEquipment VALUES ('3', '5'); -- knife for ham sandwich
 INSERT INTO RecipeToEquipment VALUES ('4', '3'); -- bowl for cereal
 
--- Account VALUES (<id>, <username>, <password>, <details>);
+-- Account VALUES (<username>, <pwhash>, <pwsalt>, <details>);
+-- NOTE DON'T INSERT ACCOUNTS HERE, USE THE SIGNUP PAGE INSTEAD
 
 
 
