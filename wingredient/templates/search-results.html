@@ -43,50 +43,68 @@ Python variables that need to be passed in for this template to render correctly
 <body>
   <center>
     <h1>Search Results</h1>
-    <br>
 
-    <!-- Sort Results By -->
-    <form class="form-inline justify-content-center">
-      <div class="form-group">
-        <label for="sorting_options">
-          <h3>Sort results by:&nbsp;</h3>
-        </label>
-        <select id="sorting_options" class="form-control form-control-lg">
-          <option value="cooking-time">Cooking time</option>
-          <option value="rating">Rating</option>
-        </select>
-      </div>
-    </form>
+    <br>
+    % if len(titles) == 0:
+      <h3>Sorry, no recipes found matching your search</h3>
+    % else:
+      <!-- Sort Results By -->
+      <form class="form-inline justify-content-center", method="POST">
+        <div class="form-group">
+          <label for="sorting_options">
+            <h3>Sort results by:&nbsp;</h3>
+          </label>
+          <select name="sorting_options" id="sorting_options" class="form-control form-control-lg">
+            <option value="alphabetical" 
+              % if default=='alphabetical':
+                selected
+              % endif
+            >Alphabetical</option>
+            <option value="cooking-time"
+              % if default=='cooking-time':
+                selected
+              % endif
+            >Cooking time</option>
+            <option value="rating"
+              % if default=='rating':
+                selected
+              % endif
+            >Rating</option>
+          </select>
+          <input type="submit", value="Sort">
+        </div>
+      </form>
     <br>
 
 
     <!-- Search results -->
-    % for i in range(len(titles)):
-    <div class="card mb-3">
-      <div class="row no-gutters">
-        <div class="col-md-5">
-          <img src="${image_paths[i]}" class="card-img" height="250" alt="${image_alts[i]}">
-        </div>
-        <div class="col-md-7">
-          <div class="card-body">
-            <h5 class="card-title">${titles[i]}</h5>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">
-                ${ratings[i]}% <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-              </li>
-              <li class="list-group-item">
-                <i class="fa fa-clock-o" aria-hidden="true"></i>
-                ${cooking_times_in_minutes[i]} minutes
-              </li>
-            </ul>
+      % for i in range(len(titles)):
+        <div class="card mb-3">
+          <div class="row no-gutters">
+            <div class="col-md-5">
+              <img src="${image_paths[i]}" class="card-img" height="250" alt="${image_alts[i]}">
+            </div>
+            <div class="col-md-7">
+              <div class="card-body">
+                <h5 class="card-title">${titles[i]}</h5>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    ${ratings[i]}% <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                  </li>
+                  <li class="list-group-item">
+                    <i class="fa fa-clock-o" aria-hidden="true"></i>
+                    ${cooking_times_in_minutes[i]} minutes
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
+          <!-- Makes the card clickable -->
+          <a href="recipe/${recipe_ids[i]}" class="stretched-link"></a>
         </div>
-      </div>
-      <!-- Makes the card clickable -->
-      <a href="${links_to_recipe[i]}" class="stretched-link"></a>
-    </div>
-    <br>
-    % endfor
+        <br>
+      % endfor
+    % endif
 
 
     <a class="btn btn-primary" href="/" role="button">
