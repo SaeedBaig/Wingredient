@@ -28,15 +28,15 @@ def init_db() -> int:
         with conn.cursor() as cu:
             with SCHEMA_SCRIPT.open() as f:
                 cu.execute(f.read())
-            with open(SQLCOPY1, 'r') as f:
+            with open(SQLCOPY1, 'r', encoding='utf-8') as f:
                 cu.copy_expert("COPY recipe FROM stdin DELIMITER ',' CSV HEADER", f)
-            with open(SQLCOPY2, 'r') as f:
+            with open(SQLCOPY2, 'r', encoding='utf-8') as f:
                 cu.copy_expert("COPY ingredient FROM stdin DELIMITER ',' CSV HEADER", f)
-            with open(SQLCOPY3, 'r') as f:
+            with open(SQLCOPY3, 'r', encoding='utf-8') as f:
                 cu.copy_expert("COPY recipeToIngredient FROM stdin DELIMITER ',' CSV HEADER", f)
-            with open(SQLCOPY4, 'r') as f:
+            with open(SQLCOPY4, 'r', encoding='utf-8') as f:
                 cu.copy_expert("COPY equipment FROM stdin DELIMITER ',' CSV HEADER", f)
-            with open(SQLCOPY5, 'r') as f:
+            with open(SQLCOPY5, 'r', encoding='utf-8') as f:
                 cu.copy_expert("COPY recipeToEquipment FROM stdin DELIMITER ',' CSV HEADER", f)
             #with DATA_SCRIPT.open() as f:
             #    cu.execute(f.read())
