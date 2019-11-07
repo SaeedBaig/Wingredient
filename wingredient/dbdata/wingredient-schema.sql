@@ -1,14 +1,23 @@
 -- method is an array of text outlining the steps of the recipe
 -- imageRef holds a file path to an image
 DROP TYPE IF EXISTS MeasurementTypes CASCADE;
-CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count');
+-- Vo
+CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count', 'Tablespoon', 'Teaspoon', 'Cup');
 
 DROP TYPE IF EXISTS Difficulty CASCADE;
 CREATE TYPE Difficulty as ENUM('Easy', 'Medium', 'Hard');
 
 -- Enum for different dietary traits
-DROP TYPE IF EXISTS DietaryTraits CASCADE;
-CREATE TYPE DietaryTraits as ENUM('None', 'Vegan', 'Vegetarian', 'Caeliac');
+--DROP TYPE IF EXISTS DietaryTraits CASCADE;
+-- should this be a list not an ENUM  or you can have multiple?
+--CREATE TYPE DietaryTraits as ENUM('None', 'Vegan', 'Vegetarian', 'Caeliac');
+
+-- Dietary bits
+--0000 = none
+--0001 = veg
+--0010 = vegan
+--0100 = gluten
+--1000 = dairy
 
 -- cook time stored in minutes
 DROP TABLE IF EXISTS Recipe CASCADE;
@@ -17,10 +26,13 @@ CREATE TABLE Recipe (
     name        varchar(256) not null,
     time        integer,
     difficulty  Difficulty,
-    method      text[],
     notes       text,
     description text,
-    imageRef   text default null,
+    cuisine_tags text,
+    dietary_tags bit(4),
+    imageRef    text default null,
+    url         text, 
+    method      text,
     primary key (id)
 );
 
@@ -29,8 +41,6 @@ DROP TABLE IF EXISTS Ingredient CASCADE;
 CREATE TABLE Ingredient (
     id          integer,
     name        varchar(256),
-    isMeat      boolean,
-    dietary     DietaryTraits,
     primary key (id)
 );
 
@@ -38,9 +48,11 @@ DROP TABLE IF EXISTS RecipeToIngredient;
 CREATE TABLE RecipeToIngredient (
     recipe              integer references Recipe(id),
     ingredient          integer references Ingredient(id),
-    quantity            integer,
-    optional            boolean,
+    quantity            numeric,
     measurement_type    MeasurementTypes,
+    description         text,
+    notes               text,
+    optional            boolean,
     primary key         (recipe, ingredient, quantity)
 );
 
