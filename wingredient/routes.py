@@ -81,7 +81,7 @@ def results():
     print(session["vegan"])
     # Process the variables in whatever way you need to fetch the correct
     # search results
-    
+
     results = get_search(session["ingredients"])
     if results == -1:
         return template.render(
@@ -127,7 +127,7 @@ def results_post():
         recipe_ids=[r[0] for r in results],
         default=sort_option
     )
-    
+
 
 def get_search(ingredients):
     temp_tuple = tuple(ingredients) # temporary tuple cast for compatability with cursor.execute()
@@ -137,7 +137,7 @@ def get_search(ingredients):
             if not temp_tuple:  # if there's no input into search
                 print("INVALID SEARCH")
                 return -1
-                
+
             cursor.execute(query, (temp_tuple,))
             index_result = cursor.fetchall()
             print(index_result)
@@ -221,9 +221,12 @@ def recipe(recipe_id):
             query = "SELECT equipment FROM recipetoequipment WHERE recipe = %s;"
             cursor.execute(query, (recipe_id,))
             equipment_index_tuple = tuple([e[0] for e in cursor.fetchall()])    # tuple of equipment indexes in recipe
-            query = "SELECT name FROM equipment WHERE id in %s;"
-            cursor.execute(query, (equipment_index_tuple,))
-            equipment_names = tuple([e[0] for e in cursor.fetchall()])
+            if not equipment_index_tuple:
+                equipment_names = ()
+            else:
+                query = "SELECT name FROM equipment WHERE id in %s;"
+                cursor.execute(query, (equipment_index_tuple,))
+                equipment_names = tuple([e[0] for e in cursor.fetchall()])
 
 
     print(results)
