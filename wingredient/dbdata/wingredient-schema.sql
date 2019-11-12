@@ -14,8 +14,8 @@ CREATE TYPE Difficulty as ENUM('Easy', 'Intermediate', 'Hard');
 
 -- Dietary bits
 --0000 = none
---0001 = veg
---0010 = vegan
+--0001 = vegetarian
+--0011 = vegan
 --0100 = gluten
 --1000 = dairy
 
