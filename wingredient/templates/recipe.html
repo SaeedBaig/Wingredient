@@ -26,19 +26,7 @@ Python variables that need to be passed in for this template to render correctly
   <!-- Non-Mako dependent styling from this file -->
   <link rel="stylesheet" href="../static/recipe.css">
 
-  <!--Bootstrap styling-->
-  <link rel="stylesheet"
-  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-  crossorigin="anonymous">
-
-  <!--For icons-->
-  <link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <!--
-  To see what other icons are available,
-  go to https://fontawesome.com/v4.7.0/icons/
-  -->
+  <%include file="/site_wide.html"/>
 
   <title>Wingredient</title>
 
@@ -71,8 +59,9 @@ Python variables that need to be passed in for this template to render correctly
 </head>
 
 <body>
-  <br>
   <center>
+    <%include file="/navbar.html"/>
+
     <!-- Recipe Title -->
     <h1>${title}</h1>
     <h1>${image_path}</h1>
