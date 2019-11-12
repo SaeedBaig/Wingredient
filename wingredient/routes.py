@@ -93,7 +93,7 @@ def results():
         titles=[r[1] for r in results],  #name from recipe
         image_paths=[r[4] for r in results],    # imageRef from recipe
         image_alts=[r[3] for r in results],  # set to description from recipe
-        ratings=[74, 86, 91],
+        ratings=[80 for r in results],
         cooking_times_in_minutes=[r[2] for r in results],                   #time from recipe
         recipe_ids=[r[0] for r in results],
         default='alphabetical'
@@ -120,7 +120,7 @@ def results_post():
         titles=[r[1] for r in results],  #name from recipe
         image_paths=[r[4] for r in results],    # imageRef from recipe
         image_alts=[r[3] for r in results],  # set to description from recipe
-        ratings=[74, 86, 91],
+        ratings=[80 for r in results],
         cooking_times_in_minutes=[r[2] for r in results],                   #time from recipe
         recipe_ids=[r[0] for r in results],
         default=sort_option
@@ -189,6 +189,7 @@ def get_search(ingredients):
             cursor.execute(query, (valid_recipes,))
             results = cursor.fetchall()
             results = sorted(results, key = lambda a : str(a[1]).lower())   # sort by alphabetical by name
+            print("RESULTS:")
             print(results)
             return results
 
@@ -224,6 +225,10 @@ def recipe(recipe_id):
 
 
     print(results)
+
+    method = str.split(results[3], "|")
+    print(method)
+
     return template.render(
         title=results[0],
         image_path=results[5],
@@ -232,7 +237,7 @@ def recipe(recipe_id):
         difficulty=results[2],  # can be 'Easy', 'Medium', or 'Hard'
         ingredients=ingredient_names,
         equipment=equipment_names,
-        method=results[3],
+        method=method,
         num_likes=128,
     )
 
