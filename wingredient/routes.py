@@ -4,6 +4,7 @@ from flask import Flask, request, redirect, url_for, session
 from mako.template import Template
 from os.path import abspath
 from . import db
+from .pantry import *
 from collections import Counter
 from flask_login import LoginManager, current_user, login_user, logout_user
 import string
@@ -50,8 +51,6 @@ def search():
 
         return redirect(url_for("results"))
 
-    # This list of ingredients is hard-coded;
-    # it should probably be pulled out of the database
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             query = "SELECT name FROM ingredient;"   # query for ingredient ids
@@ -89,8 +88,6 @@ def results():
         )
 
 
-    # All these paramaters are hard-coded;
-    # they should probably be pulled out of the database
     return template.render(
         titles=[r[1] for r in results],  #name from recipe
         image_paths=[r[4] for r in results],    # imageRef from recipe
@@ -187,10 +184,10 @@ def get_search(ingredients):
                 print("INVALID SEARCH")
                 return -1
 
-            query = "SELECT id, name, time, description, imageRef FROM recipe WHERE id IN %s;"
+            query = "SELECT id, name, time, description, imageRef FROM recipe WHERE id IN %s ORDER BY name;"
             cursor.execute(query, (valid_recipes,))
             results = cursor.fetchall()
-            results = sorted(results, key = lambda a : str(a[1]).lower())   # sort by alphabetical by name
+            # results = sorted(results, key = lambda a : str(a[1]).lower())   # sort by alphabetical by name
             print("RESULTS:")
             print(results)
             return results
@@ -202,8 +199,6 @@ def get_search(ingredients):
 def recipe(recipe_id):
     template = Template(filename=f"{TEMPLATE_DIR}/recipe.html")
 
-    # All these paramaters are hard-coded;
-    # they should probably be pulled out of the database
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
@@ -322,3 +317,60 @@ def logout():
     logout_user()
     # NOTE: redirect to home page instead?
     return redirect(url_for("search"))
+
+
+###################
+### PANTRY PAGE ###
+###################
+@app.route("/pantry", methods=["GET", "POST"])
+def pantry():
+    template = Template(filename=f"{TEMPLATE_DIR}/pantry.html")
+    if request.method == "POST":
+        if 'pantry-add' in request.form:
+            ingredient = request.form['ingredients']
+            ingredient_index = get_ingredient_info_from_name(ingredient)
+            quantity = request.form['quantity']
+            if quantity == '':
+                quantity = 1
+            m_type = request.form['m_type']
+            insert_ingredient(current_user.get_id(), ingredient_index, quantity, m_type)
+        else:
+            print("fuk")
+            remove_id = request.form["pantry-delete"]
+            print(remove_id)
+            remove_ingredient(current_user.get_id(), remove_id)
+    
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+            query = "SELECT name FROM ingredient ORDER BY name;"   # query for ingredient ids
+            cursor.execute(query)
+            all_ingredients_results = cursor.fetchall()
+
+    results = get_ingredients(current_user.get_id())    
+
+    
+
+    ingredient_ids = [r[0] for r in results]
+    quantities = [r[1] for r in results]
+    m_types = [r[2] for r in results]
+    print(ingredient_ids)
+    if (ingredient_ids):
+        ingredients = get_ingredient_name_from_ids(ingredient_ids)
+    else:
+        ingredients = []
+
+    print(results)
+    for i in range(len(ingredient_ids)):
+        print(str(ingredients[i]) + str(quantities[i]) + str(m_types[i]))
+    
+    #print(ingredients)
+    #ingredients = ["bread", "ham", "avocado"]
+    return template.render(
+        error="none",
+        all_ingredients = [r[0] for r in all_ingredients_results],
+        ingredients=ingredients,
+        ingredient_ids = ingredient_ids,
+        quantities=quantities,
+        m_types=m_types,
+        username=current_user.get_id() if current_user.is_authenticated else None
+    )

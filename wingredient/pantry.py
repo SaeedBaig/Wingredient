@@ -2,14 +2,14 @@ from . import db
 
 # insert ingredient into db
 # ingredients is a list of tuple (ingredient, quantity, measurement_type)
-def insert_ingredients(account, ingredient, quantity, m_type):
+def insert_ingredient(account, ingredient, quantity, m_type):
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            for i in range(len(ingredient)):
-                # insert ingredient into db
-                #INSERT INTO users (id, level) VALUES (1, 0) ON CONFLICT (id) DO UPDATE SET level = users.level + 1;
-                query = "INSERT INTO Pantry (account, ingredient, quantity, measurement_type) VALUES (%s, %s, %s, %s) ON CONFLICT (ingredient) DO UPDATE SET quantity = pantry.quantity + EXCLUDED.quantity;"   # query for ingredient ids
-                cursor.execute(query, (account, ingredient[i], quantity[i], m_type[i])) 
+            # insert ingredient into db
+            #INSERT INTO users (id, level) VALUES (1, 0) ON CONFLICT DO UPDATE SET level = users.level + 1;
+            query = "INSERT INTO Pantry (account, ingredient, quantity, measurement_type) VALUES (%s, %s, %s, %s) ON CONFLICT (ingredient, measurement_type) DO UPDATE SET quantity = pantry.quantity + EXCLUDED.quantity;"   # query for ingredient ids
+            cursor.execute(query, (account, ingredient, quantity, m_type))
+            print(str(get_ingredient_name_from_ids([ingredient])) + str(ingredient) + ":" + str(quantity) + "successfully added")
             conn.commit()
 
 
@@ -39,10 +39,14 @@ def remove_ingredient(user_id, ingredient_id):
 def get_ingredient_name_from_ids(ids):
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            query = "SELECT name FROM ingredient WHERE id in %s;"   # query for ingredient ids
-            cursor.execute(query, (tuple(ids),))
-            result = cursor.fetchall()
-            return [r[0] for r in result]
+            ingredient_names = []
+            for id in ids:
+                query = "SELECT name FROM ingredient WHERE id = %s;"   # query for ingredient ids
+                cursor.execute(query, (id,))
+                result = cursor.fetchone()
+                ingredient_names.append(result[0])
+            print(ingredient_names)
+            return ingredient_names
 
 def get_ingredient_info_from_name(name):
     with db.getconn() as conn:

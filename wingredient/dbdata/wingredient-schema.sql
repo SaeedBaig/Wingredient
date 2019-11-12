@@ -92,7 +92,9 @@ CREATE TABLE Pantry (
     account     varchar(32) references Account(username),
     ingredient  integer references Ingredient(id),
     quantity    integer,
-    primary key (account, ingredient)
+    measurement_type MeasurementTypes,
+    UNIQUE (ingredient, measurement_type),
+    primary key (account, ingredient, measurement_type)
 );
 
 DROP TABLE IF EXISTS Favourites;

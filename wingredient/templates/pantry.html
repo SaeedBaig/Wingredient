@@ -105,7 +105,7 @@ Names of input fields to recieve in the Python backend:
             <ul class="list-group list-group-flush">
                 % for i in range(len(ingredients)):
                     <li class="list-group-item">
-                        ${ingredients[i]}
+                        ${ingredients[i]} + ${quantities[i]}  ${m_types[i]}
                         <button type="submit" name="pantry-delete" class="btn btn-danger" style="float: right" value=${ingredient_ids[i]}>
                             <span class="glyphicon glyphicon-trash"></span>
                             Delete
@@ -120,14 +120,23 @@ Names of input fields to recieve in the Python backend:
         <h1>Add ingredient to Pantry</h1>
         <form method="POST">
             <div class="form-group">
-                <select name="ingredients" multiple class="form-control" id="ingredients">
-                    % for ingredient in all_ingredients:
-                        <option value="${ingredient}">${ingredient}</option>
-                    % endfor
-                </select>
-            </div>
-            <div class="form-group">
-                <input type="submit" name="pantry-add" value="Add to pantry" class="btn btn-primary" id="add" />
+                <div class="input-group mb-3">
+                    <select name="ingredients" id="ingredients" class="form-control">
+                        % for ingredient in all_ingredients:
+                            <option value="${ingredient}">${ingredient}</option>
+                        % endfor
+                    </select>
+                    <input type="number" class="form-control" min="0" step="1" name="quantity" id="quantity" placeholder="Quantity" required/>
+                    <select name="m_type" id="m_type" class="form-control">
+                        <option value='Weight'>Grams</option>
+                        <option value='Volume'>Milli-litres</option>
+                        <option value='Count'>Count</option>
+                        <option value='Tablespoon'>Tablespoon</option>
+                        <option value='Teaspoon'>Teaspoon</option>
+                        <option value='Cup'>Cup</option>
+                    </select>
+                    <input type="submit" name="pantry-add" value="Add to pantry" class="btn btn-primary" id="add" />
+                </div>
             </div>
         </form>
     </div>
