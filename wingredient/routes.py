@@ -19,7 +19,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # must import User after initialising login manager
-from .user import User
+from .user import User, create_account, load_user
 
 #################
 ### HOME PAGE ###
@@ -58,6 +58,8 @@ def search():
             cursor.execute(query)
             results = cursor.fetchall()
 
+    print("user: %s, auth: %r" % (current_user.get_id(), current_user.is_authenticated))
+
     return template.render(
         username=current_user.get_id() if current_user.is_authenticated else None,
         ingredients=[r[0] for r in results]
@@ -79,7 +81,7 @@ def results():
     print(session["vegan"])
     # Process the variables in whatever way you need to fetch the correct
     # search results
-    
+
     results = get_search(session["ingredients"])
     if results == -1:
         return template.render(
@@ -125,7 +127,7 @@ def results_post():
         recipe_ids=[r[0] for r in results],
         default=sort_option
     )
-    
+
 
 def get_search(ingredients):
     temp_tuple = tuple(ingredients) # temporary tuple cast for compatability with cursor.execute()
@@ -135,7 +137,7 @@ def get_search(ingredients):
             if not temp_tuple:  # if there's no input into search
                 print("INVALID SEARCH")
                 return -1
-                
+
             cursor.execute(query, (temp_tuple,))
             index_result = cursor.fetchall()
             print(index_result)
@@ -219,9 +221,12 @@ def recipe(recipe_id):
             query = "SELECT equipment FROM recipetoequipment WHERE recipe = %s;"
             cursor.execute(query, (recipe_id,))
             equipment_index_tuple = tuple([e[0] for e in cursor.fetchall()])    # tuple of equipment indexes in recipe
-            query = "SELECT name FROM equipment WHERE id in %s;"
-            cursor.execute(query, (equipment_index_tuple,))
-            equipment_names = tuple([e[0] for e in cursor.fetchall()])
+            if not equipment_index_tuple:
+                equipment_names = ()
+            else:
+                query = "SELECT name FROM equipment WHERE id in %s;"
+                cursor.execute(query, (equipment_index_tuple,))
+                equipment_names = tuple([e[0] for e in cursor.fetchall()])
 
 
     print(results)
@@ -251,18 +256,16 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        user = load_user(username)
 
-        # TODO implement actual login check
-        # PASSWORD FOR ALL ACCOUNTS
-        if password == "guest":
+        if user != None and user.authenticate(password):
             # flash("Logged in successfully.")
-            login_user(User(username))
+            login_user(user)
             return redirect(url_for("search"))
         else:
             error = "Incorrect username or password."
 
     template = Template(filename=f"{TEMPLATE_DIR}/login.html")
-    # TODO
     return template.render(error=error)
 
 
@@ -282,7 +285,6 @@ def signup():
         #  capitalisation is preserved for a given user,
         #  but duplicate username check is case insensitive
 
-        # TODO move this out side function
         allowed_chars = set(
             string.ascii_lowercase + string.ascii_uppercase + string.digits + "-" + "_"
         )
@@ -290,20 +292,24 @@ def signup():
         if not (set(username).issubset(allowed_chars)):
             error = "Usernames may contain only letters, numbers, dashes, and underscores."
 
-        # TODO Check that the username is not already in use
-        elif False:
+        # Check that the username is not already in use
+        elif load_user(username) != None:
             error = "Username already in use."
 
         # Check that the two passwords given match
         elif password != password_duplicate:
             error = "Passwords do not match."
 
-        # #TODO No error, add the user to the database and sign in
+        # No error, add the user to the database and sign in
         if error == None:
-            pass
+            create_account(username, password)
+            user = load_user(username)
+            auth_success = user.authenticate(password)
+            assert(auth_success) # this must succeed
+            login_user(user)
+            return redirect(url_for("search"))
 
     template = Template(filename=f"{TEMPLATE_DIR}/signup.html")
-    # TODO
     return template.render(error=error)
 
 
@@ -312,6 +318,7 @@ def signup():
 ###################
 @app.route("/logout")
 def logout():
+    current_user.logout()
     logout_user()
     # NOTE: redirect to home page instead?
     return redirect(url_for("search"))
