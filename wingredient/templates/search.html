@@ -51,10 +51,12 @@ Names of input fields to recieve in the Python backend:
     name - Label that appears on the collapsible
     contents - The hidden contents inside the form that are revealed upon click
     -->
-    <%def name="collapsible_form(name, contents)">
+    <%def name="collapsible_form(name, icon, contents)">
       <div class="wrap-collabsible">
         <input id="${name}_collapsible" class="toggle" type="checkbox">
-        <label for="${name}_collapsible" class="lbl-toggle">${name}</label>
+        <label for="${name}_collapsible" class="lbl-toggle">
+          ${name} ${icon}
+        </label>
         <div class="collapsible-content">
           <div class="content-inner">
             ${contents}
@@ -81,21 +83,26 @@ Names of input fields to recieve in the Python backend:
       <br>
 
       <!-- Search terms -->
-      ${collapsible_form('Search terms', """
+      ${collapsible_form('Search terms', '<i class="fa fa-book" aria-hidden="true"></i>', """
         <div class='col-sm-5'>
           <input name='terms' type='search' class='form-control' id='search-box' placeholder='e.g. soup'>
         </div>
       """)}
 
       <!-- #Servings -->
-      ${collapsible_form('#Servings', """
+      ${collapsible_form('#Servings', '<i class="fa fa-users" aria-hidden="true"></i>', """
       <div class="col-sm-5">
-        <input name="num_servings" type="number" class="form-control" id="num-servings" min="1" max="8">
+        <div class="input-group mb-3">
+          <input name="num_servings" type="number" class="form-control" id="num-servings" min="1" max="8">
+          <div class="input-group-append">
+            <span class="input-group-text" id="basic-addon3">people</span>
+          </div>
+        </div>
       </div>
       """)}
 
       <!-- Min Rating -->
-      ${collapsible_form('Minimum rating', """
+      ${collapsible_form('Minimum rating', '<i class="fa fa-thumbs-up" aria-hidden="true"></i>', """
         <div class="col-sm-5">
           <div class="input-group mb-3">
             <input name="min_rating" id="min-rating" type="number" class="form-control" min="0" max="100">
@@ -107,7 +114,7 @@ Names of input fields to recieve in the Python backend:
       """)}
 
       <!-- Max Difficulty -->
-      ${collapsible_form('Max Difficulty', """
+      ${collapsible_form('Max Difficulty', '<i class="fa fa-signal" aria-hidden="true"></i>', """
         <div class="col-sm-5">
           <select name="max_difficulty" class="form-control" id="max-difficulty">
             <option>Easy</option>
@@ -118,7 +125,7 @@ Names of input fields to recieve in the Python backend:
       """)}
 
       <!-- Maximum time to cook -->
-      ${collapsible_form('Max time to cook', """
+      ${collapsible_form('Max time to cook', '<i class="fa fa-clock-o" aria-hidden="true"></i>', """
         <div class="col-sm-5">
           <div class="input-group mb-3">
             <input name="max_time" id="max-time" type="number" class="form-control" min="0" max="1440">
@@ -130,7 +137,7 @@ Names of input fields to recieve in the Python backend:
       """)}
 
       <!-- Restrictions (checkboxes) -->
-      ${collapsible_form('Dietary Restrictions', """
+      ${collapsible_form('Dietary Restrictions', '<i class="fa fa-envira" aria-hidden="true"></i>', """
         <!-- Pantry only -->
         <div class="form-group custom-control custom-checkbox">
           <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
