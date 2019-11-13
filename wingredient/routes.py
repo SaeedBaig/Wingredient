@@ -331,3 +331,33 @@ def logout():
     logout_user()
     # NOTE: redirect to home page instead?
     return redirect(url_for("search"))
+
+###################
+### LOGOUT PAGE ###
+###################
+#@app.route("/shoppinglist")
+#def shoppinglist():
+#    with db.getconn() as conn:
+#        with conn.cursor() as cursor:
+#            #query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = 20;"   
+#
+#            ##CHANGE TO SPECIFY EXACT COLUMNS
+#            #cursor.execute(query)
+#            #results = cursor.fetchone()
+#
+#    template = LOOKUP.get_template("shopping-list.html")
+#    return template.render()
+#
+#
+#@app.route("/addtoshoppinglist")
+#def shoppinglist():
+#    with db.getconn() as conn:
+#        with conn.cursor() as cursor:
+#            #query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = 20;"   
+#
+#            ##CHANGE TO SPECIFY EXACT COLUMNS
+#            #cursor.execute(query)
+#            #results = cursor.fetchone()
+#
+#    # NOTE: redirect to home page instead?
+#    return redirect(url_for("search"))

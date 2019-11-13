@@ -84,7 +84,7 @@ DROP TABLE IF EXISTS ShoppingList;
 CREATE TABLE ShoppingList (
     account     varchar(32) references Account(username),
     ingredient  integer references Ingredient(id),
-    quantity    integer,
+    quantity    numeric,
     primary key (account, ingredient)
 );
 
@@ -92,7 +92,7 @@ DROP TABLE IF EXISTS Pantry;
 CREATE TABLE Pantry (
     account     varchar(32) references Account(username),
     ingredient  integer references Ingredient(id),
-    quantity    integer,
+    quantity    numeric,
     primary key (account, ingredient)
 );
 
