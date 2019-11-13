@@ -1,0 +1,58 @@
+<!-- Navbar at top of page -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/">Wingredient</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <!--
+    This ul is empty but it still has to be here so the login/account
+    buttons are aligned to the right
+    -->
+    <ul class="navbar-nav mr-auto">
+    </ul>
+
+    <!--
+    if username is empty string:
+      Display login button
+      Display signup button
+    else:
+      Display account button
+    -->
+    % if context.username == None:
+      <!-- Login button -->
+      <a class="btn btn-primary" href="/login" role="button">
+        <i class="fa fa-sign-in" aria-hidden="true"></i> Login
+      </a>
+      &nbsp;
+
+      <!-- Sign up button -->
+      <a class="btn btn-primary" href="/signup" role="button">
+        <i class="fa fa-user-plus" aria-hidden="true"></i> Sign up
+      </a>
+    % else:
+      <!-- Account dropdown button -->
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-user-circle-o" aria-hidden="true"></i> ${context.username}
+        </button>
+
+        <!-- Menu items -->
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="#">
+            <i class="fa fa-columns" aria-hidden="true"></i> Pantry
+          </a>
+          <a class="dropdown-item" href="#">
+            <i class="fa fa-list" aria-hidden="true"></i> Shopping List
+          </a>
+          <a class="dropdown-item" href="/logout">
+            <i class="fa fa-sign-out" aria-hidden="true"></i> Log out
+          </a>
+        </div>
+      </div>
+    % endif
+  </div>
+</nav>
+<br>
