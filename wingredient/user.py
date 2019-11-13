@@ -28,12 +28,10 @@ def compute_hash(password, salt):
 def generate_salt():
     return os.urandom(salt_len)
 
-user_table = {}
-
 class User:
     def __init__(self, username):
         self.username = username
-        self.authenticated = False
+        self.authenticated = True
 
     def set_password(self, password):
         pw_salt = generate_salt()
@@ -105,18 +103,12 @@ def create_account(username, password):
 
 @login_manager.user_loader
 def load_user(user_id):
-    if user_id in user_table:
-        # print("user_table hit %s" % (user_id))
-        return user_table[user_id]
-    else:
-        # print("user_table miss %s" % (user_id))
-        with db.getconn() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute('''SELECT * FROM Account WHERE username=%s;''', (user_id,))
-                user_entry = cursor.fetchone()
-                if user_entry != None:
-                    user = User(user_id)
-                    user_table.update({user_id:user}) 
-                    return user
-                else:
-                    return None
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute('''SELECT * FROM Account WHERE username=%s;''', (user_id,))
+            user_entry = cursor.fetchone()
+            if user_entry != None:
+                user = User(user_id)
+                return user
+            else:
+                return None

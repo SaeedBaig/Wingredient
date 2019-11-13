@@ -2,15 +2,19 @@
 
 from flask import Flask, request, redirect, url_for, session
 from mako.template import Template
+from mako.lookup import TemplateLookup
+from mako.runtime import Context
 from os.path import abspath
 from . import db
 from collections import Counter
 from flask_login import LoginManager, current_user, login_user, logout_user
 import string
 
+
 BASE_DIR = "wingredient"
 TEMPLATE_DIR = abspath(f"{BASE_DIR}/templates")
 STATIC_DIR = abspath(f"{BASE_DIR}/static")
+LOOKUP = TemplateLookup(directories=[f"{TEMPLATE_DIR}",])
 
 app = Flask("Wingredient", template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
 
@@ -21,12 +25,13 @@ login_manager.init_app(app)
 # must import User after initialising login manager
 from .user import User, create_account, load_user
 
+
 #################
 ### HOME PAGE ###
 #################
 @app.route("/", methods=["GET", "POST"])
 def search():
-    template = Template(filename=f"{TEMPLATE_DIR}/search.html")
+    template = LOOKUP.get_template("search.html")
 
     # If the user clicked search, initialise the session-variables of all the
     # input fields.
@@ -60,8 +65,12 @@ def search():
 
     print("user: %s, auth: %r" % (current_user.get_id(), current_user.is_authenticated))
 
+    # Make the username a global object (so we don't have to pass it in manually
+    # for every single template.render())
+    # (Don't worry it gets updated automatically as )
+    Context.username = current_user.get_id() if current_user.is_authenticated else None
+
     return template.render(
-        username=current_user.get_id() if current_user.is_authenticated else None,
         ingredients=[r[0] for r in results]
     )
 
@@ -72,7 +81,7 @@ def search():
 ###########################
 @app.route("/results",)
 def results():
-    template = Template(filename=f"{TEMPLATE_DIR}/search-results.html")
+    template = LOOKUP.get_template("search-results.html")
 
     # All the session-variables initialised in search() are available here.
     # E.g.
@@ -103,7 +112,7 @@ def results():
 
 @app.route("/results", methods=['POST'])
 def results_post():
-    template = Template(filename=f"{TEMPLATE_DIR}/search-results.html")
+    template = LOOKUP.get_template("search-results.html")
 
     results = get_search(session["ingredients"])
     if results == -1:
@@ -200,7 +209,7 @@ def get_search(ingredients):
 ###########################
 @app.route("/recipe/<int:recipe_id>")
 def recipe(recipe_id):
-    template = Template(filename=f"{TEMPLATE_DIR}/recipe.html")
+    template = LOOKUP.get_template("recipe.html")
 
     # All these paramaters are hard-coded;
     # they should probably be pulled out of the database
@@ -265,7 +274,7 @@ def login():
         else:
             error = "Incorrect username or password."
 
-    template = Template(filename=f"{TEMPLATE_DIR}/login.html")
+    template = LOOKUP.get_template("login.html")
     return template.render(error=error)
 
 
@@ -309,7 +318,7 @@ def signup():
             login_user(user)
             return redirect(url_for("search"))
 
-    template = Template(filename=f"{TEMPLATE_DIR}/signup.html")
+    template = LOOKUP.get_template("signup.html")
     return template.render(error=error)
 
 
