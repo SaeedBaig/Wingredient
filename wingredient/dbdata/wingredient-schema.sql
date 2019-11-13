@@ -26,6 +26,7 @@ CREATE TABLE Recipe (
     name        varchar(256) not null,
     time        integer,
     difficulty  Difficulty,
+    serving     integer,
     notes       text,
     description text,
     cuisine_tags text,
