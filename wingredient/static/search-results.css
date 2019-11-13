@@ -4,3 +4,17 @@
 .card {
     max-width: 600px;
 }
+
+/* Make Back-To-Search button always stick at bottom left */
+#back_to_search {
+    position: fixed;
+    bottom: 20px;
+    left: 30px;
+}
+
+/* Make Back-To-Top button always stick at bottom right */
+#back_to_top {
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+}
