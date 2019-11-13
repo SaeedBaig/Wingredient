@@ -1,5 +1,6 @@
 import csv
-with open('ingredient.csv', mode='w') as recipes:
+with open('wingredient/dbdata/ingredient.csv', mode='w') as recipes:
+    #print('ingredient.csv generated')
     recipe_writer = csv.writer(recipes, delimiter = ',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     recipe_writer.writerow(['id', 'name'])
     recipe_writer.writerow(['1', 'Brown Onion']) 
