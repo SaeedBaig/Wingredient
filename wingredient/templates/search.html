@@ -46,31 +46,28 @@ Names of input fields to recieve in the Python backend:
     <h1>Search for Recipes</h1>
     <br>
 
+    <!--
+    Mako function to generate a collapsible form input. Takes:
+    name - Label that appears on the collapsible
+    contents - The hidden contents inside the form that are revealed upon click
+    -->
+    <%def name="collapsible_form(name, contents)">
+      <div class="wrap-collabsible">
+        <input id="${name}_collapsible" class="toggle" type="checkbox">
+        <label for="${name}_collapsible" class="lbl-toggle">${name}</label>
+        <div class="collapsible-content">
+          <div class="content-inner">
+            ${contents}
+          </div>
+        </div>
+      </div>
+    </%def>
+
     <!-- Search form -->
     <form method="POST" class="justify-content-center">
 
-      <!-- Search term -->
-      <div class="form-group row">
-        <label for="search-box" class="col-sm-5 col-form-label">
-          <h5>Search Terms:</h5>
-        </label>
-        <div class="col-sm-5">
-          <input name="terms" type="search" class="form-control" id="search-box" placeholder="e.g. soup">
-        </div>
-      </div>
-
-      <!-- #Servings -->
-      <div class="form-group row">
-        <label for="num-servings" class="col-sm-5 col-form-label">
-          <h5>#Servings:</h5>
-        </label>
-        <div class="col-sm-5">
-          <input name="num_servings" type="number" class="form-control" id="num-servings" min="1" max="8">
-        </div>
-      </div>
-      <br>
-
       <!-- Ingredients -->
+      <!-- This isn't in a collapsible form yet because it behaves weirdly -->
       <div class="form-group">
         <label for="ingredients">
           <h5>Ingredients</h5>
@@ -83,12 +80,22 @@ Names of input fields to recieve in the Python backend:
       </div>
       <br>
 
+      <!-- Search terms -->
+      ${collapsible_form('Search terms', """
+        <div class='col-sm-5'>
+          <input name='terms' type='search' class='form-control' id='search-box' placeholder='e.g. soup'>
+        </div>
+      """)}
+
+      <!-- #Servings -->
+      ${collapsible_form('#Servings', """
+      <div class="col-sm-5">
+        <input name="num_servings" type="number" class="form-control" id="num-servings" min="1" max="8">
+      </div>
+      """)}
 
       <!-- Min Rating -->
-      <div class="form-group row">
-        <label for="min-rating" class="col-sm-5 col-form-label">
-          <h5>Minimum rating:</h5>
-        </label>
+      ${collapsible_form('Minimum rating', """
         <div class="col-sm-5">
           <div class="input-group mb-3">
             <input name="min_rating" id="min-rating" type="number" class="form-control" min="0" max="100">
@@ -97,13 +104,10 @@ Names of input fields to recieve in the Python backend:
             </div>
           </div>
         </div>
-      </div>
+      """)}
 
       <!-- Max Difficulty -->
-      <div class="form-group row">
-        <label for="max-difficulty" class="col-sm-5 col-form-label">
-          <h5>Max difficulty: </h5>
-        </label>
+      ${collapsible_form('Max Difficulty', """
         <div class="col-sm-5">
           <select name="max_difficulty" class="form-control" id="max-difficulty">
             <option>Easy</option>
@@ -111,13 +115,10 @@ Names of input fields to recieve in the Python backend:
             <option selected>Hard</option>
           </select>
         </div>
-      </div>
+      """)}
 
       <!-- Maximum time to cook -->
-      <div class="form-group row">
-        <label for="max-time" class="col-sm-5 col-form-label">
-          <h5>Max time to cook:</h5>
-        </label>
+      ${collapsible_form('Max time to cook', """
         <div class="col-sm-5">
           <div class="input-group mb-3">
             <input name="max_time" id="max-time" type="number" class="form-control" min="0" max="1440">
@@ -126,40 +127,40 @@ Names of input fields to recieve in the Python backend:
             </div>
           </div>
         </div>
-      </div>
+      """)}
 
-      <!-- Checkboxes -->
-      <br>
-      <h5>Restrictions</h5>
-      <!-- Pantry only -->
-      <div class="form-group custom-control custom-checkbox">
-        <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
-        <label class="custom-control-label" for="pantry_only">Pantry only</label>
-      </div>
+      <!-- Restrictions (checkboxes) -->
+      ${collapsible_form('Dietary Restrictions', """
+        <!-- Pantry only -->
+        <div class="form-group custom-control custom-checkbox">
+          <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
+          <label class="custom-control-label" for="pantry_only">Pantry only</label>
+        </div>
 
-      <!-- Vegan -->
-      <div class="form-group custom-control custom-checkbox">
-        <input name="vegan" type="checkbox" class="custom-control-input" id="vegan">
-        <label class="custom-control-label" for="vegan">Vegan</label>
-      </div>
+        <!-- Vegan -->
+        <div class="form-group custom-control custom-checkbox">
+          <input name="vegan" type="checkbox" class="custom-control-input" id="vegan">
+          <label class="custom-control-label" for="vegan">Vegan</label>
+        </div>
 
-      <!-- Vegetarian -->
-      <div class="form-group custom-control custom-checkbox">
-        <input name="vegetarian" type="checkbox" class="custom-control-input" id="vegetarian">
-        <label class="custom-control-label" for="vegetarian">Vegetarian</label>
-      </div>
+        <!-- Vegetarian -->
+        <div class="form-group custom-control custom-checkbox">
+          <input name="vegetarian" type="checkbox" class="custom-control-input" id="vegetarian">
+          <label class="custom-control-label" for="vegetarian">Vegetarian</label>
+        </div>
 
-      <!-- Dairy Free -->
-      <div class="form-group custom-control custom-checkbox">
-        <input name="dairy_free" type="checkbox" class="custom-control-input" id="dairy-free">
-        <label class="custom-control-label" for="dairy-free">Dairy-free</label>
-      </div>
+        <!-- Dairy Free -->
+        <div class="form-group custom-control custom-checkbox">
+          <input name="dairy_free" type="checkbox" class="custom-control-input" id="dairy-free">
+          <label class="custom-control-label" for="dairy-free">Dairy-free</label>
+        </div>
 
-      <!-- Gluten free -->
-      <div class="form-group custom-control custom-checkbox">
-        <input name="gluten-free" type="checkbox" class="custom-control-input" id="gluten-free">
-        <label class="custom-control-label" for="gluten-free">Gluten-free</label>
-      </div>
+        <!-- Gluten free -->
+        <div class="form-group custom-control custom-checkbox">
+          <input name="gluten-free" type="checkbox" class="custom-control-input" id="gluten-free">
+          <label class="custom-control-label" for="gluten-free">Gluten-free</label>
+        </div>
+      """)}
 
       <!-- Submit button -->
       <br>
