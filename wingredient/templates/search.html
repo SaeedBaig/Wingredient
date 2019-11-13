@@ -35,6 +35,13 @@ Names of input fields to recieve in the Python backend:
 
   <%include file="/site_wide.html"/>
 
+  <script>
+    // Necessary for tooltips to work
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+
   <title>Wingredient</title>
 </head>
 
@@ -80,7 +87,6 @@ Names of input fields to recieve in the Python backend:
           $('#ingredients').tagging(${ingredients});
         </script>
       </div>
-      <br>
 
       <!-- Search terms -->
       ${collapsible_form('Search terms', '<i class="fa fa-book" aria-hidden="true"></i>', """
@@ -136,38 +142,59 @@ Names of input fields to recieve in the Python backend:
         </div>
       """)}
 
-      <!-- Restrictions (checkboxes) -->
-      ${collapsible_form('Dietary Restrictions', '<i class="fa fa-envira" aria-hidden="true"></i>', """
-        <!-- Pantry only -->
-        <div class="form-group custom-control custom-checkbox">
-          <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
-          <label class="custom-control-label" for="pantry_only">Pantry only</label>
-        </div>
+      <!-- Dietary Restrictions -->
+      <!-- Doesn't use the collapsible_form function because this has Mako code,
+      which doesn't render properly when passed in as an argument -->
+      <div class="wrap-collabsible">
+        <input id="dietary_restrictions_collapsible" class="toggle" type="checkbox">
+        <label for="dietary_restrictions_collapsible" class="lbl-toggle">
+          Dietary Restrictions <i class="fa fa-envira" aria-hidden="true"></i>
+        </label>
+        <div class="collapsible-content">
+          <div class="content-inner">
 
-        <!-- Vegan -->
-        <div class="form-group custom-control custom-checkbox">
-          <input name="vegan" type="checkbox" class="custom-control-input" id="vegan">
-          <label class="custom-control-label" for="vegan">Vegan</label>
-        </div>
+            <!-- Pantry only -->
+            % if context.username == None:
+              <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="top" title="Login to use your pantry">
+                <div class="form-group custom-control custom-checkbox">
+                  <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only" disabled>
+                  <label class="custom-control-label" for="pantry_only">Pantry only</label>
+                </div>
+              </span>
+            % else:
+              <div class="form-group custom-control custom-checkbox">
+                <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
+                <label class="custom-control-label" for="pantry_only">Pantry only</label>
+              </div>
+            % endif
 
-        <!-- Vegetarian -->
-        <div class="form-group custom-control custom-checkbox">
-          <input name="vegetarian" type="checkbox" class="custom-control-input" id="vegetarian">
-          <label class="custom-control-label" for="vegetarian">Vegetarian</label>
-        </div>
+            <!-- Vegan -->
+            <div class="form-group custom-control custom-checkbox">
+              <input name="vegan" type="checkbox" class="custom-control-input" id="vegan">
+              <label class="custom-control-label" for="vegan">Vegan</label>
+            </div>
 
-        <!-- Dairy Free -->
-        <div class="form-group custom-control custom-checkbox">
-          <input name="dairy_free" type="checkbox" class="custom-control-input" id="dairy-free">
-          <label class="custom-control-label" for="dairy-free">Dairy-free</label>
-        </div>
+            <!-- Vegetarian -->
+            <div class="form-group custom-control custom-checkbox">
+              <input name="vegetarian" type="checkbox" class="custom-control-input" id="vegetarian">
+              <label class="custom-control-label" for="vegetarian">Vegetarian</label>
+            </div>
 
-        <!-- Gluten free -->
-        <div class="form-group custom-control custom-checkbox">
-          <input name="gluten-free" type="checkbox" class="custom-control-input" id="gluten-free">
-          <label class="custom-control-label" for="gluten-free">Gluten-free</label>
+            <!-- Dairy Free -->
+            <div class="form-group custom-control custom-checkbox">
+              <input name="dairy_free" type="checkbox" class="custom-control-input" id="dairy_free">
+              <label class="custom-control-label" for="dairy_free">Dairy-free</label>
+            </div>
+
+            <!-- Gluten free -->
+            <div class="form-group custom-control custom-checkbox">
+              <input name="gluten_free" type="checkbox" class="custom-control-input" id="gluten_free">
+              <label class="custom-control-label" for="gluten_free">Gluten-free</label>
+            </div>
+
+          </div>
         </div>
-      """)}
+      </div>
 
       <!-- Submit button -->
       <br>
