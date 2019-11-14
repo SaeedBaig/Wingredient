@@ -48,10 +48,12 @@ def search():
             ingredients = []
         session["ingredients"] = ingredients
 
-        # All of these are bool
-        # Unselected = False
-        for checkbox in {"pantry_only", "vegan", "vegetarian", "dairy_free", "gluten_free"}:
-            session[checkbox] = checkbox in request.form
+        session["pantry_only"] = request.form.get("pantry_only", False)
+        dietary_tags = 0
+        for i, checkbox in enumerate(("vegetarian", "vegan", "gluten_free", "dairy_free")):
+            if request.form.get(checkbox):
+                dietary_tags |= 1 << i
+        session["dietary_tags"] = dietary_tags
 
         return redirect(url_for("results"))
 
@@ -87,11 +89,10 @@ def results():
     # E.g.
     print(session["ingredients"])
     print(session["num_servings"])
-    print(session["vegan"])
     # Process the variables in whatever way you need to fetch the correct
     # search results
 
-    results = get_search(session["ingredients"])
+    results = get_search(session["ingredients"], session["dietary_tags"], session["max_time"])
     if results == -1:
         return template.render(
             titles=""
@@ -138,71 +139,55 @@ def results_post():
     )
 
 
-def get_search(ingredients):
-    temp_tuple = tuple(ingredients) # temporary tuple cast for compatability with cursor.execute()
+def get_search(ingredients, dietary_tags=0, max_time=0):
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            query = "SELECT id FROM ingredient WHERE name IN %s;"   # query for ingredient ids
-            if not temp_tuple:  # if there's no input into search
-                print("INVALID SEARCH")
-                return -1
+            whereclauses = []
+            args = []
+            if ingredients:
+                whereclauses.append("i.name IN %s")
+                args.append(tuple(ingredients))
+                missing_ingredient_count_expr = (
+                    "ic.compulsory_ingredient_count - count(rtoi.recipe)"
+                )
+            else:
+                missing_ingredient_count_expr = "ic.compulsory_ingredient_count"
+            if dietary_tags:
+                whereclauses.append("r.dietary_tags & %s::bit(4) <> b'0000'")
+                args.append(dietary_tags)
+            if max_time:
+                whereclauses.append("r.time <= %s")
+                args.append(max_time)
 
-            cursor.execute(query, (temp_tuple,))
-            index_result = cursor.fetchall()
-            print(index_result)
-
-            search_indexes = []
-            for index in index_result:              # extract ingredient id from query result
-                search_indexes.append(index[0])
-            print(search_indexes)
-            search_indexes = tuple(search_indexes)
-            if not search_indexes:  #if there's no returned ingredient ids (shouldn't ever happen)
-                print("INVALID SEARCH")
-                return -1
-
-            #CHANGE TO SPECIFY EXACT COLUMNS
-            query = "SELECT recipe, ingredient FROM recipetoingredient WHERE ingredient IN %s;"  # query for matching recipes for the given ingredients
-            cursor.execute(query, (search_indexes,))
-            matched_recipes = cursor.fetchall()
-            print("matched recipes: ")
-            print(matched_recipes)
-
-            matched_recipe_indexes = [listing[0] for listing in matched_recipes]
-
-            tuple_matched_recipe_indexes = tuple(matched_recipe_indexes)
-            if not tuple_matched_recipe_indexes:    # no matched recipes
-                print("INVALID SEARCH")
-                return -1
-
-            query = "SELECT recipe, count FROM ingredient_counts WHERE recipe IN %s;"
-            cursor.execute(query, (tuple_matched_recipe_indexes,))
-            original_recipes = cursor.fetchall()
-
-            original_recipe_counts = {}
-            for listing in original_recipes:
-                original_recipe_counts[listing[0]] = listing[1]
-
-            print(original_recipe_counts)
-            result_counts = Counter(matched_recipe_indexes)
-            print(result_counts)
-
-            valid_recipes = []
-            for key in original_recipe_counts.keys():
-                if result_counts[key] >= original_recipe_counts[key]:
-                    valid_recipes.append(key)
-
-            valid_recipes = tuple(valid_recipes)                                  # Counter object of all the valid
-            if not valid_recipes:   # no recipes that match
-                print("INVALID SEARCH")
-                return -1
-
-            query = "SELECT id, name, time, description, imageRef FROM recipe WHERE id IN %s;"
-            cursor.execute(query, (valid_recipes,))
-            results = cursor.fetchall()
-            results = sorted(results, key = lambda a : str(a[1]).lower())   # sort by alphabetical by name
-            print("RESULTS:")
-            print(results)
-            return results
+            if whereclauses:
+                whereclause = "WHERE " + " AND ".join(whereclauses)
+            else:
+                whereclause = ""
+            query = f"""
+                SELECT
+                  r.id,
+                  r.name,
+                  r.time,
+                  r.description,
+                  r.imageref,
+                  ic.compulsory_ingredient_count,
+                  (
+                    {missing_ingredient_count_expr}
+                  ) AS missing_ingredient_count
+                FROM recipetoingredient rtoi
+                JOIN ingredient i ON rtoi.ingredient = i.id
+                JOIN ingredient_counts ic on rtoi.recipe = ic.recipe
+                JOIN recipe r ON rtoi.recipe = r.id
+                {whereclause}
+                GROUP BY
+                  r.id,
+                  ic.compulsory_ingredient_count
+                ORDER BY
+                  missing_ingredient_count,
+                  r.name
+            """
+            cursor.execute(query, args)
+            return cursor.fetchall()
 
 ###########################
 ### SEARCH RECIPE PAGE ####

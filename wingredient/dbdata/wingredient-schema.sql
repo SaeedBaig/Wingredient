@@ -32,7 +32,7 @@ CREATE TABLE Recipe (
     cuisine_tags text,
     dietary_tags bit(4),
     imageRef    text default null,
-    url         text, 
+    url         text,
     method      text,
     primary key (id)
 );
@@ -126,7 +126,9 @@ where optional = 'false'
 
 
 CREATE OR REPLACE VIEW ingredient_counts as
-select recipe, count(recipe)
+select
+  recipe,
+  count(recipe) AS compulsory_ingredient_count
 from compulsory_recipetoingredient
 group by recipe
 ;
