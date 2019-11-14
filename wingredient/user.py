@@ -45,16 +45,13 @@ class User:
                 )
                 conn.commit()
 
-    def authenticate(self, password):
+    def check_password(self, password):
         (req_hash, salt) = self.get_password_hash_and_salt()
         login_hash = compute_hash(password, salt)
 
         # setting the password regenerates salt and hash
         self.set_password(password)
 
-        # Don't deauthenticate if incorrect
-        if login_hash == req_hash:
-            self.authenticated = True
         return login_hash == req_hash
 
 

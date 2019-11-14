@@ -267,8 +267,7 @@ def login():
         password = request.form["password"]
         user = load_user(username)
 
-        if user != None and user.authenticate(password):
-            # flash("Logged in successfully.")
+        if user != None and user.check_password(password):
             login_user(user)
             return redirect(url_for("search"))
         else:
@@ -313,8 +312,8 @@ def signup():
         if error == None:
             create_account(username, password)
             user = load_user(username)
-            auth_success = user.authenticate(password)
-            assert(auth_success) # this must succeed
+            login_success = user.check_password(password)
+            assert(login_success) # this must succeed
             login_user(user)
             return redirect(url_for("search"))
 
