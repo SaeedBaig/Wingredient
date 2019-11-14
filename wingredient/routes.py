@@ -343,7 +343,8 @@ def logout():
 ###################
 @app.route("/pantry", methods=["GET", "POST"])
 def pantry():
-    template = Template(filename=f"{TEMPLATE_DIR}/pantry.html")
+    # template = Template(filename=f"{TEMPLATE_DIR}/pantry.html")
+    template = LOOKUP.get_template("pantry.html")
     if request.method == "POST":
         if 'pantry-add' in request.form:
             ingredient = request.form['ingredients']
