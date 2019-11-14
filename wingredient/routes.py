@@ -11,7 +11,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 from . import db
 from .pantry import *
 from collections import Counter
-from flask_login import LoginManager, current_user, login_user, logout_user
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 import string
 
 
@@ -335,16 +335,16 @@ def signup():
 ###################
 @app.route("/logout")
 def logout():
-    current_user.logout()
-    logout_user()
-    # NOTE: redirect to home page instead?
+    if current_user.is_authenticated and not current_user.is_anonymous:
+        current_user.logout()
+        logout_user()
     return redirect(url_for("search"))
-
 
 ###################
 ### PANTRY PAGE ###
 ###################
 @app.route("/pantry", methods=["GET", "POST"])
+@login_required
 def pantry():
     # template = Template(filename=f"{TEMPLATE_DIR}/pantry.html")
     template = LOOKUP.get_template("pantry.html")
