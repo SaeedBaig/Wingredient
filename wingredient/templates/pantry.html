@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<!--
+Python variables that need to be passed in for this template to render correctly:
+- error: error str to display, or None if there is no error
+-->
+
+<!--
+Names of input fields to recieve in the Python backend:
+- username
+- password
+-->
+
+<!--Defines main language used by site (English)-->
+<html lang="en">
+
+<head>
+  <!--Defines character encoding (utf-8, which is standard)-->
+  <meta charset="UTF-8">
+
+  <!--Makes webpage size adapt to device's screen size-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Non-Mako dependent styling from this file -->
+  <link rel="stylesheet" href="../static/search.css">
+
+  <%include file="/site_wide.html"/>
+
+  <title>Wingredient</title>
+</head>
+
+<body>
+  <center>
+    <%include file="/navbar.html"/>
+
+    <h1>Pantry</h1>
+    <br>
+    % if len(ingredients) == 0:
+      <h3>Sorry, no ingredients in your pantry</h3>
+    % else:
+    <form method="POST">
+        <div class="card mb-3">
+            <ul class="list-group list-group-flush">
+                % for i in range(len(ingredients)):
+                    <li class="list-group-item">
+                        ${ingredients[i]} + ${quantities[i]}  ${m_types[i]}
+                        <button type="submit" name="pantry-delete" class="btn btn-danger" style="float: right" value=${ingredient_ids[i]}>
+                            <span class="glyphicon glyphicon-trash"></span>
+                            Delete
+                        </button>
+                    </li>
+                % endfor
+            </ul>
+        </div>
+    </form>
+    <div>
+    % endif
+        <h1>Add ingredient to Pantry</h1>
+        <form method="POST">
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <select name="ingredients" id="ingredients" class="form-control">
+                        % for ingredient in all_ingredients:
+                            <option value="${ingredient}">${ingredient}</option>
+                        % endfor
+                    </select>
+                    <input type="number" class="form-control" min="0" step="1" name="quantity" id="quantity" placeholder="Quantity" required/>
+                    <select name="m_type" id="m_type" class="form-control">
+                        <option value='Weight'>Grams</option>
+                        <option value='Volume'>Milli-litres</option>
+                        <option value='Count'>Count</option>
+                        <option value='Tablespoon'>Tablespoon</option>
+                        <option value='Teaspoon'>Teaspoon</option>
+                        <option value='Cup'>Cup</option>
+                    </select>
+                    <input type="submit" name="pantry-add" value="Add to pantry" class="btn btn-primary" id="add" />
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+  </center>
+  <br>
+</body>
+</html>

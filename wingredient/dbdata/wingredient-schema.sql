@@ -32,7 +32,7 @@ CREATE TABLE Recipe (
     cuisine_tags text,
     dietary_tags bit(4),
     imageRef    text default null,
-    url         text, 
+    url         text,
     method      text,
     primary key (id)
 );
@@ -93,7 +93,9 @@ CREATE TABLE Pantry (
     account     varchar(32) references Account(username),
     ingredient  integer references Ingredient(id),
     quantity    integer,
-    primary key (account, ingredient)
+    measurement_type MeasurementTypes,
+    UNIQUE (ingredient, measurement_type),
+    primary key (account, ingredient, measurement_type)
 );
 
 DROP TABLE IF EXISTS Favourites;
@@ -126,7 +128,9 @@ where optional = 'false'
 
 
 CREATE OR REPLACE VIEW ingredient_counts as
-select recipe, count(recipe)
+select
+  recipe,
+  count(recipe) AS compulsory_ingredient_count
 from compulsory_recipetoingredient
 group by recipe
 ;

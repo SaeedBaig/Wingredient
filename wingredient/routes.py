@@ -5,7 +5,11 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from os.path import abspath
+
+from werkzeug.datastructures import ImmutableMultiDict
+
 from . import db
+from .pantry import *
 from collections import Counter
 from flask_login import LoginManager, current_user, login_user, logout_user
 import string
@@ -38,25 +42,33 @@ def search():
     if request.method == "POST":
         # All of these are str
         # No user input = empty string
-        for input_field in {"terms", "num_servings", "min_rating", "max_difficulty", "max_time"}:
-            session[input_field] = request.form[input_field]
+        url_args = {}
+        for input_field in ("terms", "num_servings", "min_rating", "max_difficulty", "max_time"):
+            if request.form[input_field]:
+                url_args[input_field] = request.form[input_field]
 
         # list of str
         # No user input = empty list
         ingredients = request.form['ingredients'].split(',')
-        if ingredients == ['']: # no user input
-            ingredients = []
-        session["ingredients"] = ingredients
+        if ingredients != ['']: # no user input
+            url_args["ingredients"] = ingredients
 
-        # All of these are bool
-        # Unselected = False
-        for checkbox in {"pantry_only", "vegan", "vegetarian", "dairy_free", "gluten_free"}:
-            session[checkbox] = checkbox in request.form
+        if request.form.get("pantry_only"):
+            url_args["pantry_only"] = True
 
-        return redirect(url_for("results"))
+        dietary_tags = 0
+        for i, checkbox in enumerate(("vegetarian", "vegan", "gluten_free", "dairy_free")):
+            if request.form.get(checkbox):
+                dietary_tags |= 1 << i
 
-    # This list of ingredients is hard-coded;
-    # it should probably be pulled out of the database
+        if dietary_tags:
+            url_args["dietary_tags"] = dietary_tags
+
+        return redirect(url_for(
+            "results",
+            **url_args,
+        ))
+
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             query = "SELECT name FROM ingredient;"   # query for ingredient ids
@@ -85,28 +97,25 @@ def results():
 
     # All the session-variables initialised in search() are available here.
     # E.g.
-    print(session["ingredients"])
-    print(session["num_servings"])
-    print(session["vegan"])
+    print(request.args.getlist("ingredients"))
+    print(request.args.get("num_servings"))
     # Process the variables in whatever way you need to fetch the correct
     # search results
 
-    results = get_search(session["ingredients"])
-    if results == -1:
+    _results = get_search()
+    if _results == -1:
         return template.render(
             titles=""
         )
 
 
-    # All these paramaters are hard-coded;
-    # they should probably be pulled out of the database
     return template.render(
-        titles=[r[1] for r in results],  #name from recipe
-        image_paths=[r[4] for r in results],    # imageRef from recipe
-        image_alts=[r[3] for r in results],  # set to description from recipe
-        ratings=[80 for r in results],
-        cooking_times_in_minutes=[r[2] for r in results],                   #time from recipe
-        recipe_ids=[r[0] for r in results],
+        titles=[r[1] for r in _results],  # name from recipe
+        image_paths=[r[4] for r in _results],    # imageRef from recipe
+        image_alts=[r[3] for r in _results],  # set to description from recipe
+        ratings=[80 for r in _results],
+        cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
+        recipe_ids=[r[0] for r in _results],
         default='alphabetical'
     )
 
@@ -114,8 +123,8 @@ def results():
 def results_post():
     template = LOOKUP.get_template("search-results.html")
 
-    results = get_search(session["ingredients"])
-    if results == -1:
+    _results = get_search()
+    if _results == -1:
         return template.render(
             titles=""
         )
@@ -125,84 +134,82 @@ def results_post():
     if sort_option == "rating":
         pass
     elif sort_option == "cooking-time":
-        results = sorted(results, key = lambda a : a[2])   # sort results by cooking time
+        _results = sorted(_results, key = lambda a : a[2])   # sort results by cooking time
 
     return template.render(
-        titles=[r[1] for r in results],  #name from recipe
-        image_paths=[r[4] for r in results],    # imageRef from recipe
-        image_alts=[r[3] for r in results],  # set to description from recipe
-        ratings=[80 for r in results],
-        cooking_times_in_minutes=[r[2] for r in results],                   #time from recipe
-        recipe_ids=[r[0] for r in results],
+        titles=[r[1] for r in _results],  #name from recipe
+        image_paths=[r[4] for r in _results],    # imageRef from recipe
+        image_alts=[r[3] for r in _results],  # set to description from recipe
+        ratings=[80 for r in _results],
+        cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
+        recipe_ids=[r[0] for r in _results],
         default=sort_option
     )
 
 
-def get_search(ingredients):
-    temp_tuple = tuple(ingredients) # temporary tuple cast for compatability with cursor.execute()
+def get_search():
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            query = "SELECT id FROM ingredient WHERE name IN %s;"   # query for ingredient ids
-            if not temp_tuple:  # if there's no input into search
-                print("INVALID SEARCH")
-                return -1
+            whereclauses = []
+            query_args = {}
 
-            cursor.execute(query, (temp_tuple,))
-            index_result = cursor.fetchall()
-            print(index_result)
+            ingredients = request.args.getlist("ingredients")
+            if ingredients:
+                whereclauses.append("i.name IN %(ingredients)s")
+                query_args["ingredients"] = tuple(ingredients)
+                missing_ingredient_count_expr = (
+                    "ic.compulsory_ingredient_count - count(rtoi.recipe)"
+                )
+            else:
+                missing_ingredient_count_expr = "ic.compulsory_ingredient_count"
 
-            search_indexes = []
-            for index in index_result:              # extract ingredient id from query result
-                search_indexes.append(index[0])
-            print(search_indexes)
-            search_indexes = tuple(search_indexes)
-            if not search_indexes:  #if there's no returned ingredient ids (shouldn't ever happen)
-                print("INVALID SEARCH")
-                return -1
+            dietary_tags = request.args.get("dietary_tags", default=0, type=int)
+            if dietary_tags:
+                whereclauses.append(
+                    "r.dietary_tags & %(dietary_tags)s::bit(4) = %(dietary_tags)s::bit(4)"
+                )
+                query_args["dietary_tags"] = dietary_tags
 
-            #CHANGE TO SPECIFY EXACT COLUMNS
-            query = "SELECT recipe, ingredient FROM recipetoingredient WHERE ingredient IN %s;"  # query for matching recipes for the given ingredients
-            cursor.execute(query, (search_indexes,))
-            matched_recipes = cursor.fetchall()
-            print("matched recipes: ")
-            print(matched_recipes)
+            max_time = request.args.get("max_time", default=0, type=int)
+            if max_time:
+                whereclauses.append("r.time <= %(max_time)s")
+                query_args["max_time"] = max_time
 
-            matched_recipe_indexes = [listing[0] for listing in matched_recipes]
+            num_servings = request.args.get("num_servings", default=0, type=int)
+            if num_servings:
+                whereclauses.append("r.serving >= %(num_servings)s")
+                query_args["num_servings"] = num_servings
 
-            tuple_matched_recipe_indexes = tuple(matched_recipe_indexes)
-            if not tuple_matched_recipe_indexes:    # no matched recipes
-                print("INVALID SEARCH")
-                return -1
-
-            query = "SELECT recipe, count FROM ingredient_counts WHERE recipe IN %s;"
-            cursor.execute(query, (tuple_matched_recipe_indexes,))
-            original_recipes = cursor.fetchall()
-
-            original_recipe_counts = {}
-            for listing in original_recipes:
-                original_recipe_counts[listing[0]] = listing[1]
-
-            print(original_recipe_counts)
-            result_counts = Counter(matched_recipe_indexes)
-            print(result_counts)
-
-            valid_recipes = []
-            for key in original_recipe_counts.keys():
-                if result_counts[key] >= original_recipe_counts[key]:
-                    valid_recipes.append(key)
-
-            valid_recipes = tuple(valid_recipes)                                  # Counter object of all the valid
-            if not valid_recipes:   # no recipes that match
-                print("INVALID SEARCH")
-                return -1
-
-            query = "SELECT id, name, time, description, imageRef FROM recipe WHERE id IN %s;"
-            cursor.execute(query, (valid_recipes,))
-            results = cursor.fetchall()
-            results = sorted(results, key = lambda a : str(a[1]).lower())   # sort by alphabetical by name
-            print("RESULTS:")
-            print(results)
-            return results
+            if whereclauses:
+                whereclause = "WHERE " + " AND ".join(whereclauses)
+            else:
+                whereclause = ""
+            query = f"""
+                SELECT
+                  r.id,
+                  r.name,
+                  r.time,
+                  r.description,
+                  r.imageref,
+                  r.serving,
+                  ic.compulsory_ingredient_count,
+                  (
+                    {missing_ingredient_count_expr}
+                  ) AS missing_ingredient_count
+                FROM recipetoingredient rtoi
+                JOIN ingredient i ON rtoi.ingredient = i.id
+                JOIN ingredient_counts ic on rtoi.recipe = ic.recipe
+                JOIN recipe r ON rtoi.recipe = r.id
+                {whereclause}
+                GROUP BY
+                  r.id,
+                  ic.compulsory_ingredient_count
+                ORDER BY
+                  missing_ingredient_count,
+                  r.name
+            """
+            cursor.execute(query, query_args)
+            return cursor.fetchall()
 
 ###########################
 ### SEARCH RECIPE PAGE ####
@@ -211,8 +218,6 @@ def get_search(ingredients):
 def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
 
-    # All these paramaters are hard-coded;
-    # they should probably be pulled out of the database
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
@@ -334,3 +339,61 @@ def logout():
     logout_user()
     # NOTE: redirect to home page instead?
     return redirect(url_for("search"))
+
+
+###################
+### PANTRY PAGE ###
+###################
+@app.route("/pantry", methods=["GET", "POST"])
+def pantry():
+    # template = Template(filename=f"{TEMPLATE_DIR}/pantry.html")
+    template = LOOKUP.get_template("pantry.html")
+    if request.method == "POST":
+        if 'pantry-add' in request.form:
+            ingredient = request.form['ingredients']
+            ingredient_index = get_ingredient_info_from_name(ingredient)
+            quantity = request.form['quantity']
+            if quantity == '':
+                quantity = 1
+            m_type = request.form['m_type']
+            insert_ingredient(current_user.get_id(), ingredient_index, quantity, m_type)
+        else:
+            print("fuk")
+            remove_id = request.form["pantry-delete"]
+            print(remove_id)
+            remove_ingredient(current_user.get_id(), remove_id)
+
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+            query = "SELECT name FROM ingredient ORDER BY name;"   # query for ingredient ids
+            cursor.execute(query)
+            all_ingredients_results = cursor.fetchall()
+
+    results = get_ingredients(current_user.get_id())
+
+
+
+    ingredient_ids = [r[0] for r in results]
+    quantities = [r[1] for r in results]
+    m_types = [r[2] for r in results]
+    print(ingredient_ids)
+    if (ingredient_ids):
+        ingredients = get_ingredient_name_from_ids(ingredient_ids)
+    else:
+        ingredients = []
+
+    print(results)
+    for i in range(len(ingredient_ids)):
+        print(str(ingredients[i]) + str(quantities[i]) + str(m_types[i]))
+
+    #print(ingredients)
+    #ingredients = ["bread", "ham", "avocado"]
+    return template.render(
+        error="none",
+        all_ingredients = [r[0] for r in all_ingredients_results],
+        ingredients=ingredients,
+        ingredient_ids = ingredient_ids,
+        quantities=quantities,
+        m_types=m_types,
+        username=current_user.get_id() if current_user.is_authenticated else None
+    )
