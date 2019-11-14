@@ -1,5 +1,6 @@
 import csv
-with open('recipeToEquipment.csv', mode='w') as recipeToEquipment:
+with open('wingredient/dbdata/recipeToEquipment.csv', mode='w') as recipeToEquipment:
+    #print('recipeToEquipment.csv generated')
     equipment_writer = csv.writer(recipeToEquipment, delimiter = ',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     equipment_writer.writerow(['recipe', 'equipment'])
     #Chilli con carne

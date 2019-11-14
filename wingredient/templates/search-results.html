@@ -23,26 +23,14 @@ Python variables that need to be passed in for this template to render correctly
   <!-- Non-Mako dependent styling from this file -->
   <link rel="stylesheet" href="../static/search-results.css">
 
-  <!--Bootstrap styling-->
-  <link rel="stylesheet"
-  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-  crossorigin="anonymous">
-
-  <!--For icons-->
-  <link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <!--
-  To see what other icons are available,
-  go to https://fontawesome.com/v4.7.0/icons/
-  -->
+  <%include file="/site_wide.html"/>
 
   <title>Wingredient Search Results</title>
 </head>
 
 <body>
   <center>
-    <h1>Search Results</h1>
+    <%include file="/navbar.html"/>
 
     <br>
     % if len(titles) == 0:
@@ -52,14 +40,16 @@ Python variables that need to be passed in for this template to render correctly
       <form class="form-inline justify-content-center", method="POST">
         <div class="form-group">
           <label for="sorting_options">
-            <h3>Sort results by:&nbsp;</h3>
+            <h3>
+              <i class="fa fa-sort" aria-hidden="true"></i> Sort results by&nbsp;
+            </h3>
           </label>
           <select name="sorting_options" id="sorting_options" class="form-control form-control-lg">
-            <option value="alphabetical" 
+            <option value="alphabetical"
               % if default=='alphabetical':
                 selected
               % endif
-            >Alphabetical</option>
+            >Alphabetical order</option>
             <option value="cooking-time"
               % if default=='cooking-time':
                 selected
@@ -71,7 +61,8 @@ Python variables that need to be passed in for this template to render correctly
               % endif
             >Rating</option>
           </select>
-          <input type="submit", value="Sort">
+          &nbsp;
+          <input class="btn btn-primary" type="submit" value="Sort">
         </div>
       </form>
     <br>
@@ -107,14 +98,14 @@ Python variables that need to be passed in for this template to render correctly
     % endif
 
 
-    <a class="btn btn-primary" href="/" role="button">
+    <a id="back_to_search" class="btn btn-primary" href="/" role="button">
       <i class="fa fa-chevron-left" aria-hidden="true"></i> Back to Search
     </a>
-    <a class="btn btn-primary" href="#" role="button">
+
+    <a id="back_to_top" class="btn btn-primary" href="#" role="button">
       <i class="fa fa-chevron-up" aria-hidden="true"></i> Back to top
     </a>
 
   </center>
-  <br>
 </body>
 </html>

@@ -26,19 +26,7 @@ Python variables that need to be passed in for this template to render correctly
   <!-- Non-Mako dependent styling from this file -->
   <link rel="stylesheet" href="../static/recipe.css">
 
-  <!--Bootstrap styling-->
-  <link rel="stylesheet"
-  href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-  crossorigin="anonymous">
-
-  <!--For icons-->
-  <link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <!--
-  To see what other icons are available,
-  go to https://fontawesome.com/v4.7.0/icons/
-  -->
+  <%include file="/site_wide.html"/>
 
   <title>Wingredient</title>
 
@@ -49,7 +37,7 @@ Python variables that need to be passed in for this template to render correctly
       <%
         difficulty_color="green"
       %>
-      % elif difficulty == 'Medium':
+      % elif difficulty == 'Intermediate':
       <%
         difficulty_color="orange"
       %>
@@ -71,11 +59,12 @@ Python variables that need to be passed in for this template to render correctly
 </head>
 
 <body>
-  <br>
   <center>
+    <%include file="/navbar.html"/>
+
     <!-- Recipe Title -->
     <h1>${title}</h1>
-    <h1>${image_path}</h1>
+
     <!-- Recipe photo -->
     <img src="/${image_path}" width="500" alt="${image_alt}">
   </center>
@@ -94,42 +83,46 @@ Python variables that need to be passed in for this template to render correctly
   <h5 id="difficulty">${difficulty}</h5>
   <br><br>
 
-  <h2>Ingredients</h2>
-  <ul>
-    % for ingredient in ingredients:
-      <li>${ingredient}</li>
-    % endfor
-  </ul>
-  <br>
 
-  <h2>Equipment</h2>
-  <ul>
-    % for item in equipment:
-      <li>${item}</li>
-    % endfor
-  </ul>
-  <br>
+  <div class="container">
 
-  <h2>Recipe</h2>
-  <ol>
-    % for step in method:
-      <li>${step}</li>
-    % endfor
-  </ol>
-  <br>
+    <h2>Ingredients</h2>
+    <ul>
+      % for ingredient in ingredients:
+        <li>${ingredient}</li>
+      % endfor
+    </ul>
+    <br>
 
-  <center>
-    <!-- Like button -->
-    <button type="button" class="btn btn-primary">
-      <i class="fa fa-thumbs-up" aria-hidden="true"></i> ${num_likes}
-    </button>
+    <h2>Equipment</h2>
+    <ul>
+      % for item in equipment:
+        <li>${item}</li>
+      % endfor
+    </ul>
+    <br>
 
-    <!-- Add to favourites button -->
-    <button type="button" class="btn btn-danger">
-      <i class="fa fa-heart" aria-hidden="true"></i> Add to favourites
-    </button>
-  </center>
+    <h2>Recipe</h2>
+    <ol>
+      % for step in method:
+        <li>${step}</li>
+      % endfor
+    </ol>
+    <br>
 
-  <br>
+    <center>
+      <!-- Like button -->
+      <button type="button" class="btn btn-primary">
+        <i class="fa fa-thumbs-up" aria-hidden="true"></i> ${num_likes}
+      </button>
+
+      <!-- Add to favourites button -->
+      <button type="button" class="btn btn-danger">
+        <i class="fa fa-heart" aria-hidden="true"></i> Add to favourites
+      </button>
+    </center>
+
+    <br>
+  </div>
 </body>
 </html>
