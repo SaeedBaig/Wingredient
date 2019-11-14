@@ -103,7 +103,7 @@ def results():
     # Process the variables in whatever way you need to fetch the correct
     # search results
 
-    _results = get_search(request.args)
+    _results = get_search()
     if _results == -1:
         return template.render(
             titles=""
@@ -126,8 +126,8 @@ def results():
 def results_post():
     template = LOOKUP.get_template("search-results.html")
 
-    results = get_search(request.args)
-    if results == -1:
+    _results = get_search()
+    if _results == -1:
         return template.render(
             titles=""
         )
@@ -137,26 +137,26 @@ def results_post():
     if sort_option == "rating":
         pass
     elif sort_option == "cooking-time":
-        results = sorted(results, key = lambda a : a[2])   # sort results by cooking time
+        _results = sorted(_results, key = lambda a : a[2])   # sort results by cooking time
 
     return template.render(
-        titles=[r[1] for r in results],  #name from recipe
-        image_paths=[r[4] for r in results],    # imageRef from recipe
-        image_alts=[r[3] for r in results],  # set to description from recipe
-        ratings=[80 for r in results],
-        cooking_times_in_minutes=[r[2] for r in results],                   #time from recipe
-        recipe_ids=[r[0] for r in results],
+        titles=[r[1] for r in _results],  #name from recipe
+        image_paths=[r[4] for r in _results],    # imageRef from recipe
+        image_alts=[r[3] for r in _results],  # set to description from recipe
+        ratings=[80 for r in _results],
+        cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
+        recipe_ids=[r[0] for r in _results],
         default=sort_option
     )
 
 
-def get_search(request_args: ImmutableMultiDict):
+def get_search():
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             whereclauses = []
             query_args = {}
 
-            ingredients = request_args.getlist('ingredients')
+            ingredients = request.args.getlist("ingredients")
             if ingredients:
                 whereclauses.append("i.name IN %(ingredients)s")
                 query_args["ingredients"] = tuple(ingredients)
@@ -166,17 +166,22 @@ def get_search(request_args: ImmutableMultiDict):
             else:
                 missing_ingredient_count_expr = "ic.compulsory_ingredient_count"
 
-            dietary_tags = request_args.get('dietary_tags', default=0, type=int)
+            dietary_tags = request.args.get("dietary_tags", default=0, type=int)
             if dietary_tags:
                 whereclauses.append(
                     "r.dietary_tags & %(dietary_tags)s::bit(4) = %(dietary_tags)s::bit(4)"
                 )
                 query_args["dietary_tags"] = dietary_tags
 
-            max_time = request_args.get('max_time', default=0, type=int)
+            max_time = request.args.get("max_time", default=0, type=int)
             if max_time:
                 whereclauses.append("r.time <= %(max_time)s")
                 query_args["max_time"] = max_time
+
+            num_servings = request.args.get("num_servings", default=0, type=int)
+            if num_servings:
+                whereclauses.append("r.serving >= %(num_servings)s")
+                query_args["num_servings"] = num_servings
 
             if whereclauses:
                 whereclause = "WHERE " + " AND ".join(whereclauses)
@@ -189,6 +194,7 @@ def get_search(request_args: ImmutableMultiDict):
                   r.time,
                   r.description,
                   r.imageref,
+                  r.serving,
                   ic.compulsory_ingredient_count,
                   (
                     {missing_ingredient_count_expr}
