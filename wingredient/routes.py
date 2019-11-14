@@ -1,6 +1,6 @@
 """Module for the Flask app object."""
 
-from flask import Flask, request, redirect, url_for, session
+from flask import Flask, request, redirect, url_for, session, flash
 from mako.template import Template
 from mako.lookup import TemplateLookup
 from mako.runtime import Context
@@ -282,6 +282,10 @@ def login():
 ###################
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
+    # don't go to signup page if the user is already logged in
+    if not current_user.is_anonymous and current_user.is_authenticated:
+        return redirect(url_for("search"))
+
     error = None
     if request.method == "POST":
         username = request.form["username"]
