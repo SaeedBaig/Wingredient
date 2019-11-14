@@ -89,7 +89,7 @@ with open('ingredient.csv', mode='w') as recipes:
     recipe_writer.writerow(['84', 'Salmon', 'Count'])   
     recipe_writer.writerow(['85', 'Radishes', 'Count'])   
     recipe_writer.writerow(['86', 'Baby Cucumbers', 'Count'])   
-    recipe_writer.writerow(['87', 'Tomato Sauce'])   
+    recipe_writer.writerow(['87', 'Tomato Sauce', 'Volume'])   
     recipe_writer.writerow(['88', 'Rice Wine Vinegar', 'Count'])   
     recipe_writer.writerow(['89', 'Honey', 'Count'])
     recipe_writer.writerow(['90', 'Gochujang paste', 'Count'])

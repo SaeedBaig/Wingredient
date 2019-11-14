@@ -1,7 +1,7 @@
 id,name,measurement
 1,Brown Onion,Count
 2,Garlic Cloves,Count
-3,Carrot
+3,Carrot,Count
 4,Celery,Count
 5,Red Capsicum,Count
 6,Olive Oil,Count
@@ -85,7 +85,7 @@ id,name,measurement
 84,Salmon,Count
 85,Radishes,Count
 86,Baby Cucumbers,Count
-87,Tomato Sauce
+87,Tomato Sauce,Volume
 88,Rice Wine Vinegar,Count
 89,Honey,Count
 90,Gochujang paste,Count
@@ -111,7 +111,7 @@ id,name,measurement
 110,Sweet Potato,Weight
 111,Goat Cheese,Weight
 112,Chicken Breast,Weight
-113,Chinese Cabbage,Weight
+113,Chinese Cabbage,Count
 114,Apple,Count
 115,Nori,Count
 116,Mirin,Volume

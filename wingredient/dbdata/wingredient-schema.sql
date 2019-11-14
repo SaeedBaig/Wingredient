@@ -42,6 +42,7 @@ DROP TABLE IF EXISTS Ingredient CASCADE;
 CREATE TABLE Ingredient (
     id          integer,
     name        varchar(256),
+    measurement_type    MeasurementTypes,
     primary key (id)
 );
 
@@ -50,7 +51,6 @@ CREATE TABLE RecipeToIngredient (
     recipe              integer references Recipe(id),
     ingredient          integer references Ingredient(id),
     quantity            numeric,
-    measurement_type    MeasurementTypes,
     description         text,
     notes               text,
     optional            boolean,
