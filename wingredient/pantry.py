@@ -9,7 +9,6 @@ def insert_ingredient(account, ingredient, quantity):
             #INSERT INTO users (id, level) VALUES (1, 0) ON CONFLICT DO UPDATE SET level = users.level + 1;
             query = "INSERT INTO Pantry (account, ingredient, quantity) VALUES (%s, %s, %s) ON CONFLICT (ingredient) DO UPDATE SET quantity = pantry.quantity + EXCLUDED.quantity;"   # query for ingredient ids
             cursor.execute(query, (account, ingredient, quantity))
-            print(str(get_ingredient_name_from_ids([ingredient])) + str(ingredient) + ":" + str(quantity) + "successfully added")
             conn.commit()
 
 
