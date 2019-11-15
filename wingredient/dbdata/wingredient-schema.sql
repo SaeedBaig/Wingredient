@@ -1,6 +1,5 @@
 -- method is an array of text outlining the steps of the recipe
--- imageRef holds a file path to an image
-DROP TYPE IF EXISTS MeasurementTypes CASCADE;
+-- imageRef holds a file path to an image DROP TYPE IF EXISTS MeasurementTypes CASCADE;
 -- Vo
 CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count', 'Tablespoon', 'Teaspoon', 'Cup');
 
@@ -96,6 +95,13 @@ CREATE TABLE Pantry (
     measurement_type MeasurementTypes,
     UNIQUE (ingredient, measurement_type),
     primary key (account, ingredient, measurement_type)
+);
+
+DROP TABLE IF EXISTS DietInfo;
+CREATE TABLE DietInfo (
+    account     varchar(32) references Account(username),
+    diet        varchar(32),
+    primary key (account, preference)
 );
 
 DROP TABLE IF EXISTS Favourites;
