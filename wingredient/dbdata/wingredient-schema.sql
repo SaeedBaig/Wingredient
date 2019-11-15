@@ -46,7 +46,7 @@ CREATE TABLE Ingredient (
     primary key (id)
 );
 
-DROP TABLE IF EXISTS RecipeToIngredient;
+DROP TABLE IF EXISTS RecipeToIngredient CASCADE;
 CREATE TABLE RecipeToIngredient (
     recipe              integer references Recipe(id),
     ingredient          integer references Ingredient(id),
@@ -88,14 +88,16 @@ CREATE TABLE ShoppingList (
     primary key (account, ingredient)
 );
 
+
+-- no measurement type associated in pantry
+-- measurement type associated with ingredient
 DROP TABLE IF EXISTS Pantry;
 CREATE TABLE Pantry (
     account     varchar(32) references Account(username),
     ingredient  integer references Ingredient(id),
     quantity    integer,
-    measurement_type MeasurementTypes,
-    UNIQUE (ingredient, measurement_type),
-    primary key (account, ingredient, measurement_type)
+    UNIQUE (ingredient),
+    primary key (account, ingredient)
 );
 
 DROP TABLE IF EXISTS Favourites;
