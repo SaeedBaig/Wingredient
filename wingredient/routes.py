@@ -397,3 +397,12 @@ def pantry():
         m_types=m_types,
         username=current_user.get_id() if current_user.is_authenticated else None
     )
+
+
+@app.route("/recipe-form", methods=["GET", "POST"])
+def recipe_form():
+    template = LOOKUP.get_template("recipe-form.html")
+    if request.method == "POST":
+        pass
+
+    return template.render()
