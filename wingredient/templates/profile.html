@@ -89,8 +89,6 @@ Input fields for change password form:
         </label>
         <div class="collapsible-content">
           <div class="content-inner">
-            <input type="hidden" name="whichform" id="whichform-dietary" value="dietary">
-
             <!-- Generate Checkboxes -->
             % for diet in allowed_diets:
             <div class="form-group custom-control custom-checkbox">
@@ -109,7 +107,9 @@ Input fields for change password form:
             <p>${dietary_msg}</p>
             % endif
 
-            <button class="btn btn-success" type="submit">
+            <!--- NOTE: Button value determines the form seen by the POST handler 
+                        Button name should be kept as whichform                   -->
+            <button class="btn btn-success" type="submit" name="whichform" value="dietary">
               <i class="fa fa-check" aria-hidden="true"></i> Save
             </button>
           </div>
@@ -126,7 +126,6 @@ Input fields for change password form:
         </label>
         <div class="collapsible-content">
           <div class="content-inner">
-            <input type="hidden" name="whichform" id="whichform-password" value="password">
             <!-- Current password field -->
             <div class="form-group row">
               <label for="current-password-box" class="col-sm-5 col-form-label">
@@ -169,7 +168,9 @@ Input fields for change password form:
             <p>${password_msg}</p>
             % endif
 
-            <button class="btn btn-success" type="submit">
+            <!--- NOTE: Button value determines the form seen by the POST handler 
+                        Button name should be kept as whichform                   -->
+            <button class="btn btn-success" type="submit" name="whichform" value="password">
               <i class="fa fa-check" aria-hidden="true"></i> Save
             </button>
           </div>
