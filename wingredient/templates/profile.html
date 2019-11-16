@@ -69,10 +69,8 @@ Names of input fields to recieve in the Python backend:
     </%def>
     -->
 
+    <!-- Dietary Restrictions -->
     <form method="POST" class="justify-content-center">
-      <!-- Dietary Restrictions -->
-      <!-- Doesn't use the collapsible_form function because this has Mako code,
-      which doesn't render properly when passed in as an argument -->
       <div class="wrap-collabsible">
         <input id="dietary_restrictions_collapsible" class="toggle" type="checkbox">
         <label for="dietary_restrictions_collapsible" class="lbl-toggle">
@@ -105,7 +103,60 @@ Names of input fields to recieve in the Python backend:
             </div>
 
             <button class="btn btn-success" type="submit">
-              <i class="fa fa-search" aria-hidden="true"></i> Save
+              <i class="fa fa-check" aria-hidden="true"></i> Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Change Password -->
+    <form method="POST" class="justify-content-center">
+      <div class="wrap-collabsible">
+        <input id="change_password_collapsible" class="toggle" type="checkbox">
+        <label for="change_password_collapsible" class="lbl-toggle">
+          Change Password <i class="fa fa-key" aria-hidden="true"></i>
+        </label>
+        <div class="collapsible-content">
+          <div class="content-inner">
+            <!-- Current password field -->
+            <div class="form-group row">
+              <label for="current-password-box" class="col-sm-5 col-form-label">
+                <h6>
+                  <i class="fa fa-unlock" aria-hidden="true"></i> Current Password:
+                </h6>
+              </label>
+              <div class="col-sm-5">
+                <input name="current_password" type="password" class="form-control" id="current-password-box" required>
+              </div>
+            </div>
+
+            <!-- New password field -->
+            <div class="form-group row">
+              <label for="new-password-box" class="col-sm-5 col-form-label">
+                <h6>
+                  <i class="fa fa-lock" aria-hidden="true"></i> New Password:
+                </h6>
+              </label>
+              <div class="col-sm-5">
+                <input name="new_password" type="password" class="form-control" id="new-password-box" required>
+              </div>
+            </div>
+
+            <!-- Confirm new password field -->
+            <div class="form-group row">
+              <label for="confirm-new-password-box" class="col-sm-5 col-form-label">
+                <h6>
+                  <i class="fa fa-lock" aria-hidden="true"></i> Confirm New Password:
+                </h6>
+              </label>
+              <div class="col-sm-5">
+                <input name="new_password_duplicate" type="password" class="form-control" id="confirm-new-password-box" required>
+              </div>
+            </div>
+
+            <button class="btn btn-success" type="submit">
+              <i class="fa fa-check" aria-hidden="true"></i> Save
             </button>
           </div>
         </div>
