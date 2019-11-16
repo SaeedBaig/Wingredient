@@ -355,8 +355,7 @@ def pantry():
             quantity = request.form['quantity']
             if quantity == '':
                 quantity = 1
-            m_type = request.form['m_type']
-            insert_ingredient(current_user.get_id(), ingredient_index, quantity, m_type)
+            insert_ingredient(current_user.get_id(), ingredient_index, quantity)
         else:
             print("fuk")
             remove_id = request.form["pantry-delete"]
@@ -365,7 +364,7 @@ def pantry():
 
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            query = "SELECT name FROM ingredient ORDER BY name;"   # query for ingredient ids
+            query = "SELECT name, measurement_type FROM ingredient ORDER BY name;"   # query for ingredient ids
             cursor.execute(query)
             all_ingredients_results = cursor.fetchall()
 
@@ -375,25 +374,18 @@ def pantry():
 
     ingredient_ids = [r[0] for r in results]
     quantities = [r[1] for r in results]
-    m_types = [r[2] for r in results]
     print(ingredient_ids)
     if (ingredient_ids):
-        ingredients = get_ingredient_name_from_ids(ingredient_ids)
-    else:
-        ingredients = []
+        ingredient_info = get_ingredient_info_from_ids(ingredient_ids)
 
-    print(results)
-    for i in range(len(ingredient_ids)):
-        print(str(ingredients[i]) + str(quantities[i]) + str(m_types[i]))
-
-    #print(ingredients)
-    #ingredients = ["bread", "ham", "avocado"]
+    print(ingredient_info)
     return template.render(
         error="none",
         all_ingredients = [r[0] for r in all_ingredients_results],
-        ingredients=ingredients,
+        ingredients=[r[0] for r in ingredient_info],
         ingredient_ids = ingredient_ids,
         quantities=quantities,
-        m_types=m_types,
+        pantry_types=[r[1] for r in ingredient_info],
+        m_types=[r[1] for r in all_ingredients_results],
         username=current_user.get_id() if current_user.is_authenticated else None
     )
