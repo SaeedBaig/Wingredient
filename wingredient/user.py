@@ -1,6 +1,7 @@
 import os
-from hashlib import scrypt
-from .routes import login_manager
+from hashlib   import scrypt
+from .routes   import login_manager
+from .dietinfo import allowed_diets
 from . import db
 
 encoding = "ascii"
@@ -62,6 +63,34 @@ class User:
                 user_entry = cursor.fetchone()
                 assert(cursor.fetchone() == None) # there should always be exactly one
                 return (bytes(user_entry[1]), bytes(user_entry[2]))
+
+    def get_diets(self):
+        with db.getconn() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    '''SELECT * FROM DietInfo WHERE account=%s;''',
+                    (self.username,)
+                )
+                dietinfo_list = cursor.fetchall()
+                return list(map(lambda t: t[1], dietinfo_list))
+
+    def set_diets(self, diets):
+        assert(set(diets).issubset(allowed_diets))
+        with db.getconn() as conn:
+            with conn.cursor() as cursor:
+                # Clear all the user's diet info from the table
+                cursor.execute(
+                    '''DELETE FROM DietInfo WHERE account=%s;''',
+                    (self.username,)
+                )
+                # Add all the requested diets
+                for diet in diets:
+                    cursor.execute(
+                        '''INSERT INTO DietInfo VALUES (%s, %s);''', 
+                        (self.username, diet)
+                    )
+                conn.commit()
+        
 
     def logout(self):
         self.authenticated = False
