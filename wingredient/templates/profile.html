@@ -2,15 +2,24 @@
 
 <!--
 Python variables that need to be passed in for this template to render correctly:
-- ingredients:  list of str (e.g. ['Milk', 'Eggs', 'Sugar'])
+- password_msg
 -->
 
 <!--
 Names of input fields to recieve in the Python backend:
+- whichform 
+    name of form which has been submitted
+
+Input fields for dietary form:
 - vegan
 - vegetarian
 - dairy_free
 - gluten_free
+
+Input fields for change password form:
+- current_password
+- new_password
+- new_password_duplicate
 -->
 
 <!--Defines main language used by site (English)-->
@@ -78,6 +87,7 @@ Names of input fields to recieve in the Python backend:
         </label>
         <div class="collapsible-content">
           <div class="content-inner">
+            <input type="hidden" name="whichform" id="whichform-dietary" value="dietary">
             <!-- Vegan -->
             <div class="form-group custom-control custom-checkbox">
               <input name="vegan" type="checkbox" class="custom-control-input" id="vegan">
@@ -119,6 +129,7 @@ Names of input fields to recieve in the Python backend:
         </label>
         <div class="collapsible-content">
           <div class="content-inner">
+            <input type="hidden" name="whichform" id="whichform-password" value="password">
             <!-- Current password field -->
             <div class="form-group row">
               <label for="current-password-box" class="col-sm-5 col-form-label">
@@ -154,6 +165,12 @@ Names of input fields to recieve in the Python backend:
                 <input name="new_password_duplicate" type="password" class="form-control" id="confirm-new-password-box" required>
               </div>
             </div>
+
+            <!-- Error message -->
+            % if password_msg != None:
+            <br>
+            <p>${password_msg}</p>
+            % endif
 
             <button class="btn btn-success" type="submit">
               <i class="fa fa-check" aria-hidden="true"></i> Save
