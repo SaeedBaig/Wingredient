@@ -117,7 +117,12 @@ Python variables that need to be passed in for this template to render correctly
     <center>
       <form method="POST">
         <!-- Like button -->
+        % if context.username != None:
         <button type="submit" class="btn btn-primary" name="button" value="like">
+        % else:
+        <button type="submit" class="btn btn-primary" name="button" value="like" disabled>
+        % endif
+
           % if is_like:
           UN
           % endif
@@ -125,7 +130,12 @@ Python variables that need to be passed in for this template to render correctly
         </button>
 
         <!-- Add to favourites button -->
+        % if context.username != None:
         <button type="submit" class="btn btn-danger" name="button" value="favourite">
+        % else:
+        <button type="submit" class="btn btn-danger" name="button" value="favourite" disabled>
+        % endif
+
           % if is_favourite:
           UN
           % endif
