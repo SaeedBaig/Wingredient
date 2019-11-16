@@ -57,7 +57,7 @@ def search():
             url_args["pantry_only"] = True
 
         dietary_tags = 0
-        for i, checkbox in enumerate(("vegetarian", "vegan", "gluten_free", "dairy_free")):
+        for i, checkbox in enumerate(allowed_diets):
             if request.form.get(checkbox):
                 dietary_tags |= 1 << i
 
