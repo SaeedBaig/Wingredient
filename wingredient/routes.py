@@ -400,14 +400,15 @@ def profile():
     template = LOOKUP.get_template("profile.html")
 
     password_msg = None
-
-    print(request.form)
-
+    dietary_msg = None
 
     if request.method == "POST":
         whichform = request.form["whichform"]
         if whichform == "dietary":
-            pass
+            diets = set(request.form.keys()).intersection(set(allowed_diets))
+            current_user.set_diets(diets)
+            dietary_msg = "Diets set successfully."
+
         elif whichform == "password":
             password_error         = None
             current_password       = request.form["current_password"]
@@ -430,5 +431,6 @@ def profile():
 
     return template.render(
         allowed_diets = allowed_diets,
-        password_msg  = password_msg
-    )
+        password_msg  = password_msg,
+        dietary_msg   = dietary_msg
+   )

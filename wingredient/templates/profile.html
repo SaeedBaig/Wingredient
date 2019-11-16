@@ -4,6 +4,7 @@
 Python variables that need to be passed in for this template to render correctly:
 - allowed_diets
 - password_msg
+- dietary_msg
 -->
 
 <!--
@@ -97,6 +98,12 @@ Input fields for change password form:
               <label class="custom-control-label" for="${diet}">${diet}</label>
             </div>
             % endfor
+
+            <!-- Error message -->
+            % if dietary_msg != None:
+            <br>
+            <p>${dietary_msg}</p>
+            % endif
 
             <button class="btn btn-success" type="submit">
               <i class="fa fa-check" aria-hidden="true"></i> Save
