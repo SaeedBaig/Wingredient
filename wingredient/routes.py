@@ -218,9 +218,22 @@ def get_search():
 ###########################
 ### SEARCH RECIPE PAGE ####
 ###########################
-@app.route("/recipe/<int:recipe_id>")
+@app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
 def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
+
+    # Handle the likes and fav buttons
+    if request.method == "POST" and current_user.is_authenticated:
+        if request.form["button"] == "favourite":
+            if current_user.is_fav(recipe_id):
+                current_user.del_fav(recipe_id)
+            else:
+                current_user.add_fav(recipe_id)
+        elif request.form["button"] == "like":
+            if current_user.is_like(recipe_id):
+                current_user.del_like(recipe_id)
+            else:
+                current_user.add_like(recipe_id)
 
     with db.getconn() as conn:
         with conn.cursor() as cursor:
@@ -246,11 +259,13 @@ def recipe(recipe_id):
                 cursor.execute(query, (equipment_index_tuple,))
                 equipment_names = tuple([e[0] for e in cursor.fetchall()])
 
-
     print(results)
 
     method = str.split(results[3], "|")
     print(method)
+
+    is_favourite = current_user.is_fav(recipe_id) if current_user.is_authenticated else False
+    is_like      = current_user.is_like(recipe_id) if current_user.is_authenticated else False
 
     return template.render(
         title=results[0],
@@ -262,6 +277,8 @@ def recipe(recipe_id):
         equipment=equipment_names,
         method=method,
         num_likes=128,
+        is_favourite=is_favourite,
+        is_like=is_like
     )
 
 

@@ -11,6 +11,10 @@ Python variables that need to be passed in for this template to render correctly
 - equipment:    list of str (e.g. ['Bowl', 'Oven', 'Microwave'])
 - method:       list of str (e.g. ['Heat oven.', 'Fill tray.', 'Dice banana.'])
 - num_likes:    int (number of likes this recipe has)
+
+- is_like:      bool (whether this user likes this recipe)
+- is_favourite: bool (whether this user favourites this recipe)
+
 -->
 
 <!--Defines main language used by site (English)-->
@@ -108,15 +112,33 @@ Python variables that need to be passed in for this template to render correctly
     <br>
 
     <center>
-      <!-- Like button -->
-      <button type="button" class="btn btn-primary">
-        <i class="fa fa-thumbs-up" aria-hidden="true"></i> ${num_likes}
-      </button>
+      <form method="POST">
+        <!-- Like button -->
+        % if context.username != None:
+        <button type="submit" class="btn btn-primary" name="button" value="like">
+        % else:
+        <button type="submit" class="btn btn-primary" name="button" value="like" disabled>
+        % endif
 
-      <!-- Add to favourites button -->
-      <button type="button" class="btn btn-danger">
-        <i class="fa fa-heart" aria-hidden="true"></i> Add to favourites
-      </button>
+          % if is_like:
+          UN
+          % endif
+          <i class="fa fa-thumbs-up" aria-hidden="true"></i> ${num_likes}
+        </button>
+
+        <!-- Add to favourites button -->
+        % if context.username != None:
+        <button type="submit" class="btn btn-danger" name="button" value="favourite">
+        % else:
+        <button type="submit" class="btn btn-danger" name="button" value="favourite" disabled>
+        % endif
+
+          % if is_favourite:
+          UN
+          % endif
+          <i class="fa fa-heart" aria-hidden="true"></i> 
+        </button>
+      </form>
     </center>
 
     <br>
