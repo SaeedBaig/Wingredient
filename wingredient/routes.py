@@ -5,9 +5,7 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from os.path import abspath
-
-from werkzeug.datastructures import ImmutableMultiDict
-
+from werkzeug.datastructures import ImmutableMultiDict 
 from . import db
 from .pantry import *
 from collections import Counter
@@ -389,3 +387,17 @@ def pantry():
         m_types=[r[1] for r in all_ingredients_results],
         username=current_user.get_id() if current_user.is_authenticated else None
     )
+
+
+#########################
+### USER PROFILE PAGE ###
+#########################
+@app.route("/profile", methods=["POST", "GET"])
+@login_required
+def profile():
+    template = LOOKUP.get_template("profile.html")
+
+    if request.method == "POST":
+        pass
+
+    return template.render()
