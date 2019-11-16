@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<!--
+Python variables that need to be passed in for this template to render correctly:
+- ingredients:  list of str (e.g. ['Milk', 'Eggs', 'Sugar'])
+-->
+
+<!--
+Names of input fields to recieve in the Python backend:
+- vegan
+- vegetarian
+- dairy_free
+- gluten_free
+-->
+
+<!--Defines main language used by site (English)-->
+<html lang="en">
+
+<head>
+  <!--Defines character encoding (utf-8, which is standard)-->
+  <meta charset="UTF-8">
+
+  <!--Makes webpage size adapt to device's screen size-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Non-Mako dependent styling from this file -->
+  <link rel="stylesheet" href="../static/search.css">
+
+  <%include file="/site_wide.html"/>
+
+  <script>
+    // Necessary for tooltips to work
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+
+  <title></title>
+</head>
+
+<body>
+  <center>
+
+    <%include file="/navbar.html"/>
+
+    <h1>${context.username}'s Profile</h1>
+    <br>
+
+    <!--
+    Mako function to generate a collapsible form input. Takes:
+    name - Label that appears on the collapsible
+    contents - The hidden contents inside the form that are revealed upon click
+    -->
+    <!--
+    <%def name="separate_collapsible_form(name, icon, contents)">
+      <form method="POST" class="justify-content-center">
+        <div class="wrap-collabsible">
+          <input id="${name}_collapsible" class="toggle" type="checkbox">
+          <label for="${name}_collapsible" class="lbl-toggle">
+            ${name} ${icon}
+          </label>
+          <div class="collapsible-content">
+            <div class="content-inner">
+              ${contents}
+            </div>
+          </div>
+        </div>
+      </form>
+    </%def>
+    -->
+
+    <form method="POST" class="justify-content-center">
+      <!-- Dietary Restrictions -->
+      <!-- Doesn't use the collapsible_form function because this has Mako code,
+      which doesn't render properly when passed in as an argument -->
+      <div class="wrap-collabsible">
+        <input id="dietary_restrictions_collapsible" class="toggle" type="checkbox">
+        <label for="dietary_restrictions_collapsible" class="lbl-toggle">
+          Dietary Restrictions <i class="fa fa-envira" aria-hidden="true"></i>
+        </label>
+        <div class="collapsible-content">
+          <div class="content-inner">
+            <!-- Vegan -->
+            <div class="form-group custom-control custom-checkbox">
+              <input name="vegan" type="checkbox" class="custom-control-input" id="vegan">
+              <label class="custom-control-label" for="vegan">Vegan</label>
+            </div>
+
+            <!-- Vegetarian -->
+            <div class="form-group custom-control custom-checkbox">
+              <input name="vegetarian" type="checkbox" class="custom-control-input" id="vegetarian">
+              <label class="custom-control-label" for="vegetarian">Vegetarian</label>
+            </div>
+
+            <!-- Dairy Free -->
+            <div class="form-group custom-control custom-checkbox">
+              <input name="dairy_free" type="checkbox" class="custom-control-input" id="dairy_free">
+              <label class="custom-control-label" for="dairy_free">Dairy-free</label>
+            </div>
+
+            <!-- Gluten free -->
+            <div class="form-group custom-control custom-checkbox">
+              <input name="gluten_free" type="checkbox" class="custom-control-input" id="gluten_free">
+              <label class="custom-control-label" for="gluten_free">Gluten-free</label>
+            </div>
+
+            <button class="btn btn-success" type="submit">
+              <i class="fa fa-search" aria-hidden="true"></i> Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </center>
+  <br>
+</body>
+</html>
