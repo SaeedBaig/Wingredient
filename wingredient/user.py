@@ -1,6 +1,7 @@
 import os
-from hashlib import scrypt
-from .routes import login_manager
+from hashlib   import scrypt
+from .routes   import login_manager
+from .dietinfo import allowed_diets
 from . import db
 
 encoding = "ascii"
@@ -45,16 +46,13 @@ class User:
                 )
                 conn.commit()
 
-    def authenticate(self, password):
+    def check_password(self, password):
         (req_hash, salt) = self.get_password_hash_and_salt()
         login_hash = compute_hash(password, salt)
 
         # setting the password regenerates salt and hash
         self.set_password(password)
 
-        # Don't deauthenticate if incorrect
-        if login_hash == req_hash:
-            self.authenticated = True
         return login_hash == req_hash
 
 
@@ -65,6 +63,34 @@ class User:
                 user_entry = cursor.fetchone()
                 assert(cursor.fetchone() == None) # there should always be exactly one
                 return (bytes(user_entry[1]), bytes(user_entry[2]))
+
+    def get_diets(self):
+        with db.getconn() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    '''SELECT * FROM DietInfo WHERE account=%s;''',
+                    (self.username,)
+                )
+                dietinfo_list = cursor.fetchall()
+                return list(map(lambda t: t[1], dietinfo_list))
+
+    def set_diets(self, diets):
+        assert(set(diets).issubset(set(allowed_diets)))
+        with db.getconn() as conn:
+            with conn.cursor() as cursor:
+                # Clear all the user's diet info from the table
+                cursor.execute(
+                    '''DELETE FROM DietInfo WHERE account=%s;''',
+                    (self.username,)
+                )
+                # Add all the requested diets
+                for diet in diets:
+                    cursor.execute(
+                        '''INSERT INTO DietInfo VALUES (%s, %s);''', 
+                        (self.username, diet)
+                    )
+                conn.commit()
+        
 
     def logout(self):
         self.authenticated = False

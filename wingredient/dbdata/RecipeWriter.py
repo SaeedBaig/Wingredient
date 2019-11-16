@@ -1,5 +1,5 @@
 import csv
-with open('wingredient/dbdata/recipe.csv', mode='w') as recipe:
+with open('recipe.csv', mode='w') as recipe:
     #print('recipe.csv generated')
     recipe_writer = csv.writer(recipe, delimiter = ',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     recipe_writer.writerow(['id', 'name', 'time', 'difficulty', 'serving', 'notes', 'description', 'cuisine_tags', 'dietary_tags', 'imageRef', 'url', 'method'])

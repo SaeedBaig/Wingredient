@@ -1,7 +1,6 @@
 from contextlib import contextmanager
 from pathlib import Path
 from typing import cast
-from .dbdata import DBWriterFiles
 import psycopg2.pool
 
 from . import config

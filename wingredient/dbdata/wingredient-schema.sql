@@ -1,7 +1,6 @@
 -- method is an array of text outlining the steps of the recipe
 -- imageRef holds a file path to an image
 DROP TYPE IF EXISTS MeasurementTypes CASCADE;
--- Vo
 CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count', 'Tablespoon', 'Teaspoon', 'Cup');
 
 DROP TYPE IF EXISTS Difficulty CASCADE;
@@ -32,7 +31,7 @@ CREATE TABLE Recipe (
     cuisine_tags text,
     dietary_tags bit(4),
     imageRef    text default null,
-    url         text, 
+    url         text,
     method      text,
     primary key (id)
 );
@@ -42,15 +41,15 @@ DROP TABLE IF EXISTS Ingredient CASCADE;
 CREATE TABLE Ingredient (
     id          integer,
     name        varchar(256),
+    measurement_type    MeasurementTypes,
     primary key (id)
 );
 
-DROP TABLE IF EXISTS RecipeToIngredient;
+DROP TABLE IF EXISTS RecipeToIngredient CASCADE;
 CREATE TABLE RecipeToIngredient (
     recipe              integer references Recipe(id),
     ingredient          integer references Ingredient(id),
     quantity            numeric,
-    measurement_type    MeasurementTypes,
     description         text,
     notes               text,
     optional            boolean,
@@ -84,16 +83,27 @@ DROP TABLE IF EXISTS ShoppingList;
 CREATE TABLE ShoppingList (
     account     varchar(32) references Account(username),
     ingredient  integer references Ingredient(id),
-    quantity    numeric,
+    quantity    integer,
     primary key (account, ingredient)
 );
 
+
+-- no measurement type associated in pantry
+-- measurement type associated with ingredient
 DROP TABLE IF EXISTS Pantry;
 CREATE TABLE Pantry (
     account     varchar(32) references Account(username),
     ingredient  integer references Ingredient(id),
-    quantity    numeric,
+    quantity    integer,
+    UNIQUE (ingredient),
     primary key (account, ingredient)
+);
+
+DROP TABLE IF EXISTS DietInfo;
+CREATE TABLE DietInfo (
+    account     varchar(32) references Account(username),
+    diet        varchar(32),
+    primary key (account, diet)
 );
 
 DROP TABLE IF EXISTS Favourites;
@@ -126,7 +136,9 @@ where optional = 'false'
 
 
 CREATE OR REPLACE VIEW ingredient_counts as
-select recipe, count(recipe)
+select
+  recipe,
+  count(recipe) AS compulsory_ingredient_count
 from compulsory_recipetoingredient
 group by recipe
 ;

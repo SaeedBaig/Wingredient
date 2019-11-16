@@ -1,124 +1,124 @@
-id,name
-1,Brown Onion
-2,Garlic Cloves
-3,Carrot
-4,Celery
-5,Red Capsicum
-6,Olive Oil
-7,Chilli Powder
-8,Ground Cumin
-9,Ground Cinnamon
-10,Tinned Chickpeas
-11,Tinned Red Kidney Beans
-12,Tinned Tomatoes
-13,Beef Mince
-14,Coriander
-15,Balsamic Vinegar
-16,Kent Pumpkin
-17,Shallots
-18,Ginger
-19,Chives
-20,Mint Leaves
-21,Vegetable Stock
-22,Coconut Milk
-23,Lime
-24,Spaghetti
-25,Chicken Thigh Fillets
-26,Butter
-27,Zucchini Noodles
-28,Chilli Flakes
-29,Parsley Leaves
-30,Parmesan
-31,Tofu
-32,Rice Noodle
-33,Cornflour
-34,Peanut Oil
-35,Chinese Broccoli
-36,Soy Sauce
-37,Brown Sugar
-38,Egg
-39,Steak
-40,Baby Corn
-41,Broccolini
-42,Oyster Sauce
-43,Rice
-44,Curry Paste
-45,Baby Carrot
-46,Lamb Mince
-47,Mixed Spice
-48,Turkish Bread
-49,Pizza Cheese
-50,Cherry Tomatoes
-51,Lemon
-52,Mixed Salad Leaves
-53,Mushrooms
-54,Sesame Seeds
-55,Lemon Juice
-56,Miso Paste
-57,Bread Rolls
-58,Red Cabbage
-59,Sprouts
-60,Basil
-61,Tomato Paste
-62,Tomato Passata
-63,Whole Chicken
-64,Oregano
-65,Paprika
-66,Corn
-67,Spring Onion
-68,Baby Gem Lettuce
-69,Avocado
-70,Buttermilk
-71,Greek-style Yoghurt
-72,Breadcrumbs
-73,Lentils
-74,Chicken Stock
-75,Tomatoes
-76,Ground Coriander
-77,Cayenne Pepper
-78,Salt
-79,Pepper
-80,Soba Noodles
-81,Teriyaki Marinade
-82,Lime Juice
-83,Sesame Oil
-84,Salmon
-85,Radishes
-86,Baby Cucumbers
-87,Tomato Sauce
-88,Rice Wine Vinegar
-89,Honey
-90,Gochujang paste
-91,Garlic Chives
-92,Rice Flour
-93,Vegetable oil
-94,Snow Peas
-95,Kale
-96,Spinach Mix
-97,Ground Turmeric
-98,Red Onion
-99,Dill
-100,Tabasco Sauce
-101,Red Wine Vinegar
-102,Baby Spinach
-103,Zucchini
-104,Roma Tomatoes
-105,Pasta
-106,Pine Nuts
-107,Baby Rocket Leaves
-108,Mixed Vegetables
-109,Beef Stock
-110,Sweet Potato
-111,Goat Cheese
-112,Chicken Breast
-113,Chinese Cabbage
-114,Apple
-115,Nori
-116,Mirin
-117,Sushi Seasoning
-118,Plain Flour
-119,Milk
-120,Self-raising Flour
-121,Butternut Pumpkin
-122,Water
-123,Pork Mince
+id,name,measurement
+1,Brown Onion,Count
+2,Garlic Cloves,Count
+3,Carrot,Count
+4,Celery,Count
+5,Red Capsicum,Count
+6,Olive Oil,Count
+7,Chilli Powder,Count
+8,Ground Cumin,Count
+9,Ground Cinnamon,Count
+10,Tinned Chickpeas,Weight
+11,Tinned Red Kidney Beans,Weight
+12,Tinned Tomatoes,Weight
+13,Beef Mince,Weight
+14,Coriander,Count
+15,Balsamic Vinegar,Count
+16,Kent Pumpkin,Weight
+17,Shallots,Count
+18,Ginger,Count
+19,Chives,Count
+20,Mint Leaves,Count
+21,Vegetable Stock,Volume
+22,Coconut Milk,Volume
+23,Lime,Count
+24,Spaghetti,Weight
+25,Chicken Thigh Fillets,Weight
+26,Butter,Weight
+27,Zucchini Noodles,Weight
+28,Chilli Flakes,Count
+29,Parsley Leaves,Count
+30,Parmesan,Weight
+31,Tofu,Weight
+32,Rice Noodle,Weight
+33,Cornflour,Weight
+34,Peanut Oil,Count
+35,Chinese Broccoli,Count
+36,Soy Sauce,Count
+37,Brown Sugar,Count
+38,Egg,Count
+39,Steak,Weight
+40,Baby Corn,Count
+41,Broccolini,Count
+42,Oyster Sauce,Count
+43,Rice,Count
+44,Curry Paste,Count
+45,Baby Carrot,Count
+46,Lamb Mince,Weight
+47,Mixed Spice,Count
+48,Turkish Bread,Count
+49,Pizza Cheese,Weight
+50,Cherry Tomatoes,Weight
+51,Lemon,Count
+52,Mixed Salad Leaves,Count
+53,Mushrooms,Weight
+54,Sesame Seeds,Weight
+55,Lemon Juice,Volume
+56,Miso Paste,Count
+57,Bread Rolls,Count
+58,Red Cabbage,Count
+59,Sprouts,Weight
+60,Basil,Count
+61,Tomato Paste,Weight
+62,Tomato Passata,Volume
+63,Whole Chicken,Weight
+64,Oregano,Count
+65,Paprika,Count
+66,Corn,Count
+67,Spring Onion,Count
+68,Baby Gem Lettuce,Count
+69,Avocado,Count
+70,Buttermilk,Volume
+71,Greek-style Yoghurt,Weight
+72,Breadcrumbs,Weight
+73,Lentils,Weight
+74,Chicken Stock,Volume
+75,Tomatoes,Count
+76,Ground Coriander,Count
+77,Cayenne Pepper,Count
+78,Salt,Count
+79,Pepper,Count
+80,Soba Noodles,Weight
+81,Teriyaki Marinade,Volume
+82,Lime Juice,Volume
+83,Sesame Oil,Count
+84,Salmon,Count
+85,Radishes,Count
+86,Baby Cucumbers,Count
+87,Tomato Sauce,Volume
+88,Rice Wine Vinegar,Count
+89,Honey,Count
+90,Gochujang paste,Count
+91,Garlic Chives,Count
+92,Rice Flour,Weight
+93,Vegetable oil,Count
+94,Snow Peas,Weight
+95,Kale,Weight
+96,Spinach Mix,Weight
+97,Ground Turmeric,Count
+98,Red Onion,Count
+99,Dill,Count
+100,Tabasco Sauce,Count
+101,Red Wine Vinegar,Count
+102,Baby Spinach,Weight
+103,Zucchini,Count
+104,Roma Tomatoes,Weight
+105,Pasta,Weight
+106,Pine Nuts,Weight
+107,Baby Rocket Leaves,Count
+108,Mixed Vegetables,Weight
+109,Beef Stock,Volume
+110,Sweet Potato,Weight
+111,Goat Cheese,Weight
+112,Chicken Breast,Weight
+113,Chinese Cabbage,Count
+114,Apple,Count
+115,Nori,Count
+116,Mirin,Volume
+117,Sushi Seasoning,Count
+118,Plain Flour,Weight
+119,Milk,Volume
+120,Self-raising Flour,Weight
+121,Butternut Pumpkin,Weight
+122,Water,Volume
+123,Pork Mince,Weight

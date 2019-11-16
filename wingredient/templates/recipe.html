@@ -67,8 +67,8 @@ Python variables that need to be passed in for this template to render correctly
 
     <!-- Recipe photo -->
     <img src="/${image_path}" width="500" alt="${image_alt}">
-  </center>
   <br>
+</center>
 
   <!-- Cooking time & difficulty -->
   <h5 id="recipe_info_bar">
@@ -80,42 +80,46 @@ Python variables that need to be passed in for this template to render correctly
   </h5>
   <br></br>
 
-  <h2>Ingredients</h2>
-  <ul>
-    % for ingredient in ingredients:
-      <li>${ingredient}</li>
-    % endfor
-  </ul>
-  <br>
 
-  <h2>Equipment</h2>
-  <ul>
-    % for item in equipment:
-      <li>${item}</li>
-    % endfor
-  </ul>
-  <br>
+  <div class="container">
 
-  <h2>Recipe</h2>
-  <ol>
-    % for step in method:
-      <li>${step}</li>
-    % endfor
-  </ol>
-  <br>
+    <h2>Ingredients</h2>
+    <ul>
+      % for ingredient in ingredients:
+        <li>${ingredient}</li>
+      % endfor
+    </ul>
+    <br>
 
-  <center>
-    <!-- Like button -->
-    <button type="button" class="btn btn-primary">
-      <i class="fa fa-thumbs-up" aria-hidden="true"></i> ${num_likes}
-    </button>
+    <h2>Equipment</h2>
+    <ul>
+      % for item in equipment:
+        <li>${item}</li>
+      % endfor
+    </ul>
+    <br>
 
-    <!-- Add to favourites button -->
-    <button type="button" class="btn btn-danger">
-      <i class="fa fa-heart" aria-hidden="true"></i> Add to favourites
-    </button>
-  </center>
+    <h2>Recipe</h2>
+    <ol>
+      % for step in method:
+        <li>${step}</li>
+      % endfor
+    </ol>
+    <br>
 
-  <br>
+    <center>
+      <!-- Like button -->
+      <button type="button" class="btn btn-primary">
+        <i class="fa fa-thumbs-up" aria-hidden="true"></i> ${num_likes}
+      </button>
+
+      <!-- Add to favourites button -->
+      <button type="button" class="btn btn-danger">
+        <i class="fa fa-heart" aria-hidden="true"></i> Add to favourites
+      </button>
+    </center>
+
+    <br>
+  </div>
 </body>
 </html>

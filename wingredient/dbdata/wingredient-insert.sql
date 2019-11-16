@@ -54,6 +54,11 @@ INSERT INTO RecipeToEquipment VALUES ('4', '3'); -- bowl for cereal
 
 -- Account VALUES (<username>, <pwhash>, <pwsalt>, <details>);
 -- NOTE DON'T INSERT ACCOUNTS HERE, USE THE SIGNUP PAGE INSTEAD
+-- Account VALUES (<id>, <username>, <password>, <details>);
+-- Pantry VALUES (<account>, <ingredient>, <quantity>, <measurement_type>)
+--INSERT INTO Pantry VALUES ('kevin', '7', '1', 'Count'); -- 1 count of bread in user 1 pantry
+--INSERT INTO Pantry VALUES ('kevin', '13', '2', 'Count'); -- 2 count of ham in user 1 pantry--
+--INSERT INTO Pantry VALUES ('kevin', '12', '1', 'Count'); -- 1 count of avocado in user 1 pantry
 
 
 
