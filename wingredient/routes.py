@@ -397,7 +397,35 @@ def pantry():
 def profile():
     template = LOOKUP.get_template("profile.html")
 
-    if request.method == "POST":
-        pass
+    password_msg = None
 
-    return template.render()
+    print(request.form)
+
+
+    if request.method == "POST":
+        whichform = request.form["whichform"]
+        if whichform == "dietary":
+            pass
+        elif whichform == "password":
+            password_error         = None
+            current_password       = request.form["current_password"]
+            new_password           = request.form["new_password"]
+            new_password_duplicate = request.form["new_password_duplicate"]
+
+            if not current_user.check_password(current_password):
+                password_error = "Current password incorrect."
+
+            if new_password != new_password_duplicate:
+                password_error = "New passwords do not match."
+
+            if password_error == None:
+                current_user.set_password(new_password)
+                password_msg = "Password changed successfully."
+            else:
+                password_msg = password_error
+        else:
+            pass
+
+    return template.render(
+        password_msg = password_msg
+    )
