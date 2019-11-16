@@ -75,7 +75,7 @@ class User:
                 return list(map(lambda t: t[1], dietinfo_list))
 
     def set_diets(self, diets):
-        assert(set(diets).issubset(allowed_diets))
+        assert(set(diets).issubset(set(allowed_diets)))
         with db.getconn() as conn:
             with conn.cursor() as cursor:
                 # Clear all the user's diet info from the table
