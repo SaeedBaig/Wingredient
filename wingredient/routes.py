@@ -82,8 +82,12 @@ def search():
     # (Don't worry it gets updated automatically as )
     Context.username = current_user.get_id() if current_user.is_authenticated else None
 
+    current_diets = current_user.get_diets() if current_user.is_authenticated else None
+
     return template.render(
-        ingredients=[r[0] for r in results]
+        ingredients=[r[0] for r in results],
+        allowed_diets = allowed_diets,
+        current_diets = current_diets
     )
 
 

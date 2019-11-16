@@ -3,6 +3,8 @@
 <!--
 Python variables that need to be passed in for this template to render correctly:
 - ingredients:  list of str (e.g. ['Milk', 'Eggs', 'Sugar'])
+- allowed_diets
+- current_diets
 -->
 
 <!--
@@ -169,29 +171,17 @@ Names of input fields to recieve in the Python backend:
               </div>
             % endif
 
-            <!-- Vegan -->
+            <!-- Generate Dietary Checkboxes -->
+            % for diet in allowed_diets:
             <div class="form-group custom-control custom-checkbox">
-              <input name="vegan" type="checkbox" class="custom-control-input" id="vegan">
-              <label class="custom-control-label" for="vegan">Vegan</label>
+              % if diet in set(current_diets):
+              <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}" checked>
+              % else:
+              <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}">
+              % endif
+              <label class="custom-control-label" for="${diet}">${diet}</label>
             </div>
-
-            <!-- Vegetarian -->
-            <div class="form-group custom-control custom-checkbox">
-              <input name="vegetarian" type="checkbox" class="custom-control-input" id="vegetarian">
-              <label class="custom-control-label" for="vegetarian">Vegetarian</label>
-            </div>
-
-            <!-- Dairy Free -->
-            <div class="form-group custom-control custom-checkbox">
-              <input name="dairy_free" type="checkbox" class="custom-control-input" id="dairy_free">
-              <label class="custom-control-label" for="dairy_free">Dairy-free</label>
-            </div>
-
-            <!-- Gluten free -->
-            <div class="form-group custom-control custom-checkbox">
-              <input name="gluten_free" type="checkbox" class="custom-control-input" id="gluten_free">
-              <label class="custom-control-label" for="gluten_free">Gluten-free</label>
-            </div>
+            % endfor
 
           </div>
         </div>
