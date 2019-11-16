@@ -2,6 +2,7 @@
 
 <!--
 Python variables that need to be passed in for this template to render correctly:
+- allowed_diets
 - password_msg
 -->
 
@@ -88,29 +89,14 @@ Input fields for change password form:
         <div class="collapsible-content">
           <div class="content-inner">
             <input type="hidden" name="whichform" id="whichform-dietary" value="dietary">
-            <!-- Vegan -->
-            <div class="form-group custom-control custom-checkbox">
-              <input name="vegan" type="checkbox" class="custom-control-input" id="vegan">
-              <label class="custom-control-label" for="vegan">Vegan</label>
-            </div>
 
-            <!-- Vegetarian -->
+            <!-- Generate Checkboxes -->
+            % for diet in allowed_diets:
             <div class="form-group custom-control custom-checkbox">
-              <input name="vegetarian" type="checkbox" class="custom-control-input" id="vegetarian">
-              <label class="custom-control-label" for="vegetarian">Vegetarian</label>
+              <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}">
+              <label class="custom-control-label" for="${diet}">${diet}</label>
             </div>
-
-            <!-- Dairy Free -->
-            <div class="form-group custom-control custom-checkbox">
-              <input name="dairy_free" type="checkbox" class="custom-control-input" id="dairy_free">
-              <label class="custom-control-label" for="dairy_free">Dairy-free</label>
-            </div>
-
-            <!-- Gluten free -->
-            <div class="form-group custom-control custom-checkbox">
-              <input name="gluten_free" type="checkbox" class="custom-control-input" id="gluten_free">
-              <label class="custom-control-label" for="gluten_free">Gluten-free</label>
-            </div>
+            % endfor
 
             <button class="btn btn-success" type="submit">
               <i class="fa fa-check" aria-hidden="true"></i> Save

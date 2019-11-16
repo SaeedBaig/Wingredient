@@ -12,6 +12,7 @@ from collections import Counter
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 import string
 
+from .dietinfo import allowed_diets
 
 BASE_DIR = "wingredient"
 TEMPLATE_DIR = abspath(f"{BASE_DIR}/templates")
@@ -26,6 +27,7 @@ login_manager.init_app(app)
 
 # must import User after initialising login manager
 from .user import User, create_account, load_user
+
 
 
 #################
@@ -427,5 +429,6 @@ def profile():
             pass
 
     return template.render(
-        password_msg = password_msg
+        allowed_diets = allowed_diets,
+        password_msg  = password_msg
     )
