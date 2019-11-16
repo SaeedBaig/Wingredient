@@ -92,7 +92,7 @@ class User:
                 conn.commit()
 
     def add_fav(self, recipe_id):
-        if not self.is_fav(recipe):
+        if not self.is_fav(recipe_id):
             with db.getconn() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(
