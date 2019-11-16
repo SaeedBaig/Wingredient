@@ -119,6 +119,34 @@ class User:
                 )
                 return cursor.fetchone() != None
 
+    def add_like(self, recipe_id):
+        if not self.is_like(recipe_id):
+            with db.getconn() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(
+                        '''INSERT INTO Likes VALUES (%s, %s);''',
+                        (self.username, recipe_id)
+                    )
+                    conn.commit()
+
+    def del_like(self, recipe_id):
+        with db.getconn() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    '''DELETE FROM Likes WHERE account=%s AND recipe=%s;''',
+                    (self.username, recipe_id)
+                )
+                conn.commit()
+
+    def is_like(self, recipe_id):
+        with db.getconn() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    '''SELECT * FROM Likes WHERE account=%s AND recipe=%s;''',
+                    (self.username, recipe_id)
+                )
+                return cursor.fetchone() != None
+
     def logout(self):
         self.authenticated = False
 

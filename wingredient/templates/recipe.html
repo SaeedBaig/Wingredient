@@ -11,6 +11,10 @@ Python variables that need to be passed in for this template to render correctly
 - equipment:    list of str (e.g. ['Bowl', 'Oven', 'Microwave'])
 - method:       list of str (e.g. ['Heat oven.', 'Fill tray.', 'Dice banana.'])
 - num_likes:    int (number of likes this recipe has)
+
+- is_like:      bool (whether this user likes this recipe)
+- is_favourite: bool (whether this user favourites this recipe)
+
 -->
 
 <!--Defines main language used by site (English)-->
@@ -114,6 +118,9 @@ Python variables that need to be passed in for this template to render correctly
       <form method="POST">
         <!-- Like button -->
         <button type="submit" class="btn btn-primary" name="button" value="like">
+          % if is_like:
+          UN
+          % endif
           <i class="fa fa-thumbs-up" aria-hidden="true"></i> ${num_likes}
         </button>
 
