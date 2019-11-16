@@ -94,7 +94,11 @@ Input fields for change password form:
             <!-- Generate Checkboxes -->
             % for diet in allowed_diets:
             <div class="form-group custom-control custom-checkbox">
+              % if diet in set(current_diets):
+              <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}" checked>
+              % else:
               <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}">
+              % endif
               <label class="custom-control-label" for="${diet}">${diet}</label>
             </div>
             % endfor

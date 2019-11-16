@@ -429,8 +429,11 @@ def profile():
         else:
             pass
 
+    current_diets = current_user.get_diets()
+
     return template.render(
         allowed_diets = allowed_diets,
+        current_diets = current_diets,
         password_msg  = password_msg,
         dietary_msg   = dietary_msg
    )
