@@ -103,7 +103,7 @@ DROP TABLE IF EXISTS DietInfo;
 CREATE TABLE DietInfo (
     account     varchar(32) references Account(username),
     diet        varchar(32),
-    primary key (account, preference)
+    primary key (account, diet)
 );
 
 DROP TABLE IF EXISTS Favourites;
