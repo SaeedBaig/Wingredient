@@ -90,7 +90,34 @@ class User:
                         (self.username, diet)
                     )
                 conn.commit()
-        
+
+    def add_fav(self, recipe_id):
+        if not self.is_fav(recipe):
+            with db.getconn() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(
+                        '''INSERT INTO Favourites VALUES (%s, %s);''',
+                        (self.username, recipe_id)
+                    )
+                    conn.commit()
+
+    def del_fav(self, recipe_id):
+        with db.getconn() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    '''DELETE FROM Favourites WHERE account=%s AND recipe=%s;''',
+                    (self.username, recipe_id)
+                )
+                conn.commit()
+
+    def is_fav(self, recipe_id):
+        with db.getconn() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    '''SELECT * FROM Favourites WHERE account=%s AND recipe=%s;''',
+                    (self.username, recipe_id)
+                )
+                return cursor.fetchone() != None
 
     def logout(self):
         self.authenticated = False
