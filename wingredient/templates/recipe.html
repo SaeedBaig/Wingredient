@@ -12,6 +12,7 @@ Python variables that need to be passed in for this template to render correctly
 - method:       list of str (e.g. ['Heat oven.', 'Fill tray.', 'Dice banana.'])
 - num_likes:    int (number of likes this recipe has)
 - num_dislikes: int (number of dislikes this recipe has)
+- rating:       int or None (percentage rating if there are likes)
 
 - is_like:      bool (whether this user likes this recipe)
 - is_favourite: bool (whether this user favourites this recipe)
@@ -127,8 +128,13 @@ Python variables that need to be passed in for this template to render correctly
           % if is_like:
           UN
           % endif
+
           <i class="fa fa-thumbs-up" aria-hidden="true"></i> ${num_likes}
+          % if rating != None:
+          (${rating}%)
+          % endif
         </button>
+
 
         <!-- Dislike button -->
         % if context.username != None:

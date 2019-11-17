@@ -13,6 +13,7 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 import string
 
 from .dietinfo import allowed_diets
+from .rating import get_num_likes, get_num_dislikes, get_rating
 
 BASE_DIR = "wingredient"
 TEMPLATE_DIR = abspath(f"{BASE_DIR}/templates")
@@ -288,8 +289,9 @@ def recipe(recipe_id):
         ingredients=ingredient_names,
         equipment=equipment_names,
         method=method,
-        num_likes=128,
-        num_dislikes=13,
+        num_likes=get_num_likes(recipe_id),
+        num_dislikes=get_num_dislikes(recipe_id),
+        rating=get_rating(recipe_id),
         is_favourite=is_favourite,
         is_like=is_like,
         is_dislike=is_dislike
