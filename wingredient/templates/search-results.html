@@ -80,7 +80,12 @@ Python variables that need to be passed in for this template to render correctly
                 <h5 class="card-title">${titles[i]}</h5>
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
-                    ${ratings[i]}% <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                    % if ratings[i] == None:
+                    0%
+                    % else:
+                    ${ratings[i]}% 
+                    % endif 
+                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                   </li>
                   <li class="list-group-item">
                     <i class="fa fa-clock-o" aria-hidden="true"></i>

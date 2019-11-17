@@ -13,6 +13,7 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 import string
 
 from .dietinfo import allowed_diets
+from .rating import get_num_likes, get_num_dislikes, get_rating
 
 BASE_DIR = "wingredient"
 TEMPLATE_DIR = abspath(f"{BASE_DIR}/templates")
@@ -117,7 +118,7 @@ def results():
         titles=[r[1] for r in _results],  # name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[80 for r in _results],
+        ratings=[get_rating(r[0]) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
         default='alphabetical'
@@ -144,7 +145,7 @@ def results_post():
         titles=[r[1] for r in _results],  #name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[80 for r in _results],
+        ratings=[get_rating(r[0]) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
         default=sort_option
@@ -222,18 +223,29 @@ def get_search():
 def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
 
-    # Handle the likes and fav buttons
+    # Handle the like, dislike, and fav buttons
     if request.method == "POST" and current_user.is_authenticated:
         if request.form["button"] == "favourite":
             if current_user.is_fav(recipe_id):
                 current_user.del_fav(recipe_id)
             else:
                 current_user.add_fav(recipe_id)
+
         elif request.form["button"] == "like":
             if current_user.is_like(recipe_id):
                 current_user.del_like(recipe_id)
             else:
+                if current_user.is_dislike(recipe_id):
+                    current_user.del_dislike(recipe_id)
                 current_user.add_like(recipe_id)
+
+        elif request.form["button"] == "dislike":
+            if current_user.is_dislike(recipe_id):
+                current_user.del_dislike(recipe_id)
+            else:
+                if current_user.is_like(recipe_id):
+                    current_user.del_like(recipe_id)
+                current_user.add_dislike(recipe_id)
 
     with db.getconn() as conn:
         with conn.cursor() as cursor:
@@ -266,6 +278,7 @@ def recipe(recipe_id):
 
     is_favourite = current_user.is_fav(recipe_id) if current_user.is_authenticated else False
     is_like      = current_user.is_like(recipe_id) if current_user.is_authenticated else False
+    is_dislike   = current_user.is_dislike(recipe_id) if current_user.is_authenticated else False
 
     return template.render(
         title=results[0],
@@ -276,9 +289,12 @@ def recipe(recipe_id):
         ingredients=ingredient_names,
         equipment=equipment_names,
         method=method,
-        num_likes=128,
+        num_likes=get_num_likes(recipe_id),
+        num_dislikes=get_num_dislikes(recipe_id),
+        rating=get_rating(recipe_id),
         is_favourite=is_favourite,
-        is_like=is_like
+        is_like=is_like,
+        is_dislike=is_dislike
     )
 
 
