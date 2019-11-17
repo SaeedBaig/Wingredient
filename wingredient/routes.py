@@ -118,7 +118,7 @@ def results():
         titles=[r[1] for r in _results],  # name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[80 for r in _results],
+        ratings=[get_rating(r[0]) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
         default='alphabetical'
@@ -145,7 +145,7 @@ def results_post():
         titles=[r[1] for r in _results],  #name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[80 for r in _results],
+        ratings=[get_rating(r[0]) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
         default=sort_option
