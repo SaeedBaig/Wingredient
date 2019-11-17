@@ -1,7 +1,10 @@
 -- method is an array of text outlining the steps of the recipe
 -- imageRef holds a file path to an image
 DROP TYPE IF EXISTS MeasurementTypes CASCADE;
-CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count', 'Tablespoon', 'Teaspoon', 'Cup');
+CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count');
+
+DROP TYPE IF EXISTS Recipe_MeasurementTypes CASCADE;
+CREATE TYPE Recipe_MeasurementTypes as ENUM('Tablespoon', 'Teaspoon', 'Cup');
 
 DROP TYPE IF EXISTS Difficulty CASCADE;
 CREATE TYPE Difficulty as ENUM('Easy', 'Intermediate', 'Hard');
@@ -50,6 +53,8 @@ CREATE TABLE RecipeToIngredient (
     recipe              integer references Recipe(id),
     ingredient          integer references Ingredient(id),
     quantity            numeric,
+    r_quantity          numeric,
+    r_measurement_type  Recipe_MeasurementTypes,
     description         text,
     notes               text,
     optional            boolean,

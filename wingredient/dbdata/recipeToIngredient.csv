@@ -63,7 +63,6 @@ recipe,ingredient,quantity,r_quantity,r_measurement_type,description,notes,optio
 6,43,250,,,brown,,true
 6,14,15,,,fresh,to serve,true
 6,23,1,,,,"halves, to serve",true
-7,6,1,3,Teaspoon,,,false
 7,46,500,,,,,false
 7,1,1,,,small,finely chopped,true
 7,2,2,,,,crushed,true
@@ -73,7 +72,7 @@ recipe,ingredient,quantity,r_quantity,r_measurement_type,description,notes,optio
 7,49,120,,,,,true
 7,29,1,0.25,Cup,flat-leaf,,true
 7,50,100,,,,halved,true
-7,6,1,2,Tablespoon,,"extra, to serve",true
+7,6,1,2.75,Tablespoon,,"extra, to serve",true
 7,51,1,,,,"wedges, to serve",true
 7,52,1,,,,to serve,true
 8,53,4,,,large field,,false
@@ -111,7 +110,6 @@ recipe,ingredient,quantity,r_quantity,r_measurement_type,description,notes,optio
 10,70,125,,,,,true
 10,71,1,2,Tablespoon,,,true
 10,6,1,2,Tablespoon,extra-virgin,,true
-10,29,1,1,Tablespoon,,finely chopped,true
 10,19,1,1,Tablespoon,,finely chopped,true
 10,51,0.5,,,,"rind finely grated, juiced",true
 11,46,500,,,,,false
@@ -180,7 +178,7 @@ recipe,ingredient,quantity,r_quantity,r_measurement_type,description,notes,optio
 15,101,1,1,Tablespoon,,,true
 15,75,5,,,mixed-colour,,true
 15,102,50,,,,,true
-15,38,6,,6,,,false
+15,38,6,,,,,false
 15,6,2,,,,,false
 15,30,20,,,,,true
 16,121,650,,,,,false
