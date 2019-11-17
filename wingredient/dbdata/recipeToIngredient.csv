@@ -1,224 +1,224 @@
-recipe,ingredient,quantity,description,notes,optional
-1,1,2,medium,,true
-1,2,2,,,true
-1,3,2,medium,,true
-1,4,2,sticks,,true
-1,5,2,,,true
-1,6,2,,,false
-1,7,1,,,true
-1,8,1,,,true
-1,9,1,,,true
-1,10,400,,,true
-1,11,400,,,true
-1,12,800,chopped,,false
-1,13,500,,,false
-1,14,15,,,true
-1,15,2,,,true
-2,16,1000,,,false
-2,17,2,,,true
-2,18,75,,,false
-2,19,0.33,fresh,,true
-2,20,0.33,fresh,,true
-2,6,2 ,extra virgin,,false
-2,21,1000,organic,,false
-2,22,125,,plus extra to serve,false
-2,7,0.5,,,true
-2,23,1,,,true
-3,24,200,dried,,false
-3,6,2,,,false
-3,25,600,,trimmed,false
-3,26,80,,chopped,false
-3,2,4,,finely chopped,true
-3,27,250,packet,,false
-3,28,0.25,pinch of dried,plus extra to serve,true
-3,29,0.33,finely chopped fresh continental,leaves,true
-3,30,50,finely shredded,to serve,true
-4,31,300,firm,,false
-4,32,450,fresh wide,,false
-4,33,2,,,false
-4,34,1.33,,,false
-4,35,1,bunch,"chopped, stems halved",true
-4,2,3,,crushed,true
-4,36,4,light and dark,2 of each,false
-4,37,2,,,true
-4,38,1,,lightly beaten,false
-5,34,1.5,,,false
-5,39,500,lean beef rump,cut accross the grain into thin strips,false
-5,1,1,,"halved, thinly sliced",true
-5,5,1,large,"cut into short, thin strips",true
-5,40,125,packet,halved lengthways,true
-5,41,1,bunch,cut into 4cm lengths,true
-5,122,1,,,true
-5,42,2,,,false
-5,36,1.5,,,true
-5,2,2,,crushed,true
-5,43,1,medium-grain white,"steamed, to serve",true
-6,44,3,yellow,,false
-6,22,400,can,,false
-6,41,1,bunch,"trimmed, halved lengthways",true
-6,40,125,packet,,true
-6,16,750,"deseeded, cut into 1cm-thick wedges",,true
-6,45,6,,trimmed,true
-6,31,300,firm,cut into 2cm pieces,true
-6,43,250,brown,,true
-6,14,15,fresh,to serve,true
-6,23,1,,"halves, to serve",true
-7,6,3,,,false
-7,46,500,,,false
-7,1,1,small,finely chopped,true
-7,2,2,,crushed,true
-7,47,1,,,true
-7,48,400,,split horizontally,true
-7,38,4,,lightly whisked,true
-7,49,120,,,true
-7,29,0.25,flat-leaf,,true
-7,50,100,,halved,true
-7,6,2,,"extra, to serve",true
-7,51,1,,"wedges, to serve",true
-7,52,1,,to serve,true
-8,53,4,large field,,false
-8,36,2,sweet,,true
-8,54,2,,,true
-8,69,1,,"stoned, peeled, mashed",true
-8,55,2,,,true
-8,56,1,,,true
-8,57,4,Harvest Grain,"split, toasted",false
-8,58,80,,finely shredded,true
-8,3,1,,"peeled, finely shredded",true
-8,59,20,alfafa,,true
-9,123,500,,,false
-9,2,2,,crushed,true
-9,29,2,,chopped,true
-9,60,1,,chopped,true
-9,30,25,,finely grated,true
-9,61,140,,,true
-9,6,1,,,false
-9,1,1,small,finely chopped,true
-9,62,700,,,false
-9,24,500,gluten free,,false
-10,63,1800,,,false
-10,51,1,,"rind finely grated, juiced",false
-10,64,1,,finely chopped,true
-10,2,2,,finely chopped,true
-10,65,1.5,smoked,,true
-10,6,100,extra virgin,,true
-10,66,3,,"cobs, husks and silk removed",true
-10,67,3,,ends trimmed,true
-10,68,2,,"trimmed, cut into wedges",true
-10,29,0.5,,,true
-10,20,0.5,,,true
-10,69,1,,"stoned, peeled, sliced",true
-10,70,125,,,true
-10,71,2,,,true
-10,6,2,extra-virgin,,true
-10,29,1,,finely chopped,true
-10,19,1,,finely chopped,true
-10,51,0.5,,"rind finely grated, juiced",true
-11,46,500,,,false
-11,1,1,,grated,true
-11,72,0.25,panko,,true
-11,9,0.5,,,true
-11,2,2,,crushed,true
-11,14,2,,,true
-11,73,420,,,true
-11,43,1,Basmati,,true
-11,74,1.5,,liquid,true
-11,6,2,extra virgin,,true
-11,71,0.5,,,true
-11,75,3,,,true
-11,8,2,,,true
-11,76,2,,,true
-11,65,2,,,true
-11,77,0.5,,,true
-11,78,2,,,true
-11,79,0.5,Ground Black,,true
-12,80,270,packet,,false
-12,81,125,,,true
-12,82,60,,,true
-12,83,3,,,true
-12,67,2,,thinly sliced,true
-12,54,2,,toasted,true
-12,84,4,skinless,portions,false
-12,85,4,,thinly sliced,true
-12,86,4,,peeled into ribbons,true
-12,69,1,ripe,"stoned, peeled, thinly sliced",true
-12,3,1,large,"peeled, cut, into long matchsticks",true
-12,58,120,,finely shredded,true
-13,31,500,firm,,true
-13,87,0.66,,,true
-13,36,0.33,,,true
-13,88,0.33,,,true
-13,89,2,,,true
-13,90,1,,,true
-13,18,1,fresh small,"peeled, finely grated",true
-13,2,2,,crushed,true
-13,92,0.5,,,true
-13,93,1,,for deep-frying,true
-13,94,150,,"trimmed, halved diagonally",true
-13,40,400,spears,"drained, rinsed",true
-13,91,1,fresh,chopped,true
-13,43,1,steamed jasmine,to serve,true
-13,54,1,toasted,to serve,true
-13,14,1,fresh,to serve,true
-14,6,2.5,extra virgin,,true
-14,2,3,,thinly sliced,true
-14,95,150,,,true
-14,96,150,,,true
-14,10,425,,"rinsed, drained",true
-14,51,1,,"rind finely grated, juiced",true
-14,97,0.5,,,true
-14,28,0.25,dried,,true
-14,38,4,,,true
-14,50,200,,,true
-14,98,0.5,,finely chopped,true
-14,99,0.5,,finely chopped,true
-14,71,1,,to serve,true
-15,100,2,chipotle,,true
-15,23,2,,,true
-15,67,4,,,true
-15,14,1,bunch of fresh,,true
-15,101,1,,,true
-15,75,5,mixed-colour,,true
-15,102,50,,,true
-15,38,6,,,false
-15,6,2,,,false
-15,30,20,,,true
-16,121,650,,,false
-16,103,260,,cut into 2cm pieces,true
-16,104,250,,halved,false
-16,105,250,dried fusilli,,false
-16,98,1,small,thinly sliced,true
-16,106,2,,toasted,true
-16,107,1,,to serve,true
-16,69,1,ripe,chopped,true
-16,29,1,bunch of fresh,leaves picked,true
-16,2,2,,chopped,true
-16,51,60,fresh,,true
-16,6,2,extra virgin,,true
-17,108,400,packet,,true
-17,46,500,,,false
-17,109,500,,liquid,false
-17,110,700,,"peeled, chopped",false
-17,111,120,soft,,true
-18,112,400,smoked,"skin removed, shredded",false
-18,113,160,,shredded,true
-18,103,1,bunch,"trimmed, thinly sliced",true
-18,114,2,small,thinly sliced,true
-18,58,0.25,small,shredded,true
-18,115,2,sheets,torn,true
-18,56,3,,,true
-18,116,1.5,salt-reduced,,true
-18,36,1.5,,,true
-18,83,2,,,true
-18,54,1,white and black,to serve,true
-19,36,1,,,true
-19,117,1,,,true
-19,18,1,,,true
-19,25,500,,cut into 3cm pieces,true
-19,93,1,,to deep-fry,true
-19,33,130,,,true
-19,118,2,,,true
-20,118,1,,,false
-20,78,.125,,,true
-20,38,1,,,false
-20,119,1,,,false
+recipe,ingredient,quantity,r_quantity,r_measurement_type,description,notes,optional
+1,1,2,,,medium,,true
+1,2,2,,,,,true
+1,3,2,,,medium,,true
+1,4,2,,,sticks,,true
+1,5,2,,,red,,true
+1,6,1,2,Tablespoon,,,false
+1,7,1,1,Teaspoon,,,true
+1,8,1,1,Teaspoon,,,true
+1,9,1,1,Teaspoon,,,true
+1,10,400,,,,,true
+1,11,400,,,,,true
+1,12,800,,,chopped,,false
+1,13,500,,,,,false
+1,14,15,,,,,true
+1,15,1,2,Tablespoon,,,true
+2,16,1000,,,,,false
+2,17,2,,,,,true
+2,18,75,,,,,false
+2,19,1,0.33,Teaspoon,fresh,,true
+2,20,1,0.33,Teaspoon,fresh,,true
+2,6,1,2,Tablespoon,extra virgin,,false
+2,21,1000,,,organic,,false
+2,22,125,,,,plus extra to serve,false
+2,7,1,0.5,Tablespoon,,,true
+2,23,1,,,,,true
+3,24,200,,,dried,,false
+3,6,1,2,Teaspoon,,,false
+3,25,600,,,,trimmed,false
+3,26,80,,,,chopped,false
+3,2,4,,,,finely chopped,true
+3,27,250,,,packet,,false
+3,28,1,0.25,Teaspoon,pinch of dried,plus extra to serve,true
+3,29,1,0.33,Cup,finely chopped fresh continental,leaves,true
+3,30,50,,,finely shredded,to serve,true
+4,31,300,,,firm,,false
+4,32,450,,,fresh wide,,false
+4,33,2,,,,,false
+4,34,1,1.33,Cup,,,false
+4,35,1,,,bunch,"chopped, stems halved",true
+4,2,3,,,,crushed,true
+4,36,1,4,Tablespoon,light and dark,2 of each,false
+4,37,1,2,Tablespoon,,,true
+4,38,1,,,,lightly beaten,false
+5,34,1,1.5,Tablespoon,,,false
+5,39,500,,,lean beef rump,cut accross the grain into thin strips,false
+5,1,1,,,,"halved, thinly sliced",true
+5,5,1,,,large,"cut into short, thin strips",true
+5,40,125,,,packet,halved lengthways,true
+5,41,1,,,bunch,cut into 4cm lengths,true
+5,122,1,1,Tablespoon,,,true
+5,42,1,2,Tablespoon,,,false
+5,36,1,1.5,Tablespoon,,,true
+5,2,2,,,,crushed,true
+5,43,1,,,medium-grain white,"steamed, to serve",true
+6,44,1,3,Tablespoon,yellow,,false
+6,22,400,,,can,,false
+6,41,1,,,bunch,"trimmed, halved lengthways",true
+6,40,125,,,packet,,true
+6,16,750,,,"deseeded, cut into 1cm-thick wedges",,true
+6,45,6,,,,trimmed,true
+6,31,300,,,firm,cut into 2cm pieces,true
+6,43,250,,,brown,,true
+6,14,15,,,fresh,to serve,true
+6,23,1,,,,"halves, to serve",true
+7,6,1,3,Teaspoon,,,false
+7,46,500,,,,,false
+7,1,1,,,small,finely chopped,true
+7,2,2,,,,crushed,true
+7,47,1,1,Teaspoon,,,true
+7,48,400,,,,split horizontally,true
+7,38,4,,,,lightly whisked,true
+7,49,120,,,,,true
+7,29,1,0.25,Cup,flat-leaf,,true
+7,50,100,,,,halved,true
+7,6,1,2,Tablespoon,,"extra, to serve",true
+7,51,1,,,,"wedges, to serve",true
+7,52,1,,,,to serve,true
+8,53,4,,,large field,,false
+8,36,1,2,Tablespoon,sweet,,true
+8,54,1,2,Teaspoon,,,true
+8,69,1,,,,"stoned, peeled, mashed",true
+8,55,1,2,Teaspoon,,,true
+8,56,1,1,Teaspoon,,,true
+8,57,4,,,Harvest Grain,"split, toasted",false
+8,58,80,,,,finely shredded,true
+8,3,1,,,,"peeled, finely shredded",true
+8,59,20,,,alfafa,,true
+9,123,500,,,,,false
+9,2,2,,,,crushed,true
+9,29,1,2,Tablespoon,,chopped,true
+9,60,1,1,Tablespoon,,chopped,true
+9,30,25,,,,finely grated,true
+9,61,140,,,,,true
+9,6,1,1,Tablespoon,,,false
+9,1,1,,,small,finely chopped,true
+9,62,700,,,,,false
+9,24,500,,,gluten free,,false
+10,63,1800,,,,,false
+10,51,1,,,,"rind finely grated, juiced",false
+10,64,1,1,Tablespoon,,finely chopped,true
+10,2,2,,,,finely chopped,true
+10,65,1,1.5,Teaspoon,smoked,,true
+10,6,100,100,,extra virgin,,true
+10,66,3,,,,"cobs, husks and silk removed",true
+10,67,3,,,,ends trimmed,true
+10,68,2,,,,"trimmed, cut into wedges",true
+10,29,1,0.5,Cup,,,true
+10,20,1,0.5,Cup,,,true
+10,69,1,,,,"stoned, peeled, sliced",true
+10,70,125,,,,,true
+10,71,1,2,Tablespoon,,,true
+10,6,1,2,Tablespoon,extra-virgin,,true
+10,29,1,1,Tablespoon,,finely chopped,true
+10,19,1,1,Tablespoon,,finely chopped,true
+10,51,0.5,,,,"rind finely grated, juiced",true
+11,46,500,,,,,false
+11,1,1,,,,grated,true
+11,72,25,0.25,Cup,panko,,true
+11,9,1,0.5,Teaspoon,,,true
+11,2,2,,,,crushed,true
+11,14,2,,,,,true
+11,73,420,,,,,true
+11,43,1,,,Basmati,,true
+11,74,375,,,,liquid,true
+11,6,1,2,Tablespoon,extra virgin,,true
+11,71,125,0.5,Cup,,,true
+11,75,3,,,,,true
+11,8,1,2,Teaspoon,,,true
+11,76,1,2,Teaspoon,,,true
+11,65,1,2,Teaspoon,,,true
+11,77,1,0.5,Teaspoon,,,true
+11,78,1,2,Teaspoon,,,true
+11,79,1,0.5,Teaspoon,Ground Black,,true
+12,80,270,,,packet,,false
+12,81,125,,,,,true
+12,82,60,,,,,true
+12,83,1,3,Teaspoon,,,true
+12,67,2,,,,thinly sliced,true
+12,54,1,2,Tablespoon,,toasted,true
+12,84,4,,,skinless,portions,false
+12,85,4,,,,thinly sliced,true
+12,86,4,,,,peeled into ribbons,true
+12,69,1,,,ripe,"stoned, peeled, thinly sliced",true
+12,3,1,,,large,"peeled, cut, into long matchsticks",true
+12,58,120,,,,finely shredded,true
+13,31,500,,,firm,,true
+13,87,250,1,Cup,,,true
+13,36,1,0.33,Cup,,,true
+13,88,1,0.33,Cup,,,true
+13,89,1,2,Tablespoon,,,true
+13,90,1,1,Tablespoon,,,true
+13,18,1,,,fresh small,"peeled, finely grated",true
+13,2,2,,,,crushed,true
+13,92,0.5,,,,,true
+13,93,1,,,,for deep-frying,true
+13,94,150,,,,"trimmed, halved diagonally",true
+13,40,400,,,spears,"drained, rinsed",true
+13,91,1,1,Tablespoon,fresh,chopped,true
+13,43,1,,,steamed jasmine,to serve,true
+13,54,1,,,toasted,to serve,true
+13,14,1,,,fresh,to serve,true
+14,6,1,2.5,Tablespoon,extra virgin,,true
+14,2,3,,,,thinly sliced,true
+14,95,150,,,,,true
+14,96,150,,,,,true
+14,10,425,,,,"rinsed, drained",true
+14,51,1,,,,"rind finely grated, juiced",true
+14,97,1,0.5,Teaspoon,,,true
+14,28,1,0.25,Teaspoon,dried,,true
+14,38,4,,,,,true
+14,50,200,,,,,true
+14,98,0.5,,,,finely chopped,true
+14,99,0.5,,,,finely chopped,true
+14,71,1,,,,to serve,true
+15,100,1,2,Teaspoon,chipotle,,true
+15,23,2,,,,,true
+15,67,4,,,,,true
+15,14,1,,,bunch of fresh,,true
+15,101,1,1,Tablespoon,,,true
+15,75,5,,,mixed-colour,,true
+15,102,50,,,,,true
+15,38,6,,6,,,false
+15,6,2,,,,,false
+15,30,20,,,,,true
+16,121,650,,,,,false
+16,103,260,,,,cut into 2cm pieces,true
+16,104,250,,,,halved,false
+16,105,250,,,dried fusilli,,false
+16,98,1,,,small,thinly sliced,true
+16,106,1,2,Tablespoon,,toasted,true
+16,107,1,,,,to serve,true
+16,69,1,,,ripe,chopped,true
+16,29,1,,,bunch of fresh,leaves picked,true
+16,2,2,,,,chopped,true
+16,51,60,,,fresh,,true
+16,6,1,2,Tablespoon,extra virgin,,true
+17,108,400,,,packet,,true
+17,46,500,,,,,false
+17,109,500,,,,liquid,false
+17,110,700,,,,"peeled, chopped",false
+17,111,120,,,soft,,true
+18,112,400,,,smoked,"skin removed, shredded",false
+18,113,160,,,,shredded,true
+18,103,1,,,bunch,"trimmed, thinly sliced",true
+18,114,2,,,small,thinly sliced,true
+18,58,0.25,,,small,shredded,true
+18,115,2,,,sheets,torn,true
+18,56,1,3,Teaspoon,,,true
+18,116,1,1.5,Tablespoon,salt-reduced,,true
+18,36,1,1.5,Teaspoon,,,true
+18,83,1,2,Teaspoon,,,true
+18,54,1,,,white and black,to serve,true
+19,36,1,1,Tablespoon,,,true
+19,117,1,1,Tablespoon,,,true
+19,18,1,1,Tablespoon,,,true
+19,25,500,,,,cut into 3cm pieces,true
+19,93,1,,,,to deep-fry,true
+19,33,130,,,,,true
+19,118,1,2,Tablespoon,,,true
+20,118,1,1,Cup,,,false
+20,78,1,0.125,Teaspoon,,,true
+20,38,1,,,,,false
+20,119,250,,,,,false
