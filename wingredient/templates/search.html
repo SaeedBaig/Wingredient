@@ -91,6 +91,25 @@ Names of input fields to recieve in the Python backend:
         </script>
       </div>
 
+      <!-- Pantry only -->
+      % if context.username == None:
+        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="right" title="Login to use your pantry">
+          <div class="form-group custom-control custom-checkbox">
+            <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only" disabled>
+            <label class="custom-control-label" for="pantry_only">
+              Include ingredients from pantry
+            </label>
+          </div>
+        </span>
+      % else:
+        <div class="form-group custom-control custom-checkbox">
+          <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
+          <label class="custom-control-label" for="pantry_only">
+            Include ingredients from pantry
+          </label>
+        </div>
+      % endif
+
       <!-- Search terms -->
       ${collapsible_form('Search terms', '<i class="fa fa-book" aria-hidden="true"></i>', """
         <div class='col-sm-5'>
@@ -155,21 +174,6 @@ Names of input fields to recieve in the Python backend:
         </label>
         <div class="collapsible-content">
           <div class="content-inner">
-
-            <!-- Pantry only -->
-            % if context.username == None:
-              <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="top" title="Login to use your pantry">
-                <div class="form-group custom-control custom-checkbox">
-                  <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only" disabled>
-                  <label class="custom-control-label" for="pantry_only">Pantry only</label>
-                </div>
-              </span>
-            % else:
-              <div class="form-group custom-control custom-checkbox">
-                <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
-                <label class="custom-control-label" for="pantry_only">Pantry only</label>
-              </div>
-            % endif
 
             <!-- Generate Dietary Checkboxes -->
             % for diet in allowed_diets:
