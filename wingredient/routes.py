@@ -253,13 +253,16 @@ def recipe(recipe_id):
             cursor.execute(query, (recipe_id,))
             results = cursor.fetchone()
 
-            query = "SELECT ingredient FROM recipetoingredient WHERE recipe = %s;"
+            #query = "SELECT ingredient FROM recipetoingredient WHERE recipe = %s;"
+            #cursor.execute(query, (recipe_id,))
+            #ingredient_index_tuple = tuple([i[0] for i in cursor.fetchall()])   # tuple of ingredient indexes in recipe
+            query = "SELECT rti.quantity, i.name FROM ingredient i, recipetoingredient rti WHERE i.id = rti.ingredient AND rti.recipe = %s;"
             cursor.execute(query, (recipe_id,))
-            ingredient_index_tuple = tuple([i[0] for i in cursor.fetchall()])   # tuple of ingredient indexes in recipe
-            query = "SELECT name FROM ingredient WHERE id in %s;"
-            cursor.execute(query, (ingredient_index_tuple,))
-            ingredient_names = tuple([i[0] for i in cursor.fetchall()])
-            print(ingredient_names)
+            #ir = for row in cursor.fetchall()
+            ires = cursor.fetchall() 
+            ingredient_results = list(map(" ".join, ([(str(i[0]), i[1]) for i in ires])))
+            #for x in ingredient_results:
+            #    print(x[0], x[1])
 
             query = "SELECT equipment FROM recipetoequipment WHERE recipe = %s;"
             cursor.execute(query, (recipe_id,))
@@ -286,7 +289,7 @@ def recipe(recipe_id):
         image_alt=results[4],
         cooking_time_in_minutes=results[1],
         difficulty=results[2],  # can be 'Easy', 'Medium', or 'Hard'
-        ingredients=ingredient_names,
+        ingredients=ingredient_results,
         equipment=equipment_names,
         method=method,
         num_likes=get_num_likes(recipe_id),
