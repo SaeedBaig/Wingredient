@@ -5,7 +5,7 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from os.path import abspath
-from werkzeug.datastructures import ImmutableMultiDict 
+from werkzeug.datastructures import ImmutableMultiDict
 from . import db
 from .pantry import *
 from collections import Counter
@@ -121,6 +121,8 @@ def results():
         ratings=[get_rating(r[0]) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
+        difficulties=[r[6] for r in _results],
+        dietary_tags=[r[7] for r in _results],
         default='alphabetical'
     )
 
@@ -148,6 +150,8 @@ def results_post():
         ratings=[get_rating(r[0]) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
+        difficulties=[r[6] for r in _results],
+        dietary_tags=[r[7] for r in _results],
         default=sort_option
     )
 
@@ -197,6 +201,8 @@ def get_search():
                   r.description,
                   r.imageref,
                   r.serving,
+                  r.difficulty,
+                  r.dietary_tags,
                   ic.compulsory_ingredient_count,
                   (
                     {missing_ingredient_count_expr}
@@ -416,7 +422,7 @@ def pantry():
         ingredient_info = get_ingredient_info_from_ids(ingredient_ids)
     else:
         ingredient_info = []
-        
+
     return template.render(
         error="none",
         all_ingredients = [r[0] for r in all_ingredients_results],

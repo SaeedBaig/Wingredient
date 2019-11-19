@@ -91,6 +91,30 @@ Python variables that need to be passed in for this template to render correctly
                     <i class="fa fa-clock-o" aria-hidden="true"></i>
                     ${cooking_times_in_minutes[i]} minutes
                   </li>
+                  <script>
+                    % if difficulties[i] == 'Easy':
+                    <%
+                      difficulty_color="green"
+                    %>
+                    % elif difficulties[i] == 'Intermediate':
+                    <%
+                      difficulty_color="orange"
+                    %>
+                    % elif difficulties[i] == 'Hard':
+                    <%
+                      difficulty_color="red"
+                    %>
+                    % else:
+                    <%
+                      ## It should never be black, but this is here just to prevent the
+                      ## page from crashing
+                      difficulty_color="black"
+                    %>
+                    % endif
+                  </script>
+                  <li class="list-group-item" style="color: ${difficulty_color};">
+                    ${difficulties[i]}
+                  </li>
                 </ul>
               </div>
             </div>
