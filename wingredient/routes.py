@@ -227,6 +227,10 @@ def format_quantity(quantity):
     quantity = str(Fraction(quantity))
     return quantity
 
+def format_measurement(measurement):
+    if measurement == 'Count': measurement = ''
+    return measurement
+
 @app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
 def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
@@ -267,12 +271,12 @@ def recipe(recipe_id):
 
 
 # SELECT i.name, rti.quantity, rti.r_quantity, (CASE WHEN (rti.r_quantity IS NULL) THEN rti.quantity ELSE rti.r_quantity END) as modified_quantity FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = 1;
-            query = "SELECT (COALESCE(rti.r_quantity, rti.quantity)) as quantity, (COALESCE(rti.r_measurement_type::text, i.measurement_type::text)) as measurement_type, i.name, Replace(i.measurement_type::text, 'Count', '') FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = %s;"
+            query = "SELECT (COALESCE(rti.r_quantity, rti.quantity)) as quantity, (COALESCE(rti.r_measurement_type::text, i.measurement_type::text)) as measurement_type, i.name FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = %s;"
             #query = "SELECT rti.quantity, i.measurement_type, rti.r_quantity, rti.r_measurement_type, i.name FROM ingredient i, recipetoingredient rti WHERE i.id = rti.ingredient AND rti.recipe = %s;"
             cursor.execute(query, (recipe_id,))
             #ir = for row in cursor.fetchall()
             ires = cursor.fetchall() 
-            ires = ([(format_quantity(i[0]), i[1], i[2]) for i in ires])  
+            ires = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in ires])  
             ingredient_results = list(map(" ".join,ires))
 
 
