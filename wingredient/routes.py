@@ -219,6 +219,11 @@ def get_search():
 ###########################
 ### SEARCH RECIPE PAGE ####
 ###########################
+def convert_measurement(m):
+    if m == 'Count':
+        m = ''
+    return m
+
 @app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
 def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
@@ -256,11 +261,15 @@ def recipe(recipe_id):
             #query = "SELECT ingredient FROM recipetoingredient WHERE recipe = %s;"
             #cursor.execute(query, (recipe_id,))
             #ingredient_index_tuple = tuple([i[0] for i in cursor.fetchall()])   # tuple of ingredient indexes in recipe
-            query = "SELECT rti.quantity, i.name FROM ingredient i, recipetoingredient rti WHERE i.id = rti.ingredient AND rti.recipe = %s;"
+            query = "SELECT rti.quantity, i.measurement_type, i.name FROM ingredient i, recipetoingredient rti WHERE i.id = rti.ingredient AND rti.recipe = %s;"
             cursor.execute(query, (recipe_id,))
             #ir = for row in cursor.fetchall()
             ires = cursor.fetchall() 
-            ingredient_results = list(map(" ".join, ([(str(i[0]), i[1]) for i in ires])))
+            ires = ([(str(i[0]), convert_measurement(i[1]), i[2]) for i in ires])  
+            ingredient_results = list(map(" ".join,ires))
+
+
+           # ingredient_results = list(map(" ".join, ([(str(i[0]), i[1], i[2]) for i in ires])))
             #for x in ingredient_results:
             #    print(x[0], x[1])
 
