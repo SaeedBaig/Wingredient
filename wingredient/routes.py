@@ -5,15 +5,15 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from os.path import abspath
-
-from werkzeug.datastructures import ImmutableMultiDict
-
+from werkzeug.datastructures import ImmutableMultiDict 
 from . import db
 from .pantry import *
 from collections import Counter
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 import string
 
+from .dietinfo import allowed_diets
+from .rating import get_num_likes, get_num_dislikes, get_rating
 
 BASE_DIR = "wingredient"
 TEMPLATE_DIR = abspath(f"{BASE_DIR}/templates")
@@ -28,6 +28,7 @@ login_manager.init_app(app)
 
 # must import User after initialising login manager
 from .user import User, create_account, load_user
+
 
 
 #################
@@ -57,7 +58,7 @@ def search():
             url_args["pantry_only"] = True
 
         dietary_tags = 0
-        for i, checkbox in enumerate(("vegetarian", "vegan", "gluten_free", "dairy_free")):
+        for i, checkbox in enumerate(allowed_diets):
             if request.form.get(checkbox):
                 dietary_tags |= 1 << i
 
@@ -82,8 +83,12 @@ def search():
     # (Don't worry it gets updated automatically as )
     Context.username = current_user.get_id() if current_user.is_authenticated else None
 
+    current_diets = current_user.get_diets() if current_user.is_authenticated else []
+
     return template.render(
-        ingredients=[r[0] for r in results]
+        ingredients=[r[0] for r in results],
+        allowed_diets = allowed_diets,
+        current_diets = current_diets
     )
 
 
@@ -113,7 +118,7 @@ def results():
         titles=[r[1] for r in _results],  # name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[80 for r in _results],
+        ratings=[get_rating(r[0]) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
         default='alphabetical'
@@ -140,7 +145,7 @@ def results_post():
         titles=[r[1] for r in _results],  #name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[80 for r in _results],
+        ratings=[get_rating(r[0]) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
         default=sort_option
@@ -214,9 +219,33 @@ def get_search():
 ###########################
 ### SEARCH RECIPE PAGE ####
 ###########################
-@app.route("/recipe/<int:recipe_id>")
+@app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
 def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
+
+    # Handle the like, dislike, and fav buttons
+    if request.method == "POST" and current_user.is_authenticated:
+        if request.form["button"] == "favourite":
+            if current_user.is_fav(recipe_id):
+                current_user.del_fav(recipe_id)
+            else:
+                current_user.add_fav(recipe_id)
+
+        elif request.form["button"] == "like":
+            if current_user.is_like(recipe_id):
+                current_user.del_like(recipe_id)
+            else:
+                if current_user.is_dislike(recipe_id):
+                    current_user.del_dislike(recipe_id)
+                current_user.add_like(recipe_id)
+
+        elif request.form["button"] == "dislike":
+            if current_user.is_dislike(recipe_id):
+                current_user.del_dislike(recipe_id)
+            else:
+                if current_user.is_like(recipe_id):
+                    current_user.del_like(recipe_id)
+                current_user.add_dislike(recipe_id)
 
     with db.getconn() as conn:
         with conn.cursor() as cursor:
@@ -242,11 +271,14 @@ def recipe(recipe_id):
                 cursor.execute(query, (equipment_index_tuple,))
                 equipment_names = tuple([e[0] for e in cursor.fetchall()])
 
-
     print(results)
 
     method = str.split(results[3], "|")
     print(method)
+
+    is_favourite = current_user.is_fav(recipe_id) if current_user.is_authenticated else False
+    is_like      = current_user.is_like(recipe_id) if current_user.is_authenticated else False
+    is_dislike   = current_user.is_dislike(recipe_id) if current_user.is_authenticated else False
 
     return template.render(
         title=results[0],
@@ -257,7 +289,12 @@ def recipe(recipe_id):
         ingredients=ingredient_names,
         equipment=equipment_names,
         method=method,
-        num_likes=128,
+        num_likes=get_num_likes(recipe_id),
+        num_dislikes=get_num_dislikes(recipe_id),
+        rating=get_rating(recipe_id),
+        is_favourite=is_favourite,
+        is_like=is_like,
+        is_dislike=is_dislike
     )
 
 
@@ -390,3 +427,51 @@ def pantry():
         m_types=[r[1] for r in all_ingredients_results],
         username=current_user.get_id() if current_user.is_authenticated else None
     )
+
+
+#########################
+### USER PROFILE PAGE ###
+#########################
+@app.route("/profile", methods=["POST", "GET"])
+@login_required
+def profile():
+    template = LOOKUP.get_template("profile.html")
+
+    password_msg = None
+    dietary_msg = None
+
+    if request.method == "POST":
+        whichform = request.form["whichform"]
+        if whichform == "dietary":
+            diets = set(request.form.keys()).intersection(set(allowed_diets))
+            current_user.set_diets(diets)
+            dietary_msg = "Diets set successfully."
+
+        elif whichform == "password":
+            password_error         = None
+            current_password       = request.form["current_password"]
+            new_password           = request.form["new_password"]
+            new_password_duplicate = request.form["new_password_duplicate"]
+
+            if not current_user.check_password(current_password):
+                password_error = "Current password incorrect."
+
+            if new_password != new_password_duplicate:
+                password_error = "New passwords do not match."
+
+            if password_error == None:
+                current_user.set_password(new_password)
+                password_msg = "Password changed successfully."
+            else:
+                password_msg = password_error
+        else:
+            pass
+
+    current_diets = current_user.get_diets()
+
+    return template.render(
+        allowed_diets = allowed_diets,
+        current_diets = current_diets,
+        password_msg  = password_msg,
+        dietary_msg   = dietary_msg
+   )

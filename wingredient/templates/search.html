@@ -3,6 +3,8 @@
 <!--
 Python variables that need to be passed in for this template to render correctly:
 - ingredients:  list of str (e.g. ['Milk', 'Eggs', 'Sugar'])
+- allowed_diets
+- current_diets
 -->
 
 <!--
@@ -89,6 +91,25 @@ Names of input fields to recieve in the Python backend:
         </script>
       </div>
 
+      <!-- Pantry only -->
+      % if context.username == None:
+        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="right" title="Login to use your pantry">
+          <div class="form-group custom-control custom-checkbox">
+            <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only" disabled>
+            <label class="custom-control-label" for="pantry_only">
+              Include ingredients from pantry
+            </label>
+          </div>
+        </span>
+      % else:
+        <div class="form-group custom-control custom-checkbox">
+          <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
+          <label class="custom-control-label" for="pantry_only">
+            Include ingredients from pantry
+          </label>
+        </div>
+      % endif
+
       <!-- Search terms -->
       ${collapsible_form('Search terms', '<i class="fa fa-book" aria-hidden="true"></i>', """
         <div class='col-sm-5'>
@@ -154,60 +175,34 @@ Names of input fields to recieve in the Python backend:
         <div class="collapsible-content">
           <div class="content-inner">
 
-            <!-- Pantry only -->
-            % if context.username == None:
-              <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="top" title="Login to use your pantry">
-                <div class="form-group custom-control custom-checkbox">
-                  <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only" disabled>
-                  <label class="custom-control-label" for="pantry_only">Pantry only</label>
-                </div>
-              </span>
-            % else:
-              <div class="form-group custom-control custom-checkbox">
-                <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
-                <label class="custom-control-label" for="pantry_only">Pantry only</label>
-              </div>
-            % endif
-
-            <!-- Vegan -->
+            <!-- Generate Dietary Checkboxes -->
+            % for diet in allowed_diets:
             <div class="form-group custom-control custom-checkbox">
-              <input name="vegan" type="checkbox" class="custom-control-input" id="vegan">
-              <label class="custom-control-label" for="vegan">Vegan</label>
+              % if diet in set(current_diets):
+              <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}" checked>
+              % else:
+              <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}">
+              % endif
+              <label class="custom-control-label" for="${diet}">${diet}</label>
             </div>
-
-            <!-- Vegetarian -->
-            <div class="form-group custom-control custom-checkbox">
-              <input name="vegetarian" type="checkbox" class="custom-control-input" id="vegetarian">
-              <label class="custom-control-label" for="vegetarian">Vegetarian</label>
-            </div>
-
-            <!-- Dairy Free -->
-            <div class="form-group custom-control custom-checkbox">
-              <input name="dairy_free" type="checkbox" class="custom-control-input" id="dairy_free">
-              <label class="custom-control-label" for="dairy_free">Dairy-free</label>
-            </div>
-
-            <!-- Gluten free -->
-            <div class="form-group custom-control custom-checkbox">
-              <input name="gluten_free" type="checkbox" class="custom-control-input" id="gluten_free">
-              <label class="custom-control-label" for="gluten_free">Gluten-free</label>
-            </div>
+            % endfor
 
           </div>
         </div>
       </div>
 
-      <!-- Submit button -->
-      <br>
-      <button class="btn btn-success" type="submit">
-        <i class="fa fa-search" aria-hidden="true"></i> Search
-      </button>
-      &nbsp;
-
       <!-- Reset button -->
+      <br>
       <button class="btn btn-danger" type="reset">
         <i class="fa fa-undo" aria-hidden="true"></i> Reset
       </button>
+      &nbsp;
+
+      <!-- Submit button -->
+      <button class="btn btn-success" type="submit">
+        <i class="fa fa-search" aria-hidden="true"></i> Search
+      </button>
+
     </form>
 
   </center>

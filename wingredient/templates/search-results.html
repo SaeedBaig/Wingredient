@@ -20,7 +20,7 @@ Python variables that need to be passed in for this template to render correctly
   <!--Makes webpage size adapt to device's screen size-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Non-Mako dependent styling from this file -->
+  <!-- Non-Mako-dependent styling from this file -->
   <link rel="stylesheet" href="../static/search-results.css">
 
   <%include file="/site_wide.html"/>
@@ -70,17 +70,22 @@ Python variables that need to be passed in for this template to render correctly
 
     <!-- Search results -->
       % for i in range(len(titles)):
-        <div class="card mb-3">
+        <div class="card border-secondary mb-3">
           <div class="row no-gutters">
             <div class="col-md-5">
-              <img src="${image_paths[i]}" class="card-img" height="250" alt="${image_alts[i]}">
+              <img src="${image_paths[i]}" class="card-img" height="250" alt="${image_alts[i]}" onerror="this.onerror=null; this.src='../static/no_photo.png';">
             </div>
             <div class="col-md-7">
               <div class="card-body">
                 <h5 class="card-title">${titles[i]}</h5>
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
-                    ${ratings[i]}% <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                    % if ratings[i] == None:
+                    0%
+                    % else:
+                    ${ratings[i]}%
+                    % endif
+                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                   </li>
                   <li class="list-group-item">
                     <i class="fa fa-clock-o" aria-hidden="true"></i>

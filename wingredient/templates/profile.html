@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<!--
+Python variables that need to be passed in for this template to render correctly:
+- allowed_diets
+- password_msg
+- dietary_msg
+-->
+
+<!--
+Names of input fields to recieve in the Python backend:
+- whichform 
+    name of form which has been submitted
+
+Input fields for dietary form:
+- vegan
+- vegetarian
+- dairy_free
+- gluten_free
+
+Input fields for change password form:
+- current_password
+- new_password
+- new_password_duplicate
+-->
+
+<!--Defines main language used by site (English)-->
+<html lang="en">
+
+<head>
+  <!--Defines character encoding (utf-8, which is standard)-->
+  <meta charset="UTF-8">
+
+  <!--Makes webpage size adapt to device's screen size-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Non-Mako dependent styling from this file -->
+  <link rel="stylesheet" href="../static/search.css">
+
+  <%include file="/site_wide.html"/>
+
+  <script>
+    // Necessary for tooltips to work
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+
+  <title></title>
+</head>
+
+<body>
+  <center>
+
+    <%include file="/navbar.html"/>
+
+    <h1>${context.username}'s Profile</h1>
+    <br>
+
+    <!--
+    Mako function to generate a collapsible form input. Takes:
+    name - Label that appears on the collapsible
+    contents - The hidden contents inside the form that are revealed upon click
+    -->
+    <!--
+    <%def name="separate_collapsible_form(name, icon, contents)">
+      <form method="POST" class="justify-content-center">
+        <div class="wrap-collabsible">
+          <input id="${name}_collapsible" class="toggle" type="checkbox">
+          <label for="${name}_collapsible" class="lbl-toggle">
+            ${name} ${icon}
+          </label>
+          <div class="collapsible-content">
+            <div class="content-inner">
+              ${contents}
+            </div>
+          </div>
+        </div>
+      </form>
+    </%def>
+    -->
+
+    <!-- Dietary Restrictions -->
+    <form method="POST" class="justify-content-center">
+      <div class="wrap-collabsible">
+        <input id="dietary_restrictions_collapsible" class="toggle" type="checkbox">
+        <label for="dietary_restrictions_collapsible" class="lbl-toggle">
+          Dietary Restrictions <i class="fa fa-envira" aria-hidden="true"></i>
+        </label>
+        <div class="collapsible-content">
+          <div class="content-inner">
+            <!-- Generate Checkboxes -->
+            % for diet in allowed_diets:
+            <div class="form-group custom-control custom-checkbox">
+              % if diet in set(current_diets):
+              <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}" checked>
+              % else:
+              <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}">
+              % endif
+              <label class="custom-control-label" for="${diet}">${diet}</label>
+            </div>
+            % endfor
+
+            <!-- Error message -->
+            % if dietary_msg != None:
+            <br>
+            <p>${dietary_msg}</p>
+            % endif
+
+            <!--- NOTE: Button value determines the form seen by the POST handler 
+                        Button name should be kept as whichform                   -->
+            <button class="btn btn-success" type="submit" name="whichform" value="dietary">
+              <i class="fa fa-check" aria-hidden="true"></i> Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Change Password -->
+    <form method="POST" class="justify-content-center">
+      <div class="wrap-collabsible">
+        <input id="change_password_collapsible" class="toggle" type="checkbox">
+        <label for="change_password_collapsible" class="lbl-toggle">
+          Change Password <i class="fa fa-key" aria-hidden="true"></i>
+        </label>
+        <div class="collapsible-content">
+          <div class="content-inner">
+            <!-- Current password field -->
+            <div class="form-group row">
+              <label for="current-password-box" class="col-sm-5 col-form-label">
+                <h6>
+                  <i class="fa fa-unlock" aria-hidden="true"></i> Current Password:
+                </h6>
+              </label>
+              <div class="col-sm-5">
+                <input name="current_password" type="password" class="form-control" id="current-password-box" required>
+              </div>
+            </div>
+
+            <!-- New password field -->
+            <div class="form-group row">
+              <label for="new-password-box" class="col-sm-5 col-form-label">
+                <h6>
+                  <i class="fa fa-lock" aria-hidden="true"></i> New Password:
+                </h6>
+              </label>
+              <div class="col-sm-5">
+                <input name="new_password" type="password" class="form-control" id="new-password-box" required>
+              </div>
+            </div>
+
+            <!-- Confirm new password field -->
+            <div class="form-group row">
+              <label for="confirm-new-password-box" class="col-sm-5 col-form-label">
+                <h6>
+                  <i class="fa fa-lock" aria-hidden="true"></i> Confirm New Password:
+                </h6>
+              </label>
+              <div class="col-sm-5">
+                <input name="new_password_duplicate" type="password" class="form-control" id="confirm-new-password-box" required>
+              </div>
+            </div>
+
+            <!-- Error message -->
+            % if password_msg != None:
+            <br>
+            <p>${password_msg}</p>
+            % endif
+
+            <!--- NOTE: Button value determines the form seen by the POST handler 
+                        Button name should be kept as whichform                   -->
+            <button class="btn btn-success" type="submit" name="whichform" value="password">
+              <i class="fa fa-check" aria-hidden="true"></i> Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </center>
+  <br>
+</body>
+</html>
