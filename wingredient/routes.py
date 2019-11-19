@@ -14,6 +14,8 @@ import string
 
 from .dietinfo import allowed_diets
 from .rating import get_num_likes, get_num_dislikes, get_rating
+from fractions import Fraction
+
 
 BASE_DIR = "wingredient"
 TEMPLATE_DIR = abspath(f"{BASE_DIR}/templates")
@@ -219,10 +221,11 @@ def get_search():
 ###########################
 ### SEARCH RECIPE PAGE ####
 ###########################
-def convert_measurement(m):
-    if m == 'Count':
-        m = ''
-    return m
+
+def format_quantity(quantity):
+    # Convert quantity into fraction 0.25 = 1/4
+    quantity = str(Fraction(quantity))
+    return quantity
 
 @app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
 def recipe(recipe_id):
@@ -261,11 +264,15 @@ def recipe(recipe_id):
             #query = "SELECT ingredient FROM recipetoingredient WHERE recipe = %s;"
             #cursor.execute(query, (recipe_id,))
             #ingredient_index_tuple = tuple([i[0] for i in cursor.fetchall()])   # tuple of ingredient indexes in recipe
-            query = "SELECT rti.quantity, i.measurement_type, i.name FROM ingredient i, recipetoingredient rti WHERE i.id = rti.ingredient AND rti.recipe = %s;"
+
+
+# SELECT i.name, rti.quantity, rti.r_quantity, (CASE WHEN (rti.r_quantity IS NULL) THEN rti.quantity ELSE rti.r_quantity END) as modified_quantity FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = 1;
+            query = "SELECT (COALESCE(rti.r_quantity, rti.quantity)) as quantity, (COALESCE(rti.r_measurement_type::text, i.measurement_type::text)) as measurement_type, i.name, Replace(i.measurement_type::text, 'Count', '') FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = %s;"
+            #query = "SELECT rti.quantity, i.measurement_type, rti.r_quantity, rti.r_measurement_type, i.name FROM ingredient i, recipetoingredient rti WHERE i.id = rti.ingredient AND rti.recipe = %s;"
             cursor.execute(query, (recipe_id,))
             #ir = for row in cursor.fetchall()
             ires = cursor.fetchall() 
-            ires = ([(str(i[0]), convert_measurement(i[1]), i[2]) for i in ires])  
+            ires = ([(format_quantity(i[0]), i[1], i[2]) for i in ires])  
             ingredient_results = list(map(" ".join,ires))
 
 
