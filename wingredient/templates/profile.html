@@ -9,7 +9,7 @@ Python variables that need to be passed in for this template to render correctly
 
 <!--
 Names of input fields to recieve in the Python backend:
-- whichform 
+- whichform
     name of form which has been submitted
 
 Input fields for dietary form:
@@ -46,7 +46,7 @@ Input fields for change password form:
     });
   </script>
 
-  <title></title>
+  <title>${context.username} - Wingredient</title>
 </head>
 
 <body>
@@ -107,7 +107,7 @@ Input fields for change password form:
             <p>${dietary_msg}</p>
             % endif
 
-            <!--- NOTE: Button value determines the form seen by the POST handler 
+            <!--- NOTE: Button value determines the form seen by the POST handler
                         Button name should be kept as whichform                   -->
             <button class="btn btn-success" type="submit" name="whichform" value="dietary">
               <i class="fa fa-check" aria-hidden="true"></i> Save
@@ -168,7 +168,7 @@ Input fields for change password form:
             <p>${password_msg}</p>
             % endif
 
-            <!--- NOTE: Button value determines the form seen by the POST handler 
+            <!--- NOTE: Button value determines the form seen by the POST handler
                         Button name should be kept as whichform                   -->
             <button class="btn btn-success" type="submit" name="whichform" value="password">
               <i class="fa fa-check" aria-hidden="true"></i> Save
