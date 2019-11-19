@@ -1,7 +1,7 @@
 -- method is an array of text outlining the steps of the recipe
 -- imageRef holds a file path to an image
 DROP TYPE IF EXISTS MeasurementTypes CASCADE;
-CREATE TYPE MeasurementTypes as ENUM('Weight', 'Volume', 'Count');
+CREATE TYPE MeasurementTypes as ENUM('g', 'ml', 'Count');
 
 DROP TYPE IF EXISTS Recipe_MeasurementTypes CASCADE;
 CREATE TYPE Recipe_MeasurementTypes as ENUM('Tablespoon', 'Teaspoon', 'Cup');
