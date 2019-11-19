@@ -377,8 +377,9 @@ def pantry():
     print(ingredient_ids)
     if (ingredient_ids):
         ingredient_info = get_ingredient_info_from_ids(ingredient_ids)
-
-    print(ingredient_info)
+    else:
+        ingredient_info = []
+        
     return template.render(
         error="none",
         all_ingredients = [r[0] for r in all_ingredients_results],
