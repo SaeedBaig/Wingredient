@@ -35,8 +35,28 @@ Names of input fields to recieve in the Python backend:
 
     <h1>Pantry</h1>
     <br>
+    <div>
+      <form method="POST">
+        <div class="form-group">
+          <div class="input-group mb-3">
+            <select name="ingredients" id="ingredients" class="form-control">
+              % for i in range(len(all_ingredients)):
+              <option value="${all_ingredients[i]}">${all_ingredients[i]} (${m_types[i]})</option>
+              % endfor
+            </select>
+            <input type="number" class="form-control" min="0" step="1" name="quantity" id="quantity" placeholder="Quantity" required/>
+            <!-- <input type="submit" name="pantry-add" value="Add to pantry" class="btn btn-primary" id="add"/> -->
+            <button class="btn btn-primary" name="pantry-add" id="add" type="submit">
+              <i class="fa fa-plus" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
     % if len(ingredients) == 0:
-      <h3>Sorry, no ingredients in your pantry</h3>
+      <br>
+      <h4>Your pantry's looking pretty empty. Why not add something to it!</h4>
     % else:
     <form method="POST">
         <div class="card mb-3">
@@ -54,23 +74,7 @@ Names of input fields to recieve in the Python backend:
             </ul>
         </div>
     </form>
-    <div>
     % endif
-        <h1>Add ingredient to Pantry</h1>
-        <form method="POST">
-            <div class="form-group">
-                <div class="input-group mb-3">
-                    <select name="ingredients" id="ingredients" class="form-control">
-                        % for i in range(len(all_ingredients)):
-                            <option value="${all_ingredients[i]}">${all_ingredients[i]} (${m_types[i]})</option>
-                        % endfor
-                    </select>
-                    <input type="number" class="form-control" min="0" step="1" name="quantity" id="quantity" placeholder="Quantity" required/>
-                    <input type="submit" name="pantry-add" value="Add to pantry" class="btn btn-primary" id="add" />
-                </div>
-            </div>
-        </form>
-    </div>
 
 
   </center>
