@@ -2,7 +2,7 @@
 
 /* Control width of search-result card */
 .card {
-    max-width: 600px;
+    max-width: 60%;
 }
 
 /* Make Back-To-Search button always stick at bottom left */
