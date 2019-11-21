@@ -35,9 +35,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # must import User after initialising login manager
-from .user import User, create_account, load_user
-
-
+from .user import User, create_account, load_user, pw_min_len
 
 #################
 ### HOME PAGE ###
@@ -452,6 +450,10 @@ def signup():
         elif load_user(username) != None:
             error = "Username already in use."
 
+        # Check that the password is long enough
+        elif len(password) < pw_min_len:
+            error = "Password must be at least %d characters long." % (pw_min_len)
+
         # Check that the two passwords given match
         elif password != password_duplicate:
             error = "Passwords do not match."
@@ -589,8 +591,14 @@ def profile():
             if not current_user.check_password(current_password):
                 password_error = "Current password incorrect."
 
+            # Check that the password is long enough
+            elif len(password) < pw_min_len:
+                password_error = "Password must be at least %d characters long." % (pw_min_len)
+
             if new_password != new_password_duplicate:
                 password_error = "New passwords do not match."
+
+
 
             if password_error == None:
                 current_user.set_password(new_password)
