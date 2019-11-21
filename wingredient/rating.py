@@ -4,21 +4,19 @@ def get_num_likes(recipe_id):
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                '''SELECT * FROM Likes WHERE recipe=%s;''', 
+                '''SELECT count(*) FROM recipe_votes WHERE recipe=%s AND is_like IS TRUE;''',
                 (recipe_id,)
             )
-            likes = cursor.fetchall()
-            return len(likes)
+            return cursor.fetchone()[0]
 
 def get_num_dislikes(recipe_id):
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                '''SELECT * FROM Dislikes WHERE recipe=%s;''', 
+                '''SELECT count(*) FROM recipe_votes WHERE recipe=%s AND is_like IS FALSE;''',
                 (recipe_id,)
             )
-            dislikes = cursor.fetchall()
-            return len(dislikes)
+            return cursor.fetchone()[0]
 
 # Returns an integer percentage, or None if there are no likes yet
 def get_rating(recipe_id):

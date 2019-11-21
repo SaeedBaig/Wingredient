@@ -115,17 +115,16 @@ def results():
             titles=""
         )
 
-
     return template.render(
-        titles=[r[1] for r in _results],  # name from recipe
+        titles=[r[1] for r in _results],  #name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[get_rating(r[0]) for r in _results],
+        ratings=[r[8] if r[8] is None else int(r[8] * 100) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
         difficulties=[r[6] for r in _results],
         dietary_tags=[r[7] for r in _results],
-        default='alphabetical'
+        default="alphabetical"
     )
 
 @app.route("/results", methods=['POST'])
@@ -149,7 +148,7 @@ def results_post():
         titles=[r[1] for r in _results],  #name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[get_rating(r[0]) for r in _results],
+        ratings=[r[8] if r[8] is None else int(r[8] * 100) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
         difficulties=[r[6] for r in _results],
@@ -164,6 +163,8 @@ def get_search():
             whereclauses = []
             extra_joins = []
             query_args = {}
+
+            # Create the expressions and arguments to match the search filters
 
             ingredients = request.args.getlist("ingredients")
             use_pantry = request.args.get("pantry_only")
@@ -238,6 +239,12 @@ def get_search():
                 whereclauses.append("r.serving >= %(num_servings)s")
                 query_args["num_servings"] = num_servings
 
+            min_rating = request.args.get("min_rating", default=0, type=int)
+            if min_rating:
+                whereclauses.append("(rr.rating ISNULL OR rr.rating >= %(min_rating)s)")
+                query_args["min_rating"] = min_rating / 100
+
+            # Format the expressions into a single "WHERE <expr>" string
             extra_joinclause = " ".join(extra_joins)
             if whereclauses:
                 whereclause = "WHERE " + " AND ".join(whereclauses)
@@ -254,16 +261,19 @@ def get_search():
                   r.serving,
                   r.difficulty,
                   r.dietary_tags,
+                  rr.rating,
                   ic.compulsory_ingredient_count,
                   {missing_ingredient_count_expr} AS missing_compulsory_ingredient_count,
                   {matched_ingredient_count_expr} AS matched_ingredient_count
                 FROM recipe r
                 JOIN ingredient_counts ic ON r.id = ic.recipe
+                LEFT OUTER JOIN recipe_rating rr ON r.id = rr.recipe
                 {extra_joinclause}
                 {whereclause}
                 GROUP BY
                   r.id,
-                  ic.compulsory_ingredient_count
+                  ic.compulsory_ingredient_count,
+                  rr.rating
                 ORDER BY
                   missing_compulsory_ingredient_count,
                   matched_ingredient_count DESC,
@@ -295,18 +305,18 @@ def recipe(recipe_id):
 
         elif request.form["button"] == "like":
             if current_user.is_like(recipe_id):
-                current_user.del_like(recipe_id)
+                current_user.del_vote(recipe_id)
             else:
                 if current_user.is_dislike(recipe_id):
-                    current_user.del_dislike(recipe_id)
+                    current_user.del_vote(recipe_id)
                 current_user.add_like(recipe_id)
 
         elif request.form["button"] == "dislike":
             if current_user.is_dislike(recipe_id):
-                current_user.del_dislike(recipe_id)
+                current_user.del_vote(recipe_id)
             else:
                 if current_user.is_like(recipe_id):
-                    current_user.del_like(recipe_id)
+                    current_user.del_vote(recipe_id)
                 current_user.add_dislike(recipe_id)
 
     with db.getconn() as conn:

@@ -41,7 +41,7 @@ class User:
         with db.getconn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(
-                        '''UPDATE Account SET pwhash=%s, pwsalt=%s WHERE username=%s;''', 
+                        '''UPDATE Account SET pwhash=%s, pwsalt=%s WHERE username=%s;''',
                         (pw_hash, pw_salt, self.username)
                 )
                 conn.commit()
@@ -86,7 +86,7 @@ class User:
                 # Add all the requested diets
                 for diet in diets:
                     cursor.execute(
-                        '''INSERT INTO DietInfo VALUES (%s, %s);''', 
+                        '''INSERT INTO DietInfo VALUES (%s, %s);''',
                         (self.username, diet)
                     )
                 conn.commit()
@@ -124,16 +124,16 @@ class User:
             with db.getconn() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(
-                        '''INSERT INTO Likes VALUES (%s, %s);''',
-                        (self.username, recipe_id)
+                        '''INSERT INTO Recipe_Votes VALUES (%s, %s, %s);''',
+                        (self.username, recipe_id, True)
                     )
                     conn.commit()
 
-    def del_like(self, recipe_id):
+    def del_vote(self, recipe_id):
         with db.getconn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(
-                    '''DELETE FROM Likes WHERE account=%s AND recipe=%s;''',
+                    '''DELETE FROM Recipe_Votes WHERE account=%s AND recipe=%s;''',
                     (self.username, recipe_id)
                 )
                 conn.commit()
@@ -142,38 +142,31 @@ class User:
         with db.getconn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(
-                    '''SELECT * FROM Likes WHERE account=%s AND recipe=%s;''',
+                    '''SELECT is_like FROM Recipe_Votes WHERE account=%s AND recipe=%s;''',
                     (self.username, recipe_id)
                 )
-                return cursor.fetchone() != None
+                record = cursor.fetchone()
+                return record and record[0]
 
     def add_dislike(self, recipe_id):
         if not self.is_dislike(recipe_id):
             with db.getconn() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(
-                        '''INSERT INTO Dislikes VALUES (%s, %s);''',
-                        (self.username, recipe_id)
+                        '''INSERT INTO Recipe_Votes VALUES (%s, %s, %s);''',
+                        (self.username, recipe_id, False)
                     )
                     conn.commit()
-
-    def del_dislike(self, recipe_id):
-        with db.getconn() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    '''DELETE FROM Dislikes WHERE account=%s AND recipe=%s;''',
-                    (self.username, recipe_id)
-                )
-                conn.commit()
 
     def is_dislike(self, recipe_id):
         with db.getconn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(
-                    '''SELECT * FROM Dislikes WHERE account=%s AND recipe=%s;''',
+                    '''SELECT is_like FROM Recipe_Votes WHERE account=%s AND recipe=%s;''',
                     (self.username, recipe_id)
                 )
-                return cursor.fetchone() != None
+                record = cursor.fetchone()
+                return record and not record[0]
 
     def logout(self):
         self.authenticated = False
@@ -204,7 +197,7 @@ def create_account(username, password):
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                    '''INSERT INTO Account VALUES (%s, %s, %s, %s);''', 
+                    '''INSERT INTO Account VALUES (%s, %s, %s, %s);''',
                     (username, pw_hash, pw_salt, "")
             )
             conn.commit()

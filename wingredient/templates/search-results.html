@@ -82,11 +82,11 @@ Python variables that need to be passed in for this template to render correctly
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
                     % if ratings[i] == None:
-                    0%
+                    No Rating
                     % else:
-                    ${ratings[i]}%
+                    ${ratings[i]}% <i class="fa fa-thumbs-up" aria-hidden="true"></i>
                     % endif
-                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+
                   </li>
                   <li class="list-group-item">
                     <i class="fa fa-clock-o" aria-hidden="true"></i>
