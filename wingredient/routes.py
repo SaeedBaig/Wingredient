@@ -639,9 +639,9 @@ def recipe_form():
             if ('ingredient-quantity' + str(i)) in request.form:
                 ingredient_quantities.append(request.form['ingredient-quantity' + str(i)])
             if ('ingredient_check' + str(i)) in request.form:
-                ingredient_checks.append(True)
-            else:
                 ingredient_checks.append(False)
+            else:
+                ingredient_checks.append(True)
         session['recipe_ingredients'] = recipe_ingredients
         session['ingredient_quantities'] = ingredient_quantities
         session['ingredient_checks'] = ingredient_checks
@@ -712,8 +712,10 @@ def recipe_confirm():
         recipe_imageRef = path + image.filename
         print(recipe_imageRef)
         #submit recipe into database
-        upload_recipe(current_user.get_id(), recipe_name, recipe_time, recipe_difficulty, recipe_serving, recipe_notes, recipe_description, cuisine_tags, dietary_tags, recipe_imageRef, recipe_method, recipe_ingredients, ingredient_quantities, recipe_equipment)
-    
+        recipe_id = upload_recipe(current_user.get_id(), recipe_name, recipe_time, recipe_difficulty, recipe_serving, recipe_notes, recipe_description, cuisine_tags, dietary_tags, recipe_imageRef, recipe_method, recipe_ingredients, ingredient_quantities, ingredient_checks, recipe_equipment)
+        return redirect('recipe/' + str(recipe_id))
+
+
     print(session.get("recipe_ingredients", None))
 
     print(session.get("recipe_name", None))
