@@ -149,6 +149,8 @@ def results_post():
         pass
     elif sort_option == "cooking-time":
         _results = sorted(_results, key = lambda a : a[2])   # sort results by cooking time
+    elif sort_option == "alphabetical":
+        _results = sorted(_results, key = lambda a : a[1])   # sort results by cooking time
 
     return template.render(
         titles=[r[1] for r in _results],  #name from recipe
