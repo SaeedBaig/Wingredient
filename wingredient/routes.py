@@ -570,14 +570,17 @@ def profile():
     password_msg = None
     dietary_msg = None
 
+    allowed_forms = ["dietary_form", "password_form"]
+    open_forms    = []
+
     if request.method == "POST":
         whichform = request.form["whichform"]
-        if whichform == "dietary":
+        if whichform == "dietary_form":
             diets = set(request.form.keys()).intersection(set(allowed_diets))
             current_user.set_diets(diets)
             dietary_msg = "Diets set successfully."
 
-        elif whichform == "password":
+        elif whichform == "password_form":
             password_error         = None
             current_password       = request.form["current_password"]
             new_password           = request.form["new_password"]
@@ -597,9 +600,15 @@ def profile():
         else:
             pass
 
+        # Remember which collapsible forms are open
+        for form_name in allowed_forms:
+            if request.form.get(form_name) != None:
+                open_forms.append(form_name)
+
     current_diets = current_user.get_diets()
 
     return template.render(
+        open_forms    = open_forms,
         allowed_diets = allowed_diets,
         current_diets = current_diets,
         password_msg  = password_msg,
