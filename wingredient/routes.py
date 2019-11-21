@@ -400,8 +400,7 @@ def recipe_form():
         count = request.form['count']
         method = []
         for i in range(1, int(count)+1):
-            if (request.form['field' + str(i)]):
-                print(str(i), request.form['field' + str(i)])
+            if ('field' + str(i)) in request.form:
                 method.append(request.form['field' + str(i)])
         recipe_method = "|".join(method)
 
@@ -417,11 +416,13 @@ def recipe_form():
         recipe_ingredients = []
         ingredient_quantities = []
         ingredient_checks = []
+        session['cuisine_tags'] = request.form['cuisine_tags']
+        print(session['cuisine_tags'])
 
         for i in range(1, int(ingredient_count)+1):
-            if (request.form['ingredient' + str(i)]):
+            if ('ingredient' + str(i)) in request.form:
                 recipe_ingredients.append(request.form['ingredient' + str(i)])
-            if (request.form['ingredient-quantity' + str(i)]):
+            if ('ingredient-quantity' + str(i)) in request.form:
                 ingredient_quantities.append(request.form['ingredient-quantity' + str(i)])
             if ('ingredient_check' + str(i)) in request.form:
                 ingredient_checks.append(True)
@@ -429,12 +430,24 @@ def recipe_form():
                 ingredient_checks.append(False)
         session['recipe_ingredients'] = recipe_ingredients
         session['ingredient_quantities'] = ingredient_quantities
+        session['ingredient_checks'] = ingredient_checks
         print(ingredient_quantities)
         print(ingredient_checks)
+        dietary_tags = 0b0000
         vegan_check = "vegan_check" in request.form
         vegetarian_check = "vegetarian_check" in request.form
         gluten_check = "gluten_check" in request.form
         dairy_check = "dairy_check" in request.form
+        if vegan_check:
+            dietary_tags = dietary_tags | 0b0011
+        if vegetarian_check:
+            dietary_tags = dietary_tags | 0b0001
+        if gluten_check:
+            dietary_tags = dietary_tags | 0b0100
+        if dairy_check:
+            dietary_tags = dietary_tags | 0b1000
+        
+        session['dietary_tags'] = dietary_tags
         
 
         return redirect(url_for('recipe_confirm'))
@@ -468,7 +481,9 @@ def recipe_confirm():
     recipe_ingredients=session.get("recipe_ingredients", None)
     ingredient_quantities=session.get("ingredient_quantities", None)
     recipe_method=session.get("recipe_method", None)
-
+    dietary_tags = session.get("dietary_tags", None)
+    ingredient_checks = session.get("ingredient_checks", None)
+    cuisine_tags = session.get("cuisine_tags", None)
     recipe_equipment = recipe_equipment.split(',')
     if request.method == "POST":
         # take file input
@@ -483,7 +498,7 @@ def recipe_confirm():
         recipe_imageRef = path + image.filename
         print(recipe_imageRef)
         #submit recipe into database
-        upload_recipe(current_user.get_id(), recipe_name, recipe_time, recipe_difficulty, recipe_serving, recipe_notes, recipe_description, recipe_imageRef, recipe_method, recipe_ingredients, ingredient_quantities, recipe_equipment)
+        upload_recipe(current_user.get_id(), recipe_name, recipe_time, recipe_difficulty, recipe_serving, recipe_notes, recipe_description, cuisine_tags, dietary_tags, recipe_imageRef, recipe_method, recipe_ingredients, ingredient_quantities, recipe_equipment)
     
     print(session.get("recipe_ingredients", None))
 
@@ -500,6 +515,7 @@ def recipe_confirm():
         recipe_ingredients=recipe_ingredients,
         ingredient_quantities=ingredient_quantities,
         recipe_method=recipe_method,
+        dietary_tags = dietary_tags
     #   error="none",
     #   username=current_user.get_id() if current_user.is_authenticated else None
     )
