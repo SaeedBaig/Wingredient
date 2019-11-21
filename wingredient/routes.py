@@ -124,6 +124,8 @@ def results():
         recipe_ids=[r[0] for r in _results],
         difficulties=[r[6] for r in _results],
         dietary_tags=[r[7] for r in _results],
+        missing_ingredients=[r[9] for r in _results],
+        matched_ingredients=[r[10] for r in _results],
         default="alphabetical"
     )
 
@@ -153,6 +155,8 @@ def results_post():
         recipe_ids=[r[0] for r in _results],
         difficulties=[r[6] for r in _results],
         dietary_tags=[r[7] for r in _results],
+        missing_ingredients=[r[9] for r in _results],
+        matched_ingredients=[r[10] for r in _results],
         default=sort_option
     )
 
@@ -262,7 +266,6 @@ def get_search():
                   r.difficulty,
                   r.dietary_tags,
                   rr.rating,
-                  ic.compulsory_ingredient_count,
                   {missing_ingredient_count_expr} AS missing_compulsory_ingredient_count,
                   {matched_ingredient_count_expr} AS matched_ingredient_count
                 FROM recipe r
