@@ -340,24 +340,13 @@ def recipe(recipe_id):
             cursor.execute(query, (recipe_id,))
             results = cursor.fetchone()
 
-            #query = "SELECT ingredient FROM recipetoingredient WHERE recipe = %s;"
-            #cursor.execute(query, (recipe_id,))
-            #ingredient_index_tuple = tuple([i[0] for i in cursor.fetchall()])   # tuple of ingredient indexes in recipe
-
-
-# SELECT i.name, rti.quantity, rti.r_quantity, (CASE WHEN (rti.r_quantity IS NULL) THEN rti.quantity ELSE rti.r_quantity END) as modified_quantity FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = 1;
             query = "SELECT (COALESCE(rti.r_quantity, rti.quantity)) as quantity, (COALESCE(rti.r_measurement_type::text, i.measurement_type::text)) as measurement_type, i.name FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = %s;"
-            #query = "SELECT rti.quantity, i.measurement_type, rti.r_quantity, rti.r_measurement_type, i.name FROM ingredient i, recipetoingredient rti WHERE i.id = rti.ingredient AND rti.recipe = %s;"
+            
             cursor.execute(query, (recipe_id,))
             #ir = for row in cursor.fetchall()
             ires = cursor.fetchall() 
             ires = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in ires])  
             ingredient_results = list(map(" ".join,ires))
-
-
-           # ingredient_results = list(map(" ".join, ([(str(i[0]), i[1], i[2]) for i in ires])))
-            #for x in ingredient_results:
-            #    print(x[0], x[1])
 
             query = "SELECT equipment FROM recipetoequipment WHERE recipe = %s;"
             cursor.execute(query, (recipe_id,))
@@ -494,16 +483,16 @@ def logout():
 #
 #@app.route("/addtoshoppinglist")
 #def shoppinglist():
-#    with db.getconn() as conn:
-#        with conn.cursor() as cursor:
-#            #query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = 20;"   
-#
-#            ##CHANGE TO SPECIFY EXACT COLUMNS
-#            #cursor.execute(query)
-#            #results = cursor.fetchone()
-#
-#    # NOTE: redirect to home page instead?
-#    return redirect(url_for("search"))
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+           query = "select rti.quantity, i.name from recipetoingredient rti, ingredient i where rti.recipe =  AND rti.ingredient = i.id;"
+
+            ##CHANGE TO SPECIFY EXACT COLUMNS
+            #cursor.execute(query)
+            #results = cursor.fetchone()
+
+    # NOTE: redirect to home page instead?
+    return redirect(url_for("search"))
 ###################
 ### PANTRY PAGE ###
 ###################
