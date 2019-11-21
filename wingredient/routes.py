@@ -16,6 +16,8 @@ import string
 
 from .dietinfo import allowed_diets
 from .rating import get_num_likes, get_num_dislikes, get_rating
+from fractions import Fraction
+
 
 BASE_DIR = "wingredient"
 TEMPLATE_DIR = abspath(f"{BASE_DIR}/templates")
@@ -294,6 +296,16 @@ def get_search():
 ###########################
 ### SEARCH RECIPE PAGE ####
 ###########################
+
+def format_quantity(quantity):
+    # Convert quantity into fraction 0.25 = 1/4
+    quantity = str(Fraction(quantity))
+    return quantity
+
+def format_measurement(measurement):
+    if measurement == 'Count': measurement = ''
+    return measurement
+
 @app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
 def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
@@ -328,13 +340,24 @@ def recipe(recipe_id):
             cursor.execute(query, (recipe_id,))
             results = cursor.fetchone()
 
-            query = "SELECT ingredient FROM recipetoingredient WHERE recipe = %s;"
+            #query = "SELECT ingredient FROM recipetoingredient WHERE recipe = %s;"
+            #cursor.execute(query, (recipe_id,))
+            #ingredient_index_tuple = tuple([i[0] for i in cursor.fetchall()])   # tuple of ingredient indexes in recipe
+
+
+# SELECT i.name, rti.quantity, rti.r_quantity, (CASE WHEN (rti.r_quantity IS NULL) THEN rti.quantity ELSE rti.r_quantity END) as modified_quantity FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = 1;
+            query = "SELECT (COALESCE(rti.r_quantity, rti.quantity)) as quantity, (COALESCE(rti.r_measurement_type::text, i.measurement_type::text)) as measurement_type, i.name FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = %s;"
+            #query = "SELECT rti.quantity, i.measurement_type, rti.r_quantity, rti.r_measurement_type, i.name FROM ingredient i, recipetoingredient rti WHERE i.id = rti.ingredient AND rti.recipe = %s;"
             cursor.execute(query, (recipe_id,))
-            ingredient_index_tuple = tuple([i[0] for i in cursor.fetchall()])   # tuple of ingredient indexes in recipe
-            query = "SELECT name FROM ingredient WHERE id in %s;"
-            cursor.execute(query, (ingredient_index_tuple,))
-            ingredient_names = tuple([i[0] for i in cursor.fetchall()])
-            print(ingredient_names)
+            #ir = for row in cursor.fetchall()
+            ires = cursor.fetchall() 
+            ires = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in ires])  
+            ingredient_results = list(map(" ".join,ires))
+
+
+           # ingredient_results = list(map(" ".join, ([(str(i[0]), i[1], i[2]) for i in ires])))
+            #for x in ingredient_results:
+            #    print(x[0], x[1])
 
             query = "SELECT equipment FROM recipetoequipment WHERE recipe = %s;"
             cursor.execute(query, (recipe_id,))
@@ -361,7 +384,7 @@ def recipe(recipe_id):
         image_alt=results[4],
         cooking_time_in_minutes=results[1],
         difficulty=results[2],  # can be 'Easy', 'Medium', or 'Hard'
-        ingredients=ingredient_names,
+        ingredients=ingredient_results,
         equipment=equipment_names,
         method=method,
         num_likes=get_num_likes(recipe_id),
@@ -452,6 +475,35 @@ def logout():
         logout_user()
     return redirect(url_for("search"))
 
+###################
+### Shopping List ###
+###################
+#@app.route("/shoppinglist")
+#def shoppinglist():
+#    with db.getconn() as conn:
+#        with conn.cursor() as cursor:
+#            #query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = 20;"   
+#
+#            ##CHANGE TO SPECIFY EXACT COLUMNS
+#            #cursor.execute(query)
+#            #results = cursor.fetchone()
+#
+#    template = LOOKUP.get_template("shopping-list.html")
+#    return template.render()
+#
+#
+#@app.route("/addtoshoppinglist")
+#def shoppinglist():
+#    with db.getconn() as conn:
+#        with conn.cursor() as cursor:
+#            #query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = 20;"   
+#
+#            ##CHANGE TO SPECIFY EXACT COLUMNS
+#            #cursor.execute(query)
+#            #results = cursor.fetchone()
+#
+#    # NOTE: redirect to home page instead?
+#    return redirect(url_for("search"))
 ###################
 ### PANTRY PAGE ###
 ###################

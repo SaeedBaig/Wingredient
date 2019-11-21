@@ -11,5 +11,6 @@ h2 {
 
 /* Necessary for cooking time & date to be on the same line */
 #time_and_difficulty {
+    display: inline-block;
     float: left;
 }

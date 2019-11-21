@@ -77,17 +77,14 @@ Python variables that need to be passed in for this template to render correctly
 </center>
 
   <!-- Cooking time & difficulty -->
-  <h5 id="time_and_difficulty">
+  <h5 id="recipe_info_bar">
     <i class="fa fa-clock-o" aria-hidden="true"></i>
     ${cooking_time_in_minutes} minutes
     ## 50 is arbitrary; change to whatever number you think looks nicest
-    % for i in range(50):
-      &nbsp;
-    % endfor
     Difficulty:&nbsp;
+    <i id="difficulty">${difficulty}</i>
   </h5>
-  <h5 id="difficulty">${difficulty}</h5>
-  <br><br>
+  <br></br>
 
 
   <div class="container">

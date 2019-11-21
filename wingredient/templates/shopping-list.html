@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<!--
+Python variables that need to be passed in for this template to render correctly:
+- title:        str (title of the recipe)
+- image_path:   str (path to image file to use)
+- image_alt:    str (text to use if image not found)
+- cooking_time_in_minutes: int or float or str (self-explanatory)
+- difficulty:   str (either 'Easy', 'Medium' or 'Hard')
+- ingredients:  list of str (e.g. ['Milk', 'Eggs', 'Sugar'])
+- equipment:    list of str (e.g. ['Bowl', 'Oven', 'Microwave'])
+- method:       list of str (e.g. ['Heat oven.', 'Fill tray.', 'Dice banana.'])
+- num_likes:    int (number of likes this recipe has)
+-->
+
+<!--Defines main language used by site (English)-->
+<html lang="en">
+
+<head>
+  <!--Defines character encoding (utf-8, which is standard)-->
+  <meta charset="UTF-8">
+
+  <!--Makes webpage size adapt to device's screen size-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Non-Mako dependent styling from this file -->
+  <link rel="stylesheet" href="../static/recipe.css">
+
+  <%include file="/site_wide.html"/>
+
+  <title>Wingredient</title>
+
+  <!-- Mako-dependent styling -->
+
+<head>
+
+<body>
+  <center>
+    <%include file="/navbar.html"/>
+
+    <!-- Recipe Title -->
+    <h1>Shopping List</h1>
+
+  <h2>Items</h2>
+</body>
+</html>
