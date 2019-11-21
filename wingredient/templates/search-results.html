@@ -8,6 +8,8 @@ Python variables that need to be passed in for this template to render correctly
 - ratings:          list of int (list of ratings for each recipe)
 - cooking_times_in_minutes: list of int or float or str (self-explanatory)
 - links_to_recipe:  list of str (list of links to recipe pages)
+- missing_ingredients: list of int (list of missing ingredient counts)
+- matched_ingredients: list of int (list of matched ingredient counts)
 -->
 
 <!--Defines main language used by site (English)-->
@@ -115,6 +117,25 @@ Python variables that need to be passed in for this template to render correctly
                   </script>
                   <li class="list-group-item" style="color: ${difficulty_color};">
                     ${difficulties[i]}
+                  </li>
+                  <script>
+                    % if missing_ingredients[i] > 0:
+                    <%
+                      missing_colour="red"
+                    %>
+                    % else:
+                    <%
+                      ## It should never be black, but this is here just to prevent the
+                      ## page from crashing
+                      missing_colour="green"
+                    %>
+                    % endif
+                  </script>
+                  <li class="list-group-item" style="color: ${missing_colour}">
+                    Missing non-optional ingredients: ${missing_ingredients[i]}
+                  </li>
+                  <li class="list-group-item" style="color: blue">
+                    Ingredients you have: ${matched_ingredients[i]}
                   </li>
                 </ul>
               </div>
