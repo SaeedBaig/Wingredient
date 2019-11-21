@@ -2,6 +2,7 @@
 
 <!--
 Python variables that need to be passed in for this template to render correctly:
+- open_forms
 - allowed_diets
 - password_msg
 - dietary_msg
@@ -83,7 +84,11 @@ Input fields for change password form:
     <!-- Dietary Restrictions -->
     <form method="POST" class="justify-content-center">
       <div class="wrap-collabsible">
-        <input id="dietary_restrictions_collapsible" class="toggle" type="checkbox">
+        <input id="dietary_restrictions_collapsible" class="toggle" type="checkbox" name="dietary_form"
+        % if "dietary_form" in open_forms:
+        checked
+        % endif
+        >
         <label for="dietary_restrictions_collapsible" class="lbl-toggle">
           Dietary Restrictions <i class="fa fa-envira" aria-hidden="true"></i>
         </label>
@@ -92,11 +97,11 @@ Input fields for change password form:
             <!-- Generate Checkboxes -->
             % for diet in allowed_diets:
             <div class="form-group custom-control custom-checkbox">
+              <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}" 
               % if diet in set(current_diets):
-              <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}" checked>
-              % else:
-              <input name="${diet}" type="checkbox" class="custom-control-input" id="${diet}">
+              checked
               % endif
+              >
               <label class="custom-control-label" for="${diet}">${diet}</label>
             </div>
             % endfor
@@ -109,18 +114,19 @@ Input fields for change password form:
 
             <!--- NOTE: Button value determines the form seen by the POST handler
                         Button name should be kept as whichform                   -->
-            <button class="btn btn-success" type="submit" name="whichform" value="dietary">
+            <button class="btn btn-success" type="submit" name="whichform" value="dietary_form">
               <i class="fa fa-check" aria-hidden="true"></i> Save
             </button>
           </div>
         </div>
       </div>
-    </form>
 
-    <!-- Change Password -->
-    <form method="POST" class="justify-content-center">
       <div class="wrap-collabsible">
-        <input id="change_password_collapsible" class="toggle" type="checkbox">
+        <input id="change_password_collapsible" class="toggle" type="checkbox" name="password_form"
+        % if "password_form" in open_forms:
+        checked
+        % endif
+        >
         <label for="change_password_collapsible" class="lbl-toggle">
           Change Password <i class="fa fa-key" aria-hidden="true"></i>
         </label>
@@ -134,7 +140,7 @@ Input fields for change password form:
                 </h6>
               </label>
               <div class="col-sm-5">
-                <input name="current_password" type="password" class="form-control" id="current-password-box" required>
+                <input name="current_password" type="password" class="form-control" id="current-password-box">
               </div>
             </div>
 
@@ -146,7 +152,7 @@ Input fields for change password form:
                 </h6>
               </label>
               <div class="col-sm-5">
-                <input name="new_password" type="password" class="form-control" id="new-password-box" required>
+                <input name="new_password" type="password" class="form-control" id="new-password-box">
               </div>
             </div>
 
@@ -158,7 +164,7 @@ Input fields for change password form:
                 </h6>
               </label>
               <div class="col-sm-5">
-                <input name="new_password_duplicate" type="password" class="form-control" id="confirm-new-password-box" required>
+                <input name="new_password_duplicate" type="password" class="form-control" id="confirm-new-password-box">
               </div>
             </div>
 
@@ -170,7 +176,7 @@ Input fields for change password form:
 
             <!--- NOTE: Button value determines the form seen by the POST handler
                         Button name should be kept as whichform                   -->
-            <button class="btn btn-success" type="submit" name="whichform" value="password">
+            <button class="btn btn-success" type="submit" name="whichform" value="password_form">
               <i class="fa fa-check" aria-hidden="true"></i> Save
             </button>
           </div>
