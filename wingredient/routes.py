@@ -149,6 +149,8 @@ def results_post():
         pass
     elif sort_option == "cooking-time":
         _results = sorted(_results, key = lambda a : a[2])   # sort results by cooking time
+    elif sort_option == "alphabetical":
+        _results = sorted(_results, key = lambda a : a[1])   # sort results by cooking time
 
     return template.render(
         titles=[r[1] for r in _results],  #name from recipe
@@ -592,7 +594,7 @@ def profile():
                 password_error = "Current password incorrect."
 
             # Check that the password is long enough
-            elif len(password) < pw_min_len:
+            elif len(new_password) < pw_min_len:
                 password_error = "Password must be at least %d characters long." % (pw_min_len)
 
             if new_password != new_password_duplicate:
