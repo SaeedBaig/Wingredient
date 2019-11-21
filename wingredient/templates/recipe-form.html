@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<!--
+Python variables that need to be passed in for this template to render correctly:
+- error: error str to display, or None if there is no error
+-->
+
+<!--
+Names of input fields to recieve in the Python backend:
+- username
+- password
+-->
+
+<!--Defines main language used by site (English)-->
+<html lang="en">
+
+<head>
+  <!--Defines character encoding (utf-8, which is standard)-->
+  <meta charset="UTF-8">
+
+  <!--Makes webpage size adapt to device's screen size-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Non-Mako dependent styling from this file -->
+  <link rel="stylesheet" href="../static/search.css">
+  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">
+  <!--<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>-->
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+ <script>
+      var all_ingredients = ${all_ingredients}
+      var m_types = ${m_types}
+  </script>
+  <script type="text/javascript" src="../static/recipe-form.js"></script>
+  
+
+  <%include file="/site_wide.html"/>
+
+  <title>Wingredient</title>
+</head>
+
+<body>
+  <center>
+    <%include file="/navbar.html"/>
+
+    <h1>Recipe Form</h1>
+    <br>
+    <form method="POST">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="recipe_name">Recipe Name</label>
+                <input type="text" class="form-control" name="recipe_name" id="recipe_name" required>    <!-- recipe name-->
+            </div>
+            <div class="form-group col-md-6">
+                <label for="cooking_time">Cooking Time</label>
+                <input type="number" class="form-control" name="cooking_time" id="cooking_time" required>    <!-- cooking time-->
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="difficulty" class="col-sm-3 col-form-label">Difficulty:</label>
+            <div class="col-sm-8">
+                <select name="difficulty" id="difficulty" class="form-control">         <!--difficulty-->
+                    <option value="Easy">Easy</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Hard">Hard</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="serving_size" class="col-sm-3 col-form-label">Serving Size:</label>
+            <div class="col-sm-8">
+                <input type="number" name="serving_size" id="serving_size" class="form-control" required>    <!--serving size-->
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="description">Description:</label>
+            <textarea class="form-control" rows="2" id="description" name="description"></textarea>     <!--description-->
+        </div>
+
+        <div class="form-group row">
+            <label for="cooking_notes">Cooking Notes:</label>
+            <textarea class="form-control" rows="3" id="cooking_notes" name="cooking_notes"></textarea>     <!--cooking notes-->
+        </div>
+
+        <div>
+            <h5>Dietary Requirements</h5>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="vegetarian_check" id="vegetarian_check" value="vegetarian">   <!--vegetarian check-->
+                <label class="form-check-label" for="vegetarian_check">Vegetarian</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="vegan_check" id="vegan_check" value="vegan">             <!--vegan check-->
+                <label class="form-check-label" for="vegan_check">Vegan</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="gluten_check" id="gluten_check" value="gluten_free">      <!--gluten check-->
+                <label class="form-check-label" for="gluten_check">Gluten Free</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="dairy_check" id="dairy_check" value="dairy_free">        <!--dairy check-->
+                <label class="form-check-label" for="dairy_check">Dairy Free</label>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="form-group">
+            <label for="equipment">
+                <h5>Recipe Tags</h5>
+            </label>
+            <input name="cuisine_tags" id="cuisine_tags" class="tags-input form-control">
+            <script>
+                'use strict';
+                $('#cuisine_tags').tagging([]);
+            </script>
+        </div>
+
+        <div>
+            <div>
+                <div id="fields">
+                    <h5 for="field1">Method</h5>
+                    <small>(Press + to add another step)</small>
+                    <div id="profs"> 
+                        <input type="hidden" id="count" name="count" value="1" />
+
+                        <div id="field" style="width: 100%;">
+                            <textarea autocomplete="off" class="input form-control" id="field1" name="field1" type="text" style="float: left; width: 92%;" data-items="8"></textarea>     <!--method-->
+                            <button id="b1" class="btn btn-primary add-more" style="float: left; margin: 2px;" type="button">+</button>
+                        </div>
+                    <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ingredient Input-->
+        <div>
+            <div>
+                <div id="fields">
+                    <h5 for="field1">Ingredients</h5>
+                    <small>(Press + to add another ingredient)</small>
+                    <div id="profs"> 
+                        <input type="hidden" id="count-ingredient" name="count-ingredient" value="1" />
+
+                        <div id="field-ingredient" name="field-ingredient' style="width: 100%;">
+                            <div name="field-ingredient1" id="field-ingredient1">
+                                <select name="ingredient1" id="ingredient" class="form-control" style="float: left; width: 50%;">
+                                    % for i in range(len(all_ingredients)):
+                                        <option value="${all_ingredients[i]}">${all_ingredients[i]} (${m_types[i]})</option>
+                                    % endfor
+                                </select>
+                                <input type="number" style="height: 38px; width: 40%; float: left;" class="form-control input-lg" min="0" step="1" name="ingredient-quantity1" id="ingredient-quantity1" placeholder="Quantity" required/>
+                                <input class="form-control form-check-inline" style="width: 2%; float: left;"type="checkbox" name="ingredient_check1" id="ingredient_check1"/> 
+                            </div>
+                            <button id="b1" class="btn btn-primary add-more-ingredient" style="float: right; margin: 2px;" type="button">+</button>
+                        </div>
+                    <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <!-- Equipment typeahead-->
+        <div class="form-group">
+            <label for="ingredients">
+                <h5>Equipment</h5>
+            </label>
+            <input name="equipment" id="equipment" class="tags-input form-control">
+            <script>
+                'use strict';
+                $('#equipment').tagging(${equipment});
+            </script>
+        </div>
+        <br>
+        <input type="submit" value="Submit Recipe"/>
+    </form>
+
+
+  </center>
+  <br>
+</body>
+</html>

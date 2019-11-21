@@ -1,0 +1,11 @@
+form {
+    max-width: 600px;
+}
+
+input[type=checkbox] {
+    -webkit-appearance: checkbox;
+}
+  
+#field {
+    margin-bottom:20px;
+}
