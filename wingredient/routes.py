@@ -489,7 +489,9 @@ def logout():
 #def shoppinglist():
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-           query = "select rti.quantity, i.name from recipetoingredient rti, ingredient i where rti.recipe =  AND rti.ingredient = i.id;"
+            ## Query for add to shopping list 
+            query = "SELECT rti.quantity, i.name FROM recipetoingredient rti, ingredient i WHERE rti.recipe = %s AND rti.ingredient = i.id;"
+            cursor.execute(query, (recipe_id,))
 
             ##CHANGE TO SPECIFY EXACT COLUMNS
             #cursor.execute(query)
