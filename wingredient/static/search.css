@@ -15,7 +15,9 @@ https://alligator.io/css/collapsible/
   width: 600px;
 }
 
-input[type='checkbox'] {
+
+
+.toggle {
   display: none;
 }
 
