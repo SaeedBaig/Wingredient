@@ -180,11 +180,10 @@ def get_search():
             # Create the expressions and arguments to match the search filters
 
             # Filter favourites
-            fav_filter = ""
             if request.args.get("favs_only"):
-                fav_filter = f"""
-                WHERE EXISTS (SELECT * FROM Favourites as f WHERE f.account = \'{current_user.get_id()}\' AND f.recipe = r.id)
-                """
+                whereclauses.append(
+                    f"EXISTS (SELECT * FROM Favourites as f WHERE f.account = \'{current_user.get_id()}\' AND f.recipe = r.id)"
+                )
 
             ingredients = request.args.getlist("ingredients")
             use_pantry = request.args.get("pantry_only")
@@ -288,7 +287,6 @@ def get_search():
                 LEFT OUTER JOIN recipe_rating rr ON r.id = rr.recipe
                 {extra_joinclause}
                 {whereclause}
-                {fav_filter}
                 GROUP BY
                   r.id,
                   ic.compulsory_ingredient_count,
@@ -298,6 +296,7 @@ def get_search():
                   matched_ingredient_count DESC,
                   r.name
             """
+            print(query)
             cursor.execute(query, query_args)
             ret = cursor.fetchall()
 
