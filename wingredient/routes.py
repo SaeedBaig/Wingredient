@@ -35,9 +35,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # must import User after initialising login manager
-from .user import User, create_account, load_user
-
-
+from .user import User, create_account, load_user, pw_min_len
 
 #################
 ### HOME PAGE ###
@@ -441,6 +439,10 @@ def signup():
         elif load_user(username) != None:
             error = "Username already in use."
 
+        # Check that the password is long enough
+        elif len(password) < pw_min_len:
+            error = "Password must be at least %d characters long." % (pw_min_len)
+
         # Check that the two passwords given match
         elif password != password_duplicate:
             error = "Passwords do not match."
@@ -561,14 +563,17 @@ def profile():
     password_msg = None
     dietary_msg = None
 
+    allowed_forms = ["dietary_form", "password_form"]
+    open_forms    = []
+
     if request.method == "POST":
         whichform = request.form["whichform"]
-        if whichform == "dietary":
+        if whichform == "dietary_form":
             diets = set(request.form.keys()).intersection(set(allowed_diets))
             current_user.set_diets(diets)
             dietary_msg = "Diets set successfully."
 
-        elif whichform == "password":
+        elif whichform == "password_form":
             password_error         = None
             current_password       = request.form["current_password"]
             new_password           = request.form["new_password"]
@@ -577,8 +582,14 @@ def profile():
             if not current_user.check_password(current_password):
                 password_error = "Current password incorrect."
 
+            # Check that the password is long enough
+            elif len(new_password) < pw_min_len:
+                password_error = "Password must be at least %d characters long." % (pw_min_len)
+
             if new_password != new_password_duplicate:
                 password_error = "New passwords do not match."
+
+
 
             if password_error == None:
                 current_user.set_password(new_password)
@@ -588,9 +599,15 @@ def profile():
         else:
             pass
 
+        # Remember which collapsible forms are open
+        for form_name in allowed_forms:
+            if request.form.get(form_name) != None:
+                open_forms.append(form_name)
+
     current_diets = current_user.get_diets()
 
     return template.render(
+        open_forms    = open_forms,
         allowed_diets = allowed_diets,
         current_diets = current_diets,
         password_msg  = password_msg,
@@ -630,9 +647,9 @@ def recipe_form():
             if ('ingredient-quantity' + str(i)) in request.form:
                 ingredient_quantities.append(request.form['ingredient-quantity' + str(i)])
             if ('ingredient_check' + str(i)) in request.form:
-                ingredient_checks.append(True)
-            else:
                 ingredient_checks.append(False)
+            else:
+                ingredient_checks.append(True)
         session['recipe_ingredients'] = recipe_ingredients
         session['ingredient_quantities'] = ingredient_quantities
         session['ingredient_checks'] = ingredient_checks
@@ -703,8 +720,10 @@ def recipe_confirm():
         recipe_imageRef = path + image.filename
         print(recipe_imageRef)
         #submit recipe into database
-        upload_recipe(current_user.get_id(), recipe_name, recipe_time, recipe_difficulty, recipe_serving, recipe_notes, recipe_description, cuisine_tags, dietary_tags, recipe_imageRef, recipe_method, recipe_ingredients, ingredient_quantities, recipe_equipment)
-    
+        recipe_id = upload_recipe(current_user.get_id(), recipe_name, recipe_time, recipe_difficulty, recipe_serving, recipe_notes, recipe_description, cuisine_tags, dietary_tags, recipe_imageRef, recipe_method, recipe_ingredients, ingredient_quantities, ingredient_checks, recipe_equipment)
+        return redirect('recipe/' + str(recipe_id))
+
+
     print(session.get("recipe_ingredients", None))
 
     print(session.get("recipe_name", None))

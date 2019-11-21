@@ -4,6 +4,10 @@ from .routes   import login_manager
 from .dietinfo import allowed_diets
 from . import db
 
+# password constant
+pw_min_len = 2
+
+# hashing constants
 encoding = "ascii"
 scrypt_n = 2
 scrypt_r = 8

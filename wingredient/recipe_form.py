@@ -1,7 +1,7 @@
 from werkzeug import secure_filename
 from . import db
 
-def upload_recipe(username, name, cooking_time, difficulty, serving_size, cooking_notes, description, cuisine_tags, dietary_tags, imageRef, method, ingredients, ingredient_quantities, equipment):
+def upload_recipe(username, name, cooking_time, difficulty, serving_size, cooking_notes, description, cuisine_tags, dietary_tags, imageRef, method, ingredients, ingredient_quantities, optional, equipment):
     ingredient_ids = get_ingredient_ids_from_names(ingredients)
     equipment_ids = get_equipment_ids_from_names(equipment)
     with db.getconn() as conn:
@@ -10,9 +10,9 @@ def upload_recipe(username, name, cooking_time, difficulty, serving_size, cookin
             query = "INSERT INTO Recipe (id, name, time, difficulty, serving, notes, description, cuisine_tags, dietary_tags, imageRef, method) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s::bit(4), %s, %s)" 
             cursor.execute(query, (recipe_id, name, cooking_time, difficulty, serving_size, cooking_notes, description, cuisine_tags, dietary_tags, imageRef, method))
             conn.commit()
-    upload_ingredients(recipe_id, ingredient_ids, ingredient_quantities)
+    upload_ingredients(recipe_id, ingredient_ids, ingredient_quantities, optional)
     upload_equipment(recipe_id, equipment_ids)
-    get_recipe()
+    return recipe_id
 
 
 def gen_id():
@@ -39,12 +39,12 @@ def get_equipment_ids_from_names(equipment):
             result = cursor.fetchall()
     return [r[0] for r in result]
 
-def upload_ingredients(recipe_id, ingredients, quantities):
+def upload_ingredients(recipe_id, ingredients, quantities, optional):
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             for i in range(len(ingredients)):
-                query = "INSERT INTO RecipeToIngredient (recipe, ingredient, quantity) VALUES (%s, %s, %s)" 
-                cursor.execute(query, (recipe_id, ingredients[i], quantities[i]))
+                query = "INSERT INTO RecipeToIngredient (recipe, ingredient, quantity, optional) VALUES (%s, %s, %s, %s)" 
+                cursor.execute(query, (recipe_id, ingredients[i], quantities[i], optional[i]))
             conn.commit()
 
 def upload_equipment(recipe_id, equipment):
