@@ -73,19 +73,27 @@ Python variables that need to be passed in for this template to render correctly
 
     <!-- Recipe photo -->
     <img src="/${image_path}" width="500" alt="${image_alt}">
+    <br>
+
+    <!-- Cooking time & difficulty -->
+    <div class="d-flex justify-content-around">
+      <!-- Cooking time -->
+      <div class="p-2 bd-highlight">
+        <h5>
+          <i class="fa fa-clock-o" aria-hidden="true"></i>
+          ${cooking_time_in_minutes} minutes
+        </h5>
+      </div>
+
+      <!-- Difficulty -->
+      <div class="p-2 bd-highlight">
+        <h5>
+          Difficulty: <i id="difficulty">${difficulty}</i>
+        </h5>
+      </div>
+    </div>
+  </center>
   <br>
-</center>
-
-  <!-- Cooking time & difficulty -->
-  <h5 id="recipe_info_bar">
-    <i class="fa fa-clock-o" aria-hidden="true"></i>
-    ${cooking_time_in_minutes} minutes
-    ## 50 is arbitrary; change to whatever number you think looks nicest
-    Difficulty:&nbsp;
-    <i id="difficulty">${difficulty}</i>
-  </h5>
-  <br></br>
-
 
   <div class="container">
 

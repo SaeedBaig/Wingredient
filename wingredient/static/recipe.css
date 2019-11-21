@@ -1,16 +1,10 @@
 /* Non-Mako dependant styling for recipe.html */
 
 /* Make text not too much to the left */
-ul, h5 {
+ul {
     padding-left: 24%;
 }
 
 h2 {
     text-align: center;
-}
-
-/* Necessary for cooking time & date to be on the same line */
-#time_and_difficulty {
-    display: inline-block;
-    float: left;
 }
