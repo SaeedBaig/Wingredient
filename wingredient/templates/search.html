@@ -16,6 +16,7 @@ Names of input fields to recieve in the Python backend:
 - max_difficulty
 - max_time
 - pantry_only
+- favs_only
 - vegan
 - vegetarian
 - dairy_free
@@ -91,11 +92,17 @@ Names of input fields to recieve in the Python backend:
 
       <!-- Pantry only -->
       % if context.username == None:
-        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="right" title="Login to use your pantry">
+        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="right" title="Login to use pantry and favourites">
           <div class="form-group custom-control custom-checkbox">
             <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only" disabled>
             <label class="custom-control-label" for="pantry_only">
               Include ingredients from pantry
+            </label>
+          </div>
+          <div class="form-group custom-control custom-checkbox">
+            <input name="favs_only" type="checkbox" class="custom-control-input" id="favs_only" disabled>
+            <label class="custom-control-label" for="favs_only">
+              Search my favourites only
             </label>
           </div>
         </span>
@@ -104,6 +111,12 @@ Names of input fields to recieve in the Python backend:
           <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
           <label class="custom-control-label" for="pantry_only">
             Include ingredients from pantry
+          </label>
+        </div>
+        <div class="form-group custom-control custom-checkbox">
+          <input name="favs_only" type="checkbox" class="custom-control-input" id="favs_only">
+          <label class="custom-control-label" for="favs_only">
+            Search my favourites only
           </label>
         </div>
       % endif
