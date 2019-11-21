@@ -20,12 +20,12 @@ Python variables that need to be passed in for this template to render correctly
   <!--Makes webpage size adapt to device's screen size-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Non-Mako dependent styling from this file -->
+  <!-- Non-Mako-dependent styling from this file -->
   <link rel="stylesheet" href="../static/search-results.css">
 
   <%include file="/site_wide.html"/>
 
-  <title>Wingredient Search Results</title>
+  <title>Search Results - Wingredient</title>
 </head>
 
 <body>
@@ -70,33 +70,58 @@ Python variables that need to be passed in for this template to render correctly
 
     <!-- Search results -->
       % for i in range(len(titles)):
-        <div class="card mb-3">
+        <div class="card border-secondary mb-3">
           <div class="row no-gutters">
-            <div class="col-md-5">
-              <img src="${image_paths[i]}" class="card-img" height="250" alt="${image_alts[i]}">
+            <div class="col-md-6">
+              <img src="${image_paths[i]}" class="card-img"
+              alt="${image_alts[i]}" onerror="this.onerror=null; this.src='../static/images/no_photo.png';">
             </div>
-            <div class="col-md-7">
+            <div class="col-md-6">
               <div class="card-body">
                 <h5 class="card-title">${titles[i]}</h5>
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
                     % if ratings[i] == None:
-                    0%
+                    No Rating
                     % else:
-                    ${ratings[i]}% 
-                    % endif 
-                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                    ${ratings[i]}% <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                    % endif
+
                   </li>
                   <li class="list-group-item">
                     <i class="fa fa-clock-o" aria-hidden="true"></i>
                     ${cooking_times_in_minutes[i]} minutes
+                  </li>
+                  <script>
+                    % if difficulties[i] == 'Easy':
+                    <%
+                      difficulty_color="green"
+                    %>
+                    % elif difficulties[i] == 'Intermediate':
+                    <%
+                      difficulty_color="orange"
+                    %>
+                    % elif difficulties[i] == 'Hard':
+                    <%
+                      difficulty_color="red"
+                    %>
+                    % else:
+                    <%
+                      ## It should never be black, but this is here just to prevent the
+                      ## page from crashing
+                      difficulty_color="black"
+                    %>
+                    % endif
+                  </script>
+                  <li class="list-group-item" style="color: ${difficulty_color};">
+                    ${difficulties[i]}
                   </li>
                 </ul>
               </div>
             </div>
           </div>
           <!-- Makes the card clickable -->
-          <a href="recipe/${recipe_ids[i]}" class="stretched-link"></a>
+          <a href="recipe/${recipe_ids[i]}" class="stretched-link" target="_blank"></a>
         </div>
         <br>
       % endfor

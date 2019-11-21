@@ -1,11 +1,13 @@
 """Module for the Flask app object."""
+import uuid
 
+import psycopg2.extras
 from flask import Flask, request, redirect, url_for, session, flash
 from mako.template import Template
 from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from os.path import abspath
-from werkzeug.datastructures import ImmutableMultiDict 
+from werkzeug.datastructures import ImmutableMultiDict
 from . import db
 from .pantry import *
 from collections import Counter
@@ -115,15 +117,16 @@ def results():
             titles=""
         )
 
-
     return template.render(
-        titles=[r[1] for r in _results],  # name from recipe
+        titles=[r[1] for r in _results],  #name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[get_rating(r[0]) for r in _results],
+        ratings=[r[8] if r[8] is None else int(r[8] * 100) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
-        default='alphabetical'
+        difficulties=[r[6] for r in _results],
+        dietary_tags=[r[7] for r in _results],
+        default="alphabetical"
     )
 
 @app.route("/results", methods=['POST'])
@@ -147,9 +150,11 @@ def results_post():
         titles=[r[1] for r in _results],  #name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[get_rating(r[0]) for r in _results],
+        ratings=[r[8] if r[8] is None else int(r[8] * 100) for r in _results],
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
+        difficulties=[r[6] for r in _results],
+        dietary_tags=[r[7] for r in _results],
         default=sort_option
     )
 
@@ -158,17 +163,66 @@ def get_search():
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             whereclauses = []
+            extra_joins = []
             query_args = {}
 
+            # Create the expressions and arguments to match the search filters
+
             ingredients = request.args.getlist("ingredients")
-            if ingredients:
-                whereclauses.append("i.name IN %(ingredients)s")
+            use_pantry = request.args.get("pantry_only")
+            cur_ingredients_tname = None
+            if ingredients or use_pantry:
+                cur_ingredients_tname = "current_ingredients_" + str(
+                    uuid.uuid4()
+                ).replace("-", "_")
+                cursor.execute(
+                    f"""
+                    CREATE TEMPORARY TABLE {cur_ingredients_tname} (
+                        name text PRIMARY KEY,
+                        quantity integer
+                    )
+                    """
+                )
+                if ingredients:
+                    psycopg2.extras.execute_values(
+                        cursor,
+                        f"INSERT INTO {cur_ingredients_tname} (name) VALUES %s",
+                        [(ingredient,) for ingredient in ingredients]
+                    )
+                if use_pantry:
+                    cursor.execute(
+                        f"""
+                        INSERT INTO {cur_ingredients_tname}
+                          SELECT i.name, p.quantity
+                          FROM pantry p
+                          JOIN ingredient i on p.ingredient = i.id
+                        ON CONFLICT DO NOTHING
+                        """
+                    )
+                conn.commit()
+                extra_joins.extend((
+                    f"JOIN recipetoingredient rtoi ON rtoi.recipe = r.id",
+                    f"JOIN ingredient i ON i.id = rtoi.ingredient",
+                    f"""
+                    LEFT OUTER JOIN {cur_ingredients_tname} ci ON
+                      ci.name = i.name
+                      AND (ci.quantity IS NULL OR ci.quantity >= rtoi.quantity)
+                      AND NOT rtoi.optional
+                    """,
+                    f"""
+                    LEFT OUTER JOIN {cur_ingredients_tname} ci_optional ON
+                      ci_optional.name = i.name
+                      AND (ci_optional.quantity IS NULL OR ci_optional.quantity >= rtoi.quantity)
+                    """,
+                ))
                 query_args["ingredients"] = tuple(ingredients)
                 missing_ingredient_count_expr = (
-                    "ic.compulsory_ingredient_count - count(rtoi.recipe)"
+                    "ic.compulsory_ingredient_count - sum((ci.name IS NOT NULL)::int)"
                 )
+                matched_ingredient_count_expr = "sum((ci_optional.name IS NOT NULL)::int)"
             else:
                 missing_ingredient_count_expr = "ic.compulsory_ingredient_count"
+                matched_ingredient_count_expr = "0"
 
             dietary_tags = request.args.get("dietary_tags", default=0, type=int)
             if dietary_tags:
@@ -187,10 +241,18 @@ def get_search():
                 whereclauses.append("r.serving >= %(num_servings)s")
                 query_args["num_servings"] = num_servings
 
+            min_rating = request.args.get("min_rating", default=0, type=int)
+            if min_rating:
+                whereclauses.append("(rr.rating ISNULL OR rr.rating >= %(min_rating)s)")
+                query_args["min_rating"] = min_rating / 100
+
+            # Format the expressions into a single "WHERE <expr>" string
+            extra_joinclause = " ".join(extra_joins)
             if whereclauses:
                 whereclause = "WHERE " + " AND ".join(whereclauses)
             else:
                 whereclause = ""
+
             query = f"""
                 SELECT
                   r.id,
@@ -199,24 +261,34 @@ def get_search():
                   r.description,
                   r.imageref,
                   r.serving,
+                  r.difficulty,
+                  r.dietary_tags,
+                  rr.rating,
                   ic.compulsory_ingredient_count,
-                  (
-                    {missing_ingredient_count_expr}
-                  ) AS missing_ingredient_count
-                FROM recipetoingredient rtoi
-                JOIN ingredient i ON rtoi.ingredient = i.id
-                JOIN ingredient_counts ic on rtoi.recipe = ic.recipe
-                JOIN recipe r ON rtoi.recipe = r.id
+                  {missing_ingredient_count_expr} AS missing_compulsory_ingredient_count,
+                  {matched_ingredient_count_expr} AS matched_ingredient_count
+                FROM recipe r
+                JOIN ingredient_counts ic ON r.id = ic.recipe
+                LEFT OUTER JOIN recipe_rating rr ON r.id = rr.recipe
+                {extra_joinclause}
                 {whereclause}
                 GROUP BY
                   r.id,
-                  ic.compulsory_ingredient_count
+                  ic.compulsory_ingredient_count,
+                  rr.rating
                 ORDER BY
-                  missing_ingredient_count,
+                  missing_compulsory_ingredient_count,
+                  matched_ingredient_count DESC,
                   r.name
             """
             cursor.execute(query, query_args)
-            return cursor.fetchall()
+            ret = cursor.fetchall()
+
+            if cur_ingredients_tname is not None:
+                # Drop the temporary table
+                cursor.execute(f"DROP TABLE {cur_ingredients_tname} CASCADE")
+
+            return ret
 
 ###########################
 ### SEARCH RECIPE PAGE ####
@@ -245,18 +317,18 @@ def recipe(recipe_id):
 
         elif request.form["button"] == "like":
             if current_user.is_like(recipe_id):
-                current_user.del_like(recipe_id)
+                current_user.del_vote(recipe_id)
             else:
                 if current_user.is_dislike(recipe_id):
-                    current_user.del_dislike(recipe_id)
+                    current_user.del_vote(recipe_id)
                 current_user.add_like(recipe_id)
 
         elif request.form["button"] == "dislike":
             if current_user.is_dislike(recipe_id):
-                current_user.del_dislike(recipe_id)
+                current_user.del_vote(recipe_id)
             else:
                 if current_user.is_like(recipe_id):
-                    current_user.del_like(recipe_id)
+                    current_user.del_vote(recipe_id)
                 current_user.add_dislike(recipe_id)
 
     with db.getconn() as conn:
@@ -466,8 +538,9 @@ def pantry():
     print(ingredient_ids)
     if (ingredient_ids):
         ingredient_info = get_ingredient_info_from_ids(ingredient_ids)
+    else:
+        ingredient_info = []
 
-    print(ingredient_info)
     return template.render(
         error="none",
         all_ingredients = [r[0] for r in all_ingredients_results],

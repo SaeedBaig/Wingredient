@@ -49,8 +49,6 @@ Names of input fields to recieve in the Python backend:
 
 <body>
   <center>
-
-
     <%include file="/navbar.html"/>
 
     <h1>Search for Recipes</h1>
@@ -90,6 +88,25 @@ Names of input fields to recieve in the Python backend:
           $('#ingredients').tagging(${ingredients});
         </script>
       </div>
+
+      <!-- Pantry only -->
+      % if context.username == None:
+        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="right" title="Login to use your pantry">
+          <div class="form-group custom-control custom-checkbox">
+            <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only" disabled>
+            <label class="custom-control-label" for="pantry_only">
+              Include ingredients from pantry
+            </label>
+          </div>
+        </span>
+      % else:
+        <div class="form-group custom-control custom-checkbox">
+          <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
+          <label class="custom-control-label" for="pantry_only">
+            Include ingredients from pantry
+          </label>
+        </div>
+      % endif
 
       <!-- Search terms -->
       ${collapsible_form('Search terms', '<i class="fa fa-book" aria-hidden="true"></i>', """
@@ -156,21 +173,6 @@ Names of input fields to recieve in the Python backend:
         <div class="collapsible-content">
           <div class="content-inner">
 
-            <!-- Pantry only -->
-            % if context.username == None:
-              <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="top" title="Login to use your pantry">
-                <div class="form-group custom-control custom-checkbox">
-                  <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only" disabled>
-                  <label class="custom-control-label" for="pantry_only">Pantry only</label>
-                </div>
-              </span>
-            % else:
-              <div class="form-group custom-control custom-checkbox">
-                <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
-                <label class="custom-control-label" for="pantry_only">Pantry only</label>
-              </div>
-            % endif
-
             <!-- Generate Dietary Checkboxes -->
             % for diet in allowed_diets:
             <div class="form-group custom-control custom-checkbox">
@@ -187,17 +189,18 @@ Names of input fields to recieve in the Python backend:
         </div>
       </div>
 
-      <!-- Submit button -->
-      <br>
-      <button class="btn btn-success" type="submit">
-        <i class="fa fa-search" aria-hidden="true"></i> Search
-      </button>
-      &nbsp;
-
       <!-- Reset button -->
+      <br>
       <button class="btn btn-danger" type="reset">
         <i class="fa fa-undo" aria-hidden="true"></i> Reset
       </button>
+      &nbsp;
+
+      <!-- Submit button -->
+      <button class="btn btn-success" type="submit">
+        <i class="fa fa-search" aria-hidden="true"></i> Search
+      </button>
+
     </form>
 
   </center>
