@@ -346,7 +346,6 @@ def recipe(recipe_id):
                 if current_user.is_like(recipe_id):
                     current_user.del_vote(recipe_id)
                 current_user.add_dislike(recipe_id)
-
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
@@ -498,8 +497,8 @@ def logout():
 #    return template.render()
 #
 #
-#@app.route("/addtoshoppinglist")
-#def shoppinglist():
+@app.route("/add-to-shopping-list")
+def shoppinglist():
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             ## Query for add to shopping list 
@@ -508,8 +507,7 @@ def logout():
 
             ##CHANGE TO SPECIFY EXACT COLUMNS
             #cursor.execute(query)
-            #results = cursor.fetchone()
-
+    print('shopping list updated')
     # NOTE: redirect to home page instead?
     return redirect(url_for("search"))
 ###################
