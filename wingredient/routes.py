@@ -264,6 +264,27 @@ def get_search():
                 whereclauses.append("(rr.rating ISNULL OR rr.rating >= %(min_rating)s)")
                 query_args["min_rating"] = min_rating / 100
 
+            search_terms = request.args.get("terms", default="", type=str)
+            if search_terms:
+                search_term_pattern = "(" + "|".join(search_terms.lower().split(" ")) + ")"
+                matched_search_terms_expr = "term_matches.count"
+                extra_joins.append(
+                    """
+                    NATURAL JOIN LATERAL (
+                      SELECT count(matches) AS count
+                      FROM regexp_matches(
+                        concat(r.name, r.description, r.method), %(search_term_pattern)s, 'ig'
+                      ) matches
+                    ) term_matches
+                    """
+                )
+                query_args["search_term_pattern"] = search_term_pattern
+                whereclauses.append(
+                    "term_matches.count > 0"
+                )
+            else:
+                matched_search_terms_expr = "1"
+
             # Format the expressions into a single "WHERE <expr>" string
             extra_joinclause = " ".join(extra_joins)
             if whereclauses:
@@ -283,16 +304,20 @@ def get_search():
                   r.dietary_tags,
                   rr.rating,
                   {missing_ingredient_count_expr} AS missing_compulsory_ingredient_count,
-                  {matched_ingredient_count_expr} AS matched_ingredient_count
-                FROM recipe r                 JOIN ingredient_counts ic ON r.id = ic.recipe
+                  {matched_ingredient_count_expr} AS matched_ingredient_count,
+                  {matched_search_terms_expr} AS matched_search_terms_count
+                FROM recipe r
+                JOIN ingredient_counts ic ON r.id = ic.recipe
                 LEFT OUTER JOIN recipe_rating rr ON r.id = rr.recipe
                 {extra_joinclause}
                 {whereclause}
                 GROUP BY
                   r.id,
                   ic.compulsory_ingredient_count,
-                  rr.rating
+                  rr.rating,
+                  matched_search_terms_count
                 ORDER BY
+                  matched_search_terms_count DESC,
                   missing_compulsory_ingredient_count,
                   matched_ingredient_count DESC,
                   r.name
