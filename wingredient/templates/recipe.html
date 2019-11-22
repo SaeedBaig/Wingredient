@@ -123,49 +123,52 @@ Python variables that need to be passed in for this template to render correctly
 
     <center>
       <form method="POST">
+
         <!-- Like button -->
-        % if context.username != None:
-        <button type="submit" class="btn btn-primary" name="button" value="like">
+        <button type="submit"
+        % if is_like:
+          class="btn btn-primary"
         % else:
-        <button type="submit" class="btn btn-primary" name="button" value="like" disabled>
+          class="btn btn-outline-primary"
         % endif
-
-          % if is_like:
-          UN
-          % endif
-
+        name="button" value="like"
+        % if context.username == None:
+          disabled
+        % endif
+        >
           <i class="fa fa-thumbs-up" aria-hidden="true"></i> ${num_likes}
-          % if rating != None:
-          (${rating}%)
-          % endif
         </button>
 
-
         <!-- Dislike button -->
-        % if context.username != None:
-        <button type="submit" class="btn btn-primary" name="button" value="dislike">
+        <button type="submit"
+        % if is_dislike:
+          class="btn btn-primary"
         % else:
-        <button type="submit" class="btn btn-primary" name="button" value="dislike" disabled>
+          class="btn btn-outline-primary"
         % endif
-
-          % if is_dislike:
-          UN
-          % endif
+        name="button" value="dislike"
+        % if context.username == None:
+          disabled
+        % endif
+        >
           <i class="fa fa-thumbs-down" aria-hidden="true"></i> ${num_dislikes}
         </button>
 
-        <!-- Add to favourites button -->
-        % if context.username != None:
-        <button type="submit" class="btn btn-danger" name="button" value="favourite">
+        <!-- Favourites button -->
+        <button type="submit"
+        % if is_favourite:
+          class="btn btn-danger"
         % else:
-        <button type="submit" class="btn btn-danger" name="button" value="favourite" disabled>
+          class="btn btn-outline-danger"
         % endif
-
-          % if is_favourite:
-          UN
-          % endif
+        name="button" value="favourite"
+        % if context.username == None:
+          disabled
+        % endif
+        >
           <i class="fa fa-heart" aria-hidden="true"></i>
         </button>
+
       </form>
     </center>
 

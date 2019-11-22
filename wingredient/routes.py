@@ -63,6 +63,9 @@ def search():
         if request.form.get("pantry_only"):
             url_args["pantry_only"] = True
 
+        if request.form.get("favs_only"):
+            url_args["favs_only"] = True
+
         dietary_tags = 0
         for i, checkbox in enumerate(allowed_diets):
             if request.form.get(checkbox):
@@ -176,6 +179,12 @@ def get_search():
 
             # Create the expressions and arguments to match the search filters
 
+            # Filter favourites
+            if request.args.get("favs_only"):
+                whereclauses.append(
+                    f"EXISTS (SELECT * FROM Favourites as f WHERE f.account = \'{current_user.get_id()}\' AND f.recipe = r.id)"
+                )
+
             ingredients = request.args.getlist("ingredients")
             use_pantry = request.args.get("pantry_only")
             cur_ingredients_tname = None
@@ -274,8 +283,7 @@ def get_search():
                   rr.rating,
                   {missing_ingredient_count_expr} AS missing_compulsory_ingredient_count,
                   {matched_ingredient_count_expr} AS matched_ingredient_count
-                FROM recipe r
-                JOIN ingredient_counts ic ON r.id = ic.recipe
+                FROM recipe r                 JOIN ingredient_counts ic ON r.id = ic.recipe
                 LEFT OUTER JOIN recipe_rating rr ON r.id = rr.recipe
                 {extra_joinclause}
                 {whereclause}
@@ -288,6 +296,7 @@ def get_search():
                   matched_ingredient_count DESC,
                   r.name
             """
+            print(query)
             cursor.execute(query, query_args)
             ret = cursor.fetchall()
 
