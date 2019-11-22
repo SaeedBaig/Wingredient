@@ -93,7 +93,8 @@ Python variables that need to be passed in for this template to render correctly
       </div>
     </div>
       <form method="POST">
-        <input type="submit" value="shopping-list">
+          <button type="submit" name="button" value="shopping-list" href="/addtoshoppinglist">
+        </button>
       </form> 
   </center>
   <br>
@@ -127,7 +128,21 @@ Python variables that need to be passed in for this template to render correctly
     <br>
 
     <center>
-
+        <form method="POST">
+        
+        <button type="submit"
+        % if is_like:
+          class="btn btn-primary"
+        % else:
+          class="btn btn-outline-primary"
+        % endif
+        name="button" value="shopping"
+        % if context.username == None:
+          disabled
+        % endif
+        >
+          Add to shopping list 
+        </button>
         <!-- Like button -->
         <button type="submit"
         % if is_like:

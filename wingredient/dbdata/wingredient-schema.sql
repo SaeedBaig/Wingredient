@@ -87,9 +87,10 @@ CREATE TABLE Account (
 DROP TABLE IF EXISTS ShoppingList;
 CREATE TABLE ShoppingList (
     account     varchar(32) references Account(username),
+    recipe      integer references Recipe(id),
     ingredient  integer references Ingredient(id),
     quantity    integer,
-    primary key (account, ingredient)
+    primary key (account, recipe, ingredient)
 );
 
 

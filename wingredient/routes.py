@@ -319,16 +319,28 @@ def format_measurement(measurement):
     if measurement == 'Count': measurement = ''
     return measurement
 
+def add_to_shopping_list(recipe_id):
+    # Handle the like, dislike, and fav buttons
+            # Replace username with current user and recipe with current recipe;
+    with db.getconn() as conn:
+       with conn.cursor() as cursor:
+
+            query = "INSERT INTO shoppinglist (account, recipe, ingredient, quantity) select a.username, rti.recipe, i.id, rti.quantity from account a, recipetoingredient rti, ingredient i where rti.recipe = %s AND rti.ingredient = i.id AND a.username iLIKE %s ON CONFLICT DO NOTHING;"
+
+            cursor.execute(query, (str(recipe_id), current_user.get_id(),))
+        #cursor.execute(query, (recipe_id,))
+            print('\n\n\n SHOPPING LIST UPDATED!!!! \n\n\n')
+            conn.commit()
 @app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
 def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
-
+    shopping_list_request = False
     # Handle the like, dislike, and fav buttons
     if request.method == "POST" and current_user.is_authenticated:
-        if request.form["button"] == "shopping-list":
-            query = "INSERT INTO shoppinglist (account, ingredient, quantity) select a.username, rti.quantity, i.measurement_type, i.name from account a, recipetoingredient rti, ingredient i where rti.recipe = 1 AND rti.ingredient = i.id AND a.username iLIKE 'jeff';"
-            cursor.execute(query)
-        elif request.form["button"] == "favourite":
+        print ("111Trying to add to shopping list!!!!!") 
+        if request.form["button"] == "shopping":
+            add_to_shopping_list(recipe_id)
+        if request.form["button"] == "favourite":
             if current_user.is_fav(recipe_id):
                 current_user.del_fav(recipe_id)
             else:
@@ -352,6 +364,12 @@ def recipe(recipe_id):
 
     with db.getconn() as conn:
         with conn.cursor() as cursor:
+            if shopping_list_request == True:
+
+                query = "INSERT INTO shoppinglist (account, ingredient, quantity) select a.username, i.id, rti.quantity from account a, recipetoingredient rti, ingredient i where rti.recipe = 1 AND rti.ingredient = i.id AND a.username iLIKE 'jeff';"
+                cursor.execute(query)
+            #cursor.execute(query, (recipe_id,))
+                print('\n\n\n SHOPPING LIST UPDATED!!!! \n\n\n')
             query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
             cursor.execute(query, (recipe_id,))
             results = cursor.fetchone()
@@ -398,6 +416,7 @@ def recipe(recipe_id):
         is_favourite=is_favourite,
         is_like=is_like,
         is_dislike=is_dislike
+        #shoppinglist = addtoshoppinglist
     )
 
 
@@ -501,16 +520,8 @@ def logout():
 #    return template.render()
 #
 #
-@app.route("/addtoshoppinglist")
-def shoppinglist():
-    with db.getconn() as conn:
-        with conn.cursor() as cursor:
-            # Replace username with current user and recipe with current recipe;
-            query = "INSERT INTO shoppinglist (account, ingredient, quantity) select a.username, rti.quantity, i.measurement_type, i.name from account a, recipetoingredient rti, ingredient i where rti.recipe = 1 AND rti.ingredient = i.id AND a.username iLIKE 'jeff';"
+@app.route("/shoppinglist")
 
-            cursor.execute(query)
-            #cursor.execute(query, (recipe_id,))
-            print('shopping list updated')
 
             ##CHANGE TO SPECIFY EXACT COLUMNS
             #cursor.execute(query)
@@ -520,7 +531,7 @@ def shoppinglist():
             #results = cursor.fetchone()
 
     # NOTE: redirect to home page instead?
-    return redirect(url_for("search"))
+    #return redirect(url_for("recipe" + recipe_id))
 ###################
 ### PANTRY PAGE ###
 ###################
