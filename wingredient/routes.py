@@ -325,7 +325,10 @@ def recipe(recipe_id):
 
     # Handle the like, dislike, and fav buttons
     if request.method == "POST" and current_user.is_authenticated:
-        if request.form["button"] == "favourite":
+        if request.form["button"] == "shopping-list":
+            query = "INSERT INTO shoppinglist (account, ingredient, quantity) select a.username, rti.quantity, i.measurement_type, i.name from account a, recipetoingredient rti, ingredient i where rti.recipe = 1 AND rti.ingredient = i.id AND a.username iLIKE 'jeff';"
+            cursor.execute(query)
+        elif request.form["button"] == "favourite":
             if current_user.is_fav(recipe_id):
                 current_user.del_fav(recipe_id)
             else:
@@ -346,6 +349,7 @@ def recipe(recipe_id):
                 if current_user.is_like(recipe_id):
                     current_user.del_vote(recipe_id)
                 current_user.add_dislike(recipe_id)
+
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
@@ -497,17 +501,24 @@ def logout():
 #    return template.render()
 #
 #
-@app.route("/add-to-shopping-list")
+@app.route("/addtoshoppinglist")
 def shoppinglist():
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            ## Query for add to shopping list 
-            query = "SELECT rti.quantity, i.name FROM recipetoingredient rti, ingredient i WHERE rti.recipe = %s AND rti.ingredient = i.id;"
-            cursor.execute(query, (recipe_id,))
+            # Replace username with current user and recipe with current recipe;
+            query = "INSERT INTO shoppinglist (account, ingredient, quantity) select a.username, rti.quantity, i.measurement_type, i.name from account a, recipetoingredient rti, ingredient i where rti.recipe = 1 AND rti.ingredient = i.id AND a.username iLIKE 'jeff';"
+
+            cursor.execute(query)
+            #cursor.execute(query, (recipe_id,))
+            print('shopping list updated')
 
             ##CHANGE TO SPECIFY EXACT COLUMNS
             #cursor.execute(query)
-    print('shopping list updated')
+            # Remove from shopping list
+            #query = "DELETE from shoppinglist where account = 'jeff';"
+            ##CHANGE TO SPECIFY EXACT COLUMNS
+            #results = cursor.fetchone()
+
     # NOTE: redirect to home page instead?
     return redirect(url_for("search"))
 ###################
