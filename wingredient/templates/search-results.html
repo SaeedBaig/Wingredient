@@ -118,22 +118,15 @@ Python variables that need to be passed in for this template to render correctly
                   <li class="list-group-item" style="color: ${difficulty_color};">
                     ${difficulties[i]}
                   </li>
-                  <script>
-                    % if missing_ingredients[i] > 0:
-                    <%
-                      missing_colour="red"
-                    %>
-                    % else:
-                    <%
-                      ## It should never be black, but this is here just to prevent the
-                      ## page from crashing
-                      missing_colour="green"
-                    %>
-                    % endif
-                  </script>
-                  <li class="list-group-item" style="color: ${missing_colour}">
-                    Missing non-optional ingredients: ${missing_ingredients[i]}
-                  </li>
+                  % if missing_ingredients[i] > 0:
+                    <li class="list-group-item" style="color: red">
+                      Missing non-optional ingredients: ${missing_ingredients[i]}
+                    </li>
+                  % else:
+                    <li class="list-group-item" style="color: green">
+                      You have all required ingredients!
+                    </li>
+                  % endif
                   <li class="list-group-item" style="color: blue">
                     Ingredients you have: ${matched_ingredients[i]}
                   </li>
