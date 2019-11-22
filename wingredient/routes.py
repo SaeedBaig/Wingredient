@@ -181,9 +181,10 @@ def get_search():
 
             # Filter favourites
             if request.args.get("favs_only"):
-                whereclauses.append(
-                    f"EXISTS (SELECT * FROM Favourites as f WHERE f.account = \'{current_user.get_id()}\' AND f.recipe = r.id)"
+                extra_joins.append(
+                    "JOIN Favourites f ON f.account = %(cur_user_id)s AND f.recipe = r.id"
                 )
+                query_args["cur_user_id"] = current_user.get_id()
 
             ingredients = request.args.getlist("ingredients")
             use_pantry = request.args.get("pantry_only")
@@ -363,8 +364,8 @@ def recipe(recipe_id):
             #query = "SELECT rti.quantity, i.measurement_type, rti.r_quantity, rti.r_measurement_type, i.name FROM ingredient i, recipetoingredient rti WHERE i.id = rti.ingredient AND rti.recipe = %s;"
             cursor.execute(query, (recipe_id,))
             #ir = for row in cursor.fetchall()
-            ires = cursor.fetchall() 
-            ires = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in ires])  
+            ires = cursor.fetchall()
+            ires = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in ires])
             ingredient_results = list(map(" ".join,ires))
 
 
@@ -499,7 +500,7 @@ def logout():
 #def shoppinglist():
 #    with db.getconn() as conn:
 #        with conn.cursor() as cursor:
-#            #query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = 20;"   
+#            #query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = 20;"
 #
 #            ##CHANGE TO SPECIFY EXACT COLUMNS
 #            #cursor.execute(query)
@@ -513,7 +514,7 @@ def logout():
 #def shoppinglist():
 #    with db.getconn() as conn:
 #        with conn.cursor() as cursor:
-#            #query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = 20;"   
+#            #query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = 20;"
 #
 #            ##CHANGE TO SPECIFY EXACT COLUMNS
 #            #cursor.execute(query)
@@ -688,12 +689,12 @@ def recipe_form():
             dietary_tags = dietary_tags | 0b0100
         if dairy_check:
             dietary_tags = dietary_tags | 0b1000
-        
+
         session['dietary_tags'] = dietary_tags
-        
+
 
         return redirect(url_for('recipe_confirm'))
-        
+
 
     with db.getconn() as conn:
         with conn.cursor() as cursor:

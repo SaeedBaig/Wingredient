@@ -7,7 +7,7 @@ def upload_recipe(username, name, cooking_time, difficulty, serving_size, cookin
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             recipe_id = gen_id()
-            query = "INSERT INTO Recipe (id, name, time, difficulty, serving, notes, description, cuisine_tags, dietary_tags, imageRef, method) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s::bit(4), %s, %s)" 
+            query = "INSERT INTO Recipe (id, name, time, difficulty, serving, notes, description, cuisine_tags, dietary_tags, imageRef, method) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s::bit(4), %s, %s)"
             cursor.execute(query, (recipe_id, name, cooking_time, difficulty, serving_size, cooking_notes, description, cuisine_tags, dietary_tags, imageRef, method))
             conn.commit()
     upload_ingredients(recipe_id, ingredient_ids, ingredient_quantities, optional)
@@ -43,7 +43,7 @@ def upload_ingredients(recipe_id, ingredients, quantities, optional):
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             for i in range(len(ingredients)):
-                query = "INSERT INTO RecipeToIngredient (recipe, ingredient, quantity, optional) VALUES (%s, %s, %s, %s)" 
+                query = "INSERT INTO RecipeToIngredient (recipe, ingredient, quantity, optional) VALUES (%s, %s, %s, %s)"
                 cursor.execute(query, (recipe_id, ingredients[i], quantities[i], optional[i]))
             conn.commit()
 
@@ -51,7 +51,7 @@ def upload_equipment(recipe_id, equipment):
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             for e in equipment:
-                query = "INSERT INTO RecipeToEquipment (recipe, equipment) VALUES (%s, %s)" 
+                query = "INSERT INTO RecipeToEquipment (recipe, equipment) VALUES (%s, %s)"
                 cursor.execute(query, (recipe_id, e))
             conn.commit()
 
@@ -71,4 +71,3 @@ def get_all_equipment():
             cursor.execute(query)
             result = cursor.fetchall()
             return [r[0] for r in result]
-         
