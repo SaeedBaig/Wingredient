@@ -152,7 +152,7 @@ def results_post():
     sort_option = request.form['sorting_options']
     print(sort_option)
     if sort_option == "rating":
-        _results.sort(key=lambda a: a[8], reverse=True)
+        _results.sort(key=lambda a: a[8] or 0, reverse=True)
     elif sort_option == "cooking-time":
         _results.sort(key=lambda a: a[2])
     elif sort_option == "alphabetical":
