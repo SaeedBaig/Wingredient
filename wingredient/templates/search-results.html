@@ -47,16 +47,21 @@ Python variables that need to be passed in for this template to render correctly
             </h3>
           </label>
           <select name="sorting_options" id="sorting_options" class="form-control form-control-lg">
-            <option value="alphabetical"
-              % if default=='alphabetical':
+            <option value="relevance"
+              % if default=='relevance':
                 selected
               % endif
-            >Alphabetical order</option>
+            >Relevance</option>
             <option value="cooking-time"
               % if default=='cooking-time':
                 selected
               % endif
             >Cooking time</option>
+            <option value="alphabetical"
+              % if default=='alphabetical':
+                selected
+              % endif
+            >Alphabetical order</option>
             <option value="rating"
               % if default=='rating':
                 selected
