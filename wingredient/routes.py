@@ -416,7 +416,6 @@ def recipe(recipe_id):
         is_favourite=is_favourite,
         is_like=is_like,
         is_dislike=is_dislike
-        #shoppinglist = addtoshoppinglist
     )
 
 
@@ -506,32 +505,32 @@ def logout():
 ###################
 ### Shopping List ###
 ###################
-#@app.route("/shoppinglist")
-#def shoppinglist():
-#    with db.getconn() as conn:
-#        with conn.cursor() as cursor:
-#            #query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = 20;"   
-#
-#            ##CHANGE TO SPECIFY EXACT COLUMNS
-#            #cursor.execute(query)
-#            #results = cursor.fetchone()
-#
-#    template = LOOKUP.get_template("shopping-list.html")
-#    return template.render()
-#
-#
-@app.route("/shoppinglist")
+@app.route("/shoppinglist", methods=["GET", "POST"])
+def shoppinglist():
+        #shoppinglist = addtoshoppinglist
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+            template = LOOKUP.get_template("shopping-list.html")
+
+            query = "select sss.quantity, sss.measurement_type, sss.name from (select ss.account, (CASE WHEN ss.ingredient = p.ingredient THEN ss.quantity-p.quantity ELSE ss.quantity END) as quantity, ss.measurement_type, ss.name from (select s.account, s.ingredient, (SUM(s.quantity)) as quantity, i.measurement_type, i.name from shoppinglist s join ingredient i on i.id = s.ingredient group by i.measurement_type, i.name, s.ingredient, s.account) AS ss left join pantry p on p.ingredient = ss.ingredient GROUP BY ss.quantity, ss.measurement_type, ss.name, ss.ingredient, p.ingredient, p.quantity, ss.account) AS sss where sss.quantity > 0 AND sss.account iLIKE %s;"
+            #query = "select SUM(s.quantity) as quantity, i.measurement_type, i.name from shoppinglist s, ingredient i where i.id = s.ingredient AND s.account = %s GROUP BY i.measurement_type, i.name MINUS SELECT;"
+            ##CHANGE TO SPECIFY EXACT COLUMNS), )
+            cursor.execute(query, (current_user.get_id(),) )
+            slres = cursor.fetchall()
+
+            ##print(format_quantity(i[0]))), print((format_measurement(i[1])), print(i[2])) for i in slres 
+            slres = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in slres])  
+            shopping_list_ingredient_results = list(map(" ".join, slres))
+            print(shopping_list_ingredient_results)
+    return template.render(
+            shopping_list_ingredients = shopping_list_ingredient_results,
+    ) 
 
 
-            ##CHANGE TO SPECIFY EXACT COLUMNS
-            #cursor.execute(query)
             # Remove from shopping list
             #query = "DELETE from shoppinglist where account = 'jeff';"
-            ##CHANGE TO SPECIFY EXACT COLUMNS
-            #results = cursor.fetchone()
 
-    # NOTE: redirect to home page instead?
-    #return redirect(url_for("recipe" + recipe_id))
+
 ###################
 ### PANTRY PAGE ###
 ###################

@@ -24,11 +24,12 @@ Python variables that need to be passed in for this template to render correctly
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Non-Mako dependent styling from this file -->
-  <link rel="stylesheet" href="../static/recipe.css">
+  <link rel="stylesheet" href="../static/shoppinglist.css">
 
   <%include file="/site_wide.html"/>
 
   <title>Wingredient</title>
+  
 
   <!-- Mako-dependent styling -->
 
@@ -39,11 +40,15 @@ Python variables that need to be passed in for this template to render correctly
     <%include file="/navbar.html"/>
     <!-- Shopping List Title -->
     <h1>Shopping List</h1>
+    <br>
+    <div>
+
       <ul>
         % for ingredient in shopping_list_ingredients:
           <li>${ingredient}</li>
         % endfor
       </ul>
+        </div>
       <br>
 </body>
 </html>
