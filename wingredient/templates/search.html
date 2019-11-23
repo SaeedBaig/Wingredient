@@ -128,6 +128,13 @@ Names of input fields to recieve in the Python backend:
         </div>
       """)}
 
+      <!-- Search fuzzyness -->
+      ${collapsible_form('Max missing ingredients', '<i class="fa fa-book" aria-hidden="true"></i>', """
+        <div class='col-sm-5'>
+          <input name='fuzzyness' type='number' class='form-control' id='fuzzyness' min="0" max="100">
+        </div>
+      """)}
+
       <!-- #Servings -->
       ${collapsible_form('#Servings', '<i class="fa fa-users" aria-hidden="true"></i>', """
       <div class="col-sm-5">

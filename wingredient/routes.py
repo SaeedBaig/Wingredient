@@ -50,7 +50,10 @@ def search():
         # All of these are str
         # No user input = empty string
         url_args = {}
-        for input_field in ("terms", "num_servings", "min_rating", "max_difficulty", "max_time"):
+        fields_to_copy = (
+            "terms", "fuzzyness", "num_servings", "min_rating", "max_difficulty", "max_time"
+        )
+        for input_field in fields_to_copy:
             if request.form[input_field]:
                 url_args[input_field] = request.form[input_field]
 
@@ -173,8 +176,9 @@ def results_post():
 def get_search():
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            whereclauses = []
+            where_clauses = []
             extra_joins = []
+            having_clauses = []
             query_args = {}
 
             # Create the expressions and arguments to match the search filters
@@ -244,24 +248,24 @@ def get_search():
 
             dietary_tags = request.args.get("dietary_tags", default=0, type=int)
             if dietary_tags:
-                whereclauses.append(
+                where_clauses.append(
                     "r.dietary_tags & %(dietary_tags)s::bit(4) = %(dietary_tags)s::bit(4)"
                 )
                 query_args["dietary_tags"] = dietary_tags
 
             max_time = request.args.get("max_time", default=0, type=int)
             if max_time:
-                whereclauses.append("r.time <= %(max_time)s")
+                where_clauses.append("r.time <= %(max_time)s")
                 query_args["max_time"] = max_time
 
             num_servings = request.args.get("num_servings", default=0, type=int)
             if num_servings:
-                whereclauses.append("r.serving >= %(num_servings)s")
+                where_clauses.append("r.serving >= %(num_servings)s")
                 query_args["num_servings"] = num_servings
 
             min_rating = request.args.get("min_rating", default=0, type=int)
             if min_rating:
-                whereclauses.append("(rr.rating ISNULL OR rr.rating >= %(min_rating)s)")
+                where_clauses.append("(rr.rating ISNULL OR rr.rating >= %(min_rating)s)")
                 query_args["min_rating"] = min_rating / 100
 
             search_terms = request.args.get("terms", default="", type=str)
@@ -279,18 +283,27 @@ def get_search():
                     """
                 )
                 query_args["search_term_pattern"] = search_term_pattern
-                whereclauses.append(
+                where_clauses.append(
                     "term_matches.count > 0"
                 )
             else:
                 matched_search_terms_expr = "1"
 
+            fuzzyness = request.args.get("fuzzyness", default=None, type=int)
+            if fuzzyness is not None:
+                having_clauses.append(f"{missing_ingredient_count_expr} <= %(fuzzyness)s")
+                query_args["fuzzyness"] = fuzzyness
+
             # Format the expressions into a single "WHERE <expr>" string
             extra_joinclause = " ".join(extra_joins)
-            if whereclauses:
-                whereclause = "WHERE " + " AND ".join(whereclauses)
+            if where_clauses:
+                where_clause = "WHERE " + " AND ".join(where_clauses)
             else:
-                whereclause = ""
+                where_clause = ""
+            if having_clauses:
+                having_clause = "HAVING " + " AND ".join(having_clauses)
+            else:
+                having_clause = ""
 
             query = f"""
                 SELECT
@@ -310,12 +323,13 @@ def get_search():
                 JOIN ingredient_counts ic ON r.id = ic.recipe
                 LEFT OUTER JOIN recipe_rating rr ON r.id = rr.recipe
                 {extra_joinclause}
-                {whereclause}
+                {where_clause}
                 GROUP BY
                   r.id,
                   ic.compulsory_ingredient_count,
                   rr.rating,
                   matched_search_terms_count
+                {having_clause}
                 ORDER BY
                   matched_search_terms_count DESC,
                   missing_compulsory_ingredient_count,
