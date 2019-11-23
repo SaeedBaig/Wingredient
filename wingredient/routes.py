@@ -180,6 +180,7 @@ def get_search():
             extra_joins = []
             having_clauses = []
             query_args = {}
+            relevance_score_expr = "0"
 
             # Create the expressions and arguments to match the search filters
 
@@ -242,6 +243,7 @@ def get_search():
                     "ic.compulsory_ingredient_count - sum((ci.name IS NOT NULL)::int)"
                 )
                 matched_ingredient_count_expr = "sum((ci_optional.name IS NOT NULL)::int)"
+                relevance_score_expr += f" + {matched_ingredient_count_expr}"
             else:
                 missing_ingredient_count_expr = "ic.compulsory_ingredient_count"
                 matched_ingredient_count_expr = "0"
@@ -286,6 +288,7 @@ def get_search():
                 where_clauses.append(
                     "term_matches.count > 0"
                 )
+                relevance_score_expr += f" + {matched_search_terms_expr}"
             else:
                 matched_search_terms_expr = "1"
 
@@ -318,7 +321,8 @@ def get_search():
                   rr.rating,
                   {missing_ingredient_count_expr} AS missing_compulsory_ingredient_count,
                   {matched_ingredient_count_expr} AS matched_ingredient_count,
-                  {matched_search_terms_expr} AS matched_search_terms_count
+                  {matched_search_terms_expr} AS matched_search_terms_count,
+                  {relevance_score_expr} AS relevance_score
                 FROM recipe r
                 JOIN ingredient_counts ic ON r.id = ic.recipe
                 LEFT OUTER JOIN recipe_rating rr ON r.id = rr.recipe
@@ -331,10 +335,9 @@ def get_search():
                   matched_search_terms_count
                 {having_clause}
                 ORDER BY
-                  matched_search_terms_count DESC,
-                  missing_compulsory_ingredient_count,
-                  matched_ingredient_count DESC,
-                  r.name
+                  relevance_score DESC,
+                  rr.rating DESC NULLS LAST,
+                  r.name ASC
             """
             print(query)
             cursor.execute(query, query_args)
