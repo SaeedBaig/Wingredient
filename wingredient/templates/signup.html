@@ -48,10 +48,15 @@ Names of input fields to recieve in the Python backend:
           </span>
         </div>
         <input id="username-box" name="username" placeholder="Username"
-        type="text" class="form-control" aria-label="Large"
-        aria-describedby="inputGroup-sizing-sm" required>
+        pattern="[a-zA-Z0-9-_]+" class="form-control" aria-label="Large"
+        aria-describedby="username-help-block" required>
       </div>
+
+      <small id="username-help-block" class="form-text text-muted">
+        Your username can only contain letters, numbers, -, and _
+      </small>
       <br>
+
 
       <!-- Password field -->
       <div class="input-group input-group-lg">
@@ -61,8 +66,8 @@ Names of input fields to recieve in the Python backend:
           </span>
         </div>
         <input id="password-box" name="password" placeholder="Password"
-        type="password" class="form-control" aria-label="Large"
-        aria-describedby="inputGroup-sizing-sm" required>
+        type="password" minlength="2" class="form-control" aria-label="Large"
+        aria-describedby="password-help-block" required>
       </div>
 
       <!-- Confirm password field -->
@@ -73,9 +78,14 @@ Names of input fields to recieve in the Python backend:
           </span>
         </div>
         <input id="confirm-password-box" name="password_duplicate"
-        placeholder="Confirm password" type="password" class="form-control"
-        aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
+        placeholder="Confirm password" type="password" minlength="2"
+        class="form-control" aria-label="Large"
+        aria-describedby="inputGroup-sizing-sm" required>
       </div>
+
+      <small id="password-help-block" class="form-text text-muted">
+        Your password must be at least 2 characters long
+      </small>
 
       <!-- Error message -->
       % if error != None:
