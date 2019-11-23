@@ -23,17 +23,143 @@
     <%include file="/navbar.html"/>
 
     <h1>Confirm Recipe</h1>
-    <h4>Recipe Name: ${recipe_name}</h4>
-    <h4>Cooking Time: ${recipe_time}</h4>
-    <h4>Difficulty: ${recipe_difficulty}</h4>
-    <h4>Servings: ${recipe_serving}</h4>
-    <h4>Cooking Notes: ${recipe_notes}</h4>
-    <h4>Description: ${recipe_description}</h4>
-    <h4>Dietary Tags: ${dietary_tags}</h4>
-    <h4>Equipment: ${recipe_equipment}</h4>
-    <h4>Method: ${recipe_method}</h4>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-2">
+                <b>Recipe Name:</b>
+            </div>
+            <div class="col-lg-2" style="align-content: flex-start">
+                ${recipe_name}
+            </div>
+        </div>
+        <div style="height:10px;font-size:1px;">&nbsp;</div>
+
+        <div class="row justify-content-center">
+            <div class="col-sm-2">
+                <b>Cooking Time:</b>
+            </div>
+            <div class="col-lg-2" style="align-content: flex-start">
+                ${recipe_time}
+            </div>
+        </div>
+        <div style="height:10px;font-size:1px;">&nbsp;</div>
+        <div class="row justify-content-center">
+            <div class="col-sm-2">
+                <b>Servings:</b>
+            </div>
+            <div class="col-lg-2" style="align-content: flex-start">
+                ${recipe_serving}
+            </div>
+        </div>
+        <div style="height:10px;font-size:1px;">&nbsp;</div>
+        <div class="row justify-content-center">
+            <div class="col-sm-2">
+                <b>Difficulty:</b>
+            </div>
+            <div class="col-lg-2" style="align-content: flex-start">
+                ${recipe_difficulty}
+            </div>
+        </div>
+        <hr>
+        <div class="row justify-content-center">
+            <div class="col-sm-2">
+                <b>Cooking Notes:</b>
+            </div>
+            <div class="col-lg-2" style="align-content: flex-start">
+                ${recipe_notes}
+            </div>
+        </div>
+        <hr>
+        <div class="row justify-content-center">
+            <div class="col-sm-2">
+                <b>Description:</b>
+            </div>
+            <div class="col-lg-2" style="align-content: flex-start">
+                ${recipe_description}
+            </div>
+        </div>
+        <hr>
+        <div class="row justify-content-center">
+            <div class="col-sm-2">
+                <b>Cuisine Tags:</b>
+            </div>
+            <div class="col-lg-2" style="align-content: flex-start">
+                ${cuisine_tags}
+            </div>
+        </div>
+        <hr>
+        <h4>Dietary Tags</h4>
+        <div class="row justify-content-center">
+            <div class="col-sm-2">
+                <b>Vegetarian:</b>
+            </div>
+            <div class="col-lg-2" style="align-content: flex-start">
+                % if vegetarian:
+                    <span class="text-success"> Yes</span>
+                % else:
+                    <span class="text-danger"> No</span>
+                % endif
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-sm-2">
+                <b>Vegan:</b>
+            </div>
+            <div class="col-lg-2" style="align-content: flex-start">
+                % if vegan:
+                    <span class="text-success"> Yes</span>
+                % else:
+                    <span class="text-danger"> No</span>
+                % endif
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-sm-2">
+                <b>Gluten Free:</b>
+            </div>
+            <div class="col-lg-2" style="align-content: flex-start">
+                % if gluten_free:
+                    <span class="text-success"> Yes</span>
+                % else:
+                    <span class="text-danger"> No</span>
+                % endif
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-sm-2">
+                <b>Dairy Free:</b>
+            </div>
+            <div class="col-lg-2" style="align-content: flex-start">
+                % if dairy_free:
+                    <span class="text-success"> Yes</span>
+                % else:
+                    <span class="text-danger"> No</span>
+                % endif
+            </div>
+        </div>
+    </div>
+    
+    <hr>
+    <h4>Equipment</h4>
+    <div style="width: 60%;">
+            <ul class="list-group list-group-flush">
+            % for elem in recipe_equipment:
+                <li class="list-group-item">${elem}</li>
+            % endfor
+            </ul>
+        </div>
+    <hr>
+    <h4>Method</h4>
+    <div style="width: 60%;">
+        <ul class="list-group list-group-flush">
+        % for i in range(len(recipe_method)):
+            <li class="list-group-item">${i+1}. ${recipe_method[i]}</li>
+        % endfor
+        </ul>
+    </div>
+    <hr>
     <h3>Ingredients</h3>
-    <div class="card mb-3">
+    <div style="width: 60%;">
         <ul class="list-group list-group-flush">
             % for i in range(len(recipe_ingredients)):
                 <li class="list-group-item">
@@ -42,15 +168,16 @@
             % endfor
         </ul>
     </div>
+    <hr>
     <form enctype="multipart/form-data", method="POST">
-        <div class="form-row">
+        <div class="form-row justify-content-center">
             <div class="form-group col-md-4">
                 <label class="col-form-label" for="recipe_image">Upload Image:</label>
             </div>
             <div class="form-group col-md-6">
                 <input class="form-control-file" type="file" id="recipe_image" name="recipe_image" accept="image/png, image/jpeg">  <!--recipe image-->
             </div>
-            <input type="submit" value="Upload Recipe"/>
+            <input type="submit" class="btn btn-primary" value="Upload Recipe"/>
         </div>
     </form>
   </center>
