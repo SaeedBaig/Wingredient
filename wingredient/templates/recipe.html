@@ -122,54 +122,119 @@ Python variables that need to be passed in for this template to render correctly
     <br>
 
     <center>
-      <form method="POST">
+      <!-- Like button -->
+      <button type="submit"
+      name="button" value="like" id="like-button"
+      % if is_like:
+        class="btn btn-primary"
+        data-active="true"
+      % else:
+        class="btn btn-outline-primary"
+        data-active="false"
+      % endif
+      % if context.username == None:
+        disabled
+      % endif
+      >
+        <i class="fa fa-thumbs-up" aria-hidden="true"></i> <span id="like-button-value">${num_likes}</span>
+      </button>
 
-        <!-- Like button -->
-        <button type="submit"
-        % if is_like:
-          class="btn btn-primary"
-        % else:
-          class="btn btn-outline-primary"
-        % endif
-        name="button" value="like"
-        % if context.username == None:
-          disabled
-        % endif
-        >
-          <i class="fa fa-thumbs-up" aria-hidden="true"></i> ${num_likes}
-        </button>
+      <!-- Dislike button -->
+      <button type="submit"
+      name="button" value="dislike" id="dislike-button"
+      % if is_dislike:
+        class="btn btn-primary"
+        data-active="true"
+      % else:
+        class="btn btn-outline-primary"
+        data-active="false"
+      % endif
+      % if context.username == None:
+        disabled
+      % endif
+      >
+        <i class="fa fa-thumbs-down" aria-hidden="true"></i> <span id="dislike-button-value">${num_dislikes}</span>
+      </button>
 
-        <!-- Dislike button -->
-        <button type="submit"
-        % if is_dislike:
-          class="btn btn-primary"
-        % else:
-          class="btn btn-outline-primary"
-        % endif
-        name="button" value="dislike"
-        % if context.username == None:
-          disabled
-        % endif
-        >
-          <i class="fa fa-thumbs-down" aria-hidden="true"></i> ${num_dislikes}
-        </button>
+      <!-- Favourites button -->
+      <button type="submit"
+      name="button" value="favourite" id="favourite-button"
+      % if is_favourite:
+        class="btn btn-danger"
+        data-active="true"
+      % else:
+        class="btn btn-outline-danger"
+        data-active="false"
+      % endif
+      % if context.username == None:
+        disabled
+      % endif
+      >
+        <i class="fa fa-heart" aria-hidden="true"></i>
+      </button>
 
-        <!-- Favourites button -->
-        <button type="submit"
-        % if is_favourite:
-          class="btn btn-danger"
-        % else:
-          class="btn btn-outline-danger"
-        % endif
-        name="button" value="favourite"
-        % if context.username == None:
-          disabled
-        % endif
-        >
-          <i class="fa fa-heart" aria-hidden="true"></i>
-        </button>
+      <script>
+        likeButton = document.getElementById('like-button');
+        dislikeButton = document.getElementById('dislike-button');
+        likeSpan = document.getElementById('like-button-value');
+        dislikeSpan = document.getElementById('dislike-button-value');
 
-      </form>
+        likeButton.addEventListener('click', async _ => {
+          try {
+            if (likeButton.getAttribute('data-active') === 'true') {
+              await fetch('${recipe_id}/like', {method: 'delete'});
+              likeButton.setAttribute('data-active', 'false');
+              likeButton.setAttribute('class', 'btn btn-outline-primary');
+              likeSpan.innerHTML = (parseInt(likeSpan.innerHTML) - 1).toString();
+            } else {
+              await fetch('${recipe_id}/like', {method: 'post'});
+              likeButton.setAttribute('data-active', 'true');
+              likeButton.setAttribute('class', 'btn btn-primary');
+              likeSpan.innerHTML = (parseInt(likeSpan.innerHTML) + 1).toString();
+              if (dislikeButton.getAttribute('data-active') === 'true') {
+                dislikeButton.setAttribute('data-active', 'false');
+                dislikeButton.setAttribute('class', 'btn btn-outline-primary');
+                dislikeSpan.innerHTML = (parseInt(dislikeSpan.innerHTML) - 1).toString();
+              }
+            }
+          } catch(err) {
+            console.error(`Error: ${{err}}`);
+          }
+        });
+
+        dislikeButton.addEventListener('click', async _ => {
+          if (dislikeButton.getAttribute('data-active') === 'true') {
+            await fetch('${recipe_id}/like', {method: 'delete'});
+            dislikeButton.setAttribute('data-active', 'false');
+            dislikeButton.setAttribute('class', 'btn btn-outline-primary');
+            dislikeSpan.innerHTML = (parseInt(dislikeSpan.innerHTML) - 1).toString();
+          } else {
+            await fetch('${recipe_id}/like', {method: 'post'});
+            dislikeButton.setAttribute('data-active', 'true');
+            dislikeButton.setAttribute('class', 'btn btn-primary');
+            dislikeSpan.innerHTML = (parseInt(dislikeSpan.innerHTML) + 1).toString();
+            if (likeButton.getAttribute('data-active') === 'true') {
+              likeButton.setAttribute('data-active', 'false');
+              likeButton.setAttribute('class', 'btn btn-outline-primary');
+              likeSpan.innerHTML = (parseInt(likeSpan.innerHTML) - 1).toString();
+            }
+          }
+        });
+
+        favButton = document.getElementById('favourite-button');
+        favButton.addEventListener('click', async _ => {
+          if (favButton.getAttribute('data-active') === 'true') {
+            await fetch('${recipe_id}/favourite', {method: 'delete'});
+            favButton.setAttribute('data-active', 'false');
+            favButton.setAttribute('class', 'btn btn-outline-danger');
+          } else {
+            await fetch('${recipe_id}/favourite', {method: 'post'});
+            favButton.setAttribute('data-active', 'true');
+            favButton.setAttribute('class', 'btn btn-danger');
+          }
+        });
+      </script>
+
     </center>
 
     <br>

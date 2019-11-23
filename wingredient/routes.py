@@ -359,34 +359,9 @@ def format_measurement(measurement):
     if measurement == 'Count': measurement = ''
     return measurement
 
-@app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
+@app.route("/recipe/<int:recipe_id>", methods=["GET"])
 def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
-
-    # Handle the like, dislike, and fav buttons
-    if request.method == "POST" and current_user.is_authenticated:
-        if request.form["button"] == "favourite":
-            if current_user.is_fav(recipe_id):
-                current_user.del_fav(recipe_id)
-            else:
-                current_user.add_fav(recipe_id)
-
-        elif request.form["button"] == "like":
-            if current_user.is_like(recipe_id):
-                current_user.del_vote(recipe_id)
-            else:
-                if current_user.is_dislike(recipe_id):
-                    current_user.del_vote(recipe_id)
-                current_user.add_like(recipe_id)
-
-        elif request.form["button"] == "dislike":
-            if current_user.is_dislike(recipe_id):
-                current_user.del_vote(recipe_id)
-            else:
-                if current_user.is_like(recipe_id):
-                    current_user.del_vote(recipe_id)
-                current_user.add_dislike(recipe_id)
-
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
@@ -445,7 +420,8 @@ def recipe(recipe_id):
         rating=get_rating(recipe_id),
         is_favourite=is_favourite,
         is_like=is_like,
-        is_dislike=is_dislike
+        is_dislike=is_dislike,
+        recipe_id=recipe_id,
     )
 
 
@@ -803,3 +779,36 @@ def recipe_confirm():
     #   error="none",
     #   username=current_user.get_id() if current_user.is_authenticated else None
     )
+
+
+@app.route('/recipe/<int:recipe_id>/like', methods=['POST', 'DELETE'])
+@app.route('/recipe/<int:recipe_id>/dislike', methods=['POST', 'DELETE'])
+def recipe_vote(recipe_id):
+    if not current_user.is_authenticated:
+        return 'You must log in first', 403
+
+    if request.method == "POST":
+        # Add like or dislike
+        if request.path.endswith('/like'):
+            current_user.add_like(recipe_id)
+        elif request.path.endswith('/dislike'):
+            current_user.add_dislike(recipe_id)
+        else:
+            # Should never happen
+            return 'Invalid path', 400
+    elif request.method == "DELETE":
+        # Remove like or dislike
+        current_user.del_vote(recipe_id)
+    return ''
+
+
+@app.route('/recipe/<int:recipe_id>/favourite', methods=['POST', 'DELETE'])
+def recipe_favourite(recipe_id):
+    if not current_user.is_authenticated:
+        return 'You must log in first', 403
+
+    if request.method == "POST":
+        current_user.add_fav(recipe_id)
+    elif request.method == "DELETE":
+        current_user.del_fav(recipe_id)
+    return ''
