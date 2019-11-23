@@ -38,44 +38,38 @@ Python variables that need to be passed in for this template to render correctly
     % if len(titles) == 0:
       <h3>Sorry, no recipes found matching your search</h3>
     % else:
-      <!-- Sort Results By -->
-      <form class="form-inline justify-content-center", method="POST">
-        <div class="form-group">
-          <label for="sorting_options">
-            <h3>
-              <i class="fa fa-sort" aria-hidden="true"></i> Sort results by&nbsp;
-            </h3>
-          </label>
-          <select name="sorting_options" id="sorting_options" class="form-control form-control-lg">
-            <option value="relevance"
-              % if default=='relevance':
-                selected
-              % endif
-            >Relevance</option>
-            <option value="cooking-time"
-              % if default=='cooking-time':
-                selected
-              % endif
-            >Cooking time</option>
-            <option value="alphabetical"
-              % if default=='alphabetical':
-                selected
-              % endif
-            >Alphabetical order</option>
-            <option value="rating"
-              % if default=='rating':
-                selected
-              % endif
-            >Rating</option>
-          </select>
-          &nbsp;
-          <input class="btn btn-primary" type="submit" value="Sort">
+      <h3>Sort by</h3>
+      <form class="form-inline justify-content-center" method="POST">
+
+        <!--
+        Mako function to generate a sort button. Takes:
+        val - The value tag of the button (either relevance, cooking-time, alphabetical, or rating)
+        label_text - Text that appears on the button
+        icon_name - The name of the FontAwesome icon to appear before the label_text (if empty string, no icon)
+        -->
+        <%def name="make_sort_button(val, label_text, icon_name)">
+          <button name="sorting_options" type="submit" value="${val}"
+          % if default == val:
+            class="btn btn-primary active"
+          % else:
+            class="btn btn-primary"
+          % endif
+          >
+            <i class="fa ${icon_name}" aria-hidden="true"></i> &nbsp; ${label_text}
+          </button>
+        </%def>
+
+        <div class="btn-group btn-group-lg" role="group" aria-label="Basic example">
+          ${make_sort_button('relevance', 'Relevance', '')}
+          ${make_sort_button('cooking-time', 'Cooking time', 'fa-clock-o')}
+          ${make_sort_button('alphabetical', 'Alphabetical order', 'fa-sort-alpha-asc')}
+          ${make_sort_button('rating', 'Rating', 'fa-thumbs-up')}
         </div>
       </form>
-    <br>
+      <br>
 
 
-    <!-- Search results -->
+      <!-- Search results -->
       % for i in range(len(titles)):
         <div class="card border-secondary mb-3">
           <div class="row no-gutters">
