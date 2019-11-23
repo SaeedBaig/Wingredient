@@ -552,6 +552,9 @@ def logout():
 #
 #    # NOTE: redirect to home page instead?
 #    return redirect(url_for("search"))
+def format_m_type(val):
+    return "(" + val + ")"
+
 ###################
 ### PANTRY PAGE ###
 ###################
@@ -562,7 +565,8 @@ def pantry():
     template = LOOKUP.get_template("pantry.html")
     if request.method == "POST":
         if 'pantry-add' in request.form:
-            ingredient = request.form['ingredients']
+            ingredient = request.form['ingredient_input']
+            ingredient = ingredient.split(' ')[0]
             ingredient_index = get_ingredient_info_from_name(ingredient)
             quantity = request.form['quantity']
             if quantity == '':
@@ -578,7 +582,11 @@ def pantry():
             query = "SELECT name, measurement_type FROM ingredient ORDER BY name;"   # query for ingredient ids
             cursor.execute(query)
             all_ingredients_results = cursor.fetchall()
+                
+    ires = ([(i[0], format_m_type(i[1])) for i in all_ingredients_results])
+ 
 
+    ingredient_results = list(map(" ".join,ires))
     results = get_ingredients(current_user.get_id())
 
 
@@ -593,12 +601,11 @@ def pantry():
 
     return template.render(
         error="none",
-        all_ingredients = [r[0] for r in all_ingredients_results],
+        all_ingredients = ingredient_results,
         ingredients=[r[0] for r in ingredient_info],
         ingredient_ids = ingredient_ids,
         quantities=quantities,
         pantry_types=[r[1] for r in ingredient_info],
-        m_types=[r[1] for r in all_ingredients_results],
         username=current_user.get_id() if current_user.is_authenticated else None
     )
 
