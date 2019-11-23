@@ -22,8 +22,11 @@ Names of input fields to recieve in the Python backend:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Non-Mako dependent styling from this file -->
-  <link rel="stylesheet" href="../static/search.css">
+  <link rel="stylesheet" href="../static/pantry.css">
 
+  
+  <script type="text/javascript" src="../static/ingredient_autocomplete.js"></script>
+  
   <%include file="/site_wide.html"/>
 
   <title>${context.username}'s Pantry - Wingredient</title>
@@ -36,14 +39,12 @@ Names of input fields to recieve in the Python backend:
     <h1>Pantry</h1>
     <br>
     <div>
-      <form method="POST">
+      <form autocomplete="off" method="POST">
         <div class="form-group">
           <div class="input-group mb-3">
-            <select name="ingredients" id="ingredients" class="form-control">
-              % for i in range(len(all_ingredients)):
-              <option value="${all_ingredients[i]}">${all_ingredients[i]} (${m_types[i]})</option>
-              % endfor
-            </select>
+            <div class="autocomplete">
+                <input id="ingredient_input" style="width: 350px;" class="form-control" type="text", name="ingredient_input", placeholder="Ingredient">
+            </div>
             <input type="number" class="form-control" min="0" step="1" name="quantity" id="quantity" placeholder="Quantity" required/>
             <!-- <input type="submit" name="pantry-add" value="Add to pantry" class="btn btn-primary" id="add"/> -->
             <button class="btn btn-primary" name="pantry-add" id="add" type="submit">
@@ -76,7 +77,13 @@ Names of input fields to recieve in the Python backend:
     </form>
     % endif
 
-
+    <script>
+        var all_ingredients = ${all_ingredients}
+        console.log(all_ingredients)
+        var elem = document.getElementById("ingredient_input")
+        console.log(elem)
+        autocomplete(document.getElementById("ingredient_input"), all_ingredients);
+    </script>
   </center>
   <br>
 </body>
