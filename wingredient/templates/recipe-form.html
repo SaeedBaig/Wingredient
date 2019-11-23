@@ -45,34 +45,37 @@ Names of input fields to recieve in the Python backend:
     <h1>Recipe Form</h1>
     <br>
     <form method="POST">
+        <div class="form-group row">
+            <label for="recipe_name" class="col-sm-3 col-form-label">Recipe Name:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" style="height: 30px;" name="recipe_name" id="recipe_name" required>    <!-- recipe name-->
+            </div>
+        </div>
+
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="recipe_name">Recipe Name</label>
-                <input type="text" class="form-control" name="recipe_name" id="recipe_name" required>    <!-- recipe name-->
+                <label for="serving_size" style="align-items: left;" class="col-sm-6 col-form-label">Serving Size:</label>
+                <input type="number" name="serving_size" style="height: 30px;" id="serving_size" class="form-control col-sm-3" required>    <!--serving size-->
             </div>
             <div class="form-group col-md-6">
-                <label for="cooking_time">Cooking Time</label>
-                <input type="number" class="form-control" name="cooking_time" id="cooking_time" required>    <!-- cooking time-->
+                <label for="cooking_time" class="col-sm-8 col-form-label">Cooking Time (mins):</label>
+                <input type="number" class="form-control col-sm-3" style="height: 30px;" name="cooking_time" id="cooking_time" required>    <!-- cooking time-->
             </div>
         </div>
 
-        <div class="form-group row">
-            <label for="difficulty" class="col-sm-3 col-form-label">Difficulty:</label>
-            <div class="col-sm-8">
-                <select name="difficulty" id="difficulty" class="form-control">         <!--difficulty-->
-                    <option value="Easy">Easy</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Hard">Hard</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="serving_size" class="col-sm-3 col-form-label">Serving Size:</label>
-            <div class="col-sm-8">
-                <input type="number" name="serving_size" id="serving_size" class="form-control" required>    <!--serving size-->
-            </div>
-        </div>
+        
 
+            
+        <div class="form-group row">
+                <label for="difficulty" class="col-sm-3 col-form-label">Difficulty:</label>
+                <div class="col-sm-8">
+                    <select name="difficulty" id="difficulty" class="form-control">         <!--difficulty-->
+                        <option value="Easy">Easy</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                </div>
+            </div>
         <div class="form-group row">
             <label for="description">Description:</label>
             <textarea class="form-control" rows="2" id="description" name="description"></textarea>     <!--description-->
@@ -107,6 +110,7 @@ Names of input fields to recieve in the Python backend:
         <div class="form-group">
             <label for="equipment">
                 <h5>Recipe Tags</h5>
+                <small>Start typing and press enter to confirm tag</small>
             </label>
             <input name="cuisine_tags" id="cuisine_tags" class="tags-input form-control">
             <script>
@@ -124,7 +128,7 @@ Names of input fields to recieve in the Python backend:
                         <input type="hidden" id="count" name="count" value="1" />
 
                         <div id="field" style="width: 100%;">
-                            <textarea autocomplete="off" class="input form-control" id="field1" name="field1" type="text" style="float: left; width: 92%;" data-items="8"></textarea>     <!--method-->
+                            <textarea autocomplete="off" class="input form-control" id="field1" name="field1" type="text" style="float: left; width: 92%;" data-items="8" required></textarea>     <!--method-->
                             <button id="b1" class="btn btn-primary add-more" style="float: left; margin: 2px;" type="button">+</button>
                         </div>
                     <br>
@@ -139,6 +143,7 @@ Names of input fields to recieve in the Python backend:
                 <div id="fields">
                     <h5 for="field1">Ingredients</h5>
                     <small>(Press + to add another ingredient)</small>
+                    <small>Check the checkbox for all compulsory ingredients in your recipe</small>
                     <div id="profs"> 
                         <input type="hidden" id="count-ingredient" name="count-ingredient" value="1" />
 
@@ -172,7 +177,7 @@ Names of input fields to recieve in the Python backend:
             </script>
         </div>
         <br>
-        <input type="submit" value="Submit Recipe"/>
+        <input type="submit" class = "btn btn-primary" value="Submit Recipe"/>
     </form>
 
 

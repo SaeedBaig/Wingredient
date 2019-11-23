@@ -485,6 +485,11 @@ def recipe_confirm():
     ingredient_checks = session.get("ingredient_checks", None)
     cuisine_tags = session.get("cuisine_tags", None)
     recipe_equipment = recipe_equipment.split(',')
+    vegetarian_check = 0b0001 & dietary_tags
+    vegan_check = 0b0011 & dietary_tags
+    gluten_check = 0b0100 & dietary_tags
+    dairy_check = 0b1000 & dietary_tags
+    display_method = recipe_method.split('|')
     if request.method == "POST":
         # take file input
         if 'recipe_image' in request.files:
@@ -514,8 +519,12 @@ def recipe_confirm():
         recipe_equipment=recipe_equipment,
         recipe_ingredients=recipe_ingredients,
         ingredient_quantities=ingredient_quantities,
-        recipe_method=recipe_method,
-        dietary_tags = dietary_tags
+        recipe_method=display_method,
+        vegetarian=vegetarian_check,
+        vegan=vegan_check,
+        gluten_free=gluten_check,
+        dairy_free=dairy_check,
+        cuisine_tags = cuisine_tags
     #   error="none",
     #   username=current_user.get_id() if current_user.is_authenticated else None
     )
