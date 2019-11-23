@@ -393,7 +393,10 @@ def recipe(recipe_id):
             ires = ([(format_quantity(i[0]), format_measurement(i[1]), i[2], format_optional(i[3])) for i in ires])
             ingredient_results = list(map(" ".join,ires))
 
-
+            query = "SELECT i.name FROM Pantry p, Ingredient i WHERE p.ingredient = i.id AND p.account = %s;"
+            cursor.execute(query, (current_user.get_id(),))
+            pantry_res = cursor.fetchall()
+            pantry_results = [r[0] for r in pantry_res]
            # ingredient_results = list(map(" ".join, ([(str(i[0]), i[1], i[2]) for i in ires])))
             #for x in ingredient_results:
             #    print(x[0], x[1])
@@ -433,6 +436,7 @@ def recipe(recipe_id):
         is_like=is_like,
         is_dislike=is_dislike,
         recipe_id=recipe_id,
+        pantry=pantry_results
     )
 
 

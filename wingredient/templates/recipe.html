@@ -100,9 +100,18 @@ Python variables that need to be passed in for this template to render correctly
     <h2>Ingredients</h2>
     <ul>
       % for ingredient in ingredients:
-        <li>${ingredient}</li>
+        <li>
+          ${ingredient}
+          % for item in pantry:
+            % if item in ingredient:
+            <i class="fa fa-check" style="color: green;" aria-hidden="true"></i>
+            % endif
+          % endfor
+        </li>
       % endfor
     </ul>
+    <i class="fa fa-check" style="color: green;" aria-hidden="true"></i>
+    <span>: In Pantry</span>
     <br>
 
     <h2>Equipment</h2>
