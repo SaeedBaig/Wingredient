@@ -55,17 +55,17 @@ Names of input fields to recieve in the Python backend:
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="serving_size" style="align-items: left;" class="col-sm-6 col-form-label">Serving Size:</label>
-                <input type="number" name="serving_size" style="height: 30px;" id="serving_size" class="form-control col-sm-3" required>    <!--serving size-->
+                <input type="number" name="serving_size" min="1" style="height: 30px;" id="serving_size" class="form-control col-sm-3" required>    <!--serving size-->
             </div>
             <div class="form-group col-md-6">
                 <label for="cooking_time" class="col-sm-8 col-form-label">Cooking Time (mins):</label>
-                <input type="number" class="form-control col-sm-3" style="height: 30px;" name="cooking_time" id="cooking_time" required>    <!-- cooking time-->
+                <input type="number" class="form-control col-sm-3" style="height: 30px;" name="cooking_time" min="0" id="cooking_time" required>    <!-- cooking time-->
             </div>
         </div>
 
-        
 
-            
+
+
         <div class="form-group row">
                 <label for="difficulty" class="col-sm-3 col-form-label">Difficulty:</label>
                 <div class="col-sm-8">
@@ -146,7 +146,7 @@ Names of input fields to recieve in the Python backend:
                     <h5 for="field1">Ingredients</h5>
                     <small>(Press + to add another ingredient)</small>
                     <small>Check the checkbox for all optional ingredients in your recipe</small>
-                    <div id="profs"> 
+                    <div id="profs">
                         <input type="hidden" id="count-ingredient" name="count-ingredient" value="1" />
 
                         <div id="field-ingredient" name="field-ingredient" style="width: 100%;">
