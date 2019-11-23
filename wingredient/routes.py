@@ -424,7 +424,7 @@ def recipe_form():
                 recipe_ingredients.append(request.form['ingredient' + str(i)])
             if ('ingredient-quantity' + str(i)) in request.form:
                 ingredient_quantities.append(request.form['ingredient-quantity' + str(i)])
-            if ('ingredient_check' + str(i)) in request.form:
+            if ('ingredient_check' + str(i)) in request.form:   # optionality checkbox is ticked
                 ingredient_checks.append(True)
             else:
                 ingredient_checks.append(False)
