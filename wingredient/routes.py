@@ -686,8 +686,6 @@ def recipe_form():
                 ingredient_checks.append(True)
             else:
                 ingredient_checks.append(False)
-            else:
-                ingredient_checks.append(True)
         session['recipe_ingredients'] = recipe_ingredients
         session['ingredient_quantities'] = ingredient_quantities
         session['ingredient_checks'] = ingredient_checks
