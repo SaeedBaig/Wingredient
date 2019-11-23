@@ -31,7 +31,7 @@ Names of input fields to recieve in the Python backend:
       var m_types = ${m_types}
   </script>
   <script type="text/javascript" src="../static/recipe-form.js"></script>
-  
+
 
   <%include file="/site_wide.html"/>
 
@@ -120,7 +120,7 @@ Names of input fields to recieve in the Python backend:
                 <div id="fields">
                     <h5 for="field1">Method</h5>
                     <small>(Press + to add another step)</small>
-                    <div id="profs"> 
+                    <div id="profs">
                         <input type="hidden" id="count" name="count" value="1" />
 
                         <div id="field" style="width: 100%;">
@@ -139,10 +139,10 @@ Names of input fields to recieve in the Python backend:
                 <div id="fields">
                     <h5 for="field1">Ingredients</h5>
                     <small>(Press + to add another ingredient)</small>
-                    <div id="profs"> 
+                    <div id="profs">
                         <input type="hidden" id="count-ingredient" name="count-ingredient" value="1" />
 
-                        <div id="field-ingredient" name="field-ingredient' style="width: 100%;">
+                        <div id="field-ingredient" name="field-ingredient" style="width: 100%;">
                             <div name="field-ingredient1" id="field-ingredient1">
                                 <select name="ingredient1" id="ingredient" class="form-control" style="float: left; width: 50%;">
                                     % for i in range(len(all_ingredients)):
@@ -150,7 +150,7 @@ Names of input fields to recieve in the Python backend:
                                     % endfor
                                 </select>
                                 <input type="number" style="height: 38px; width: 40%; float: left;" class="form-control input-lg" min="0" step="1" name="ingredient-quantity1" id="ingredient-quantity1" placeholder="Quantity" required/>
-                                <input class="form-control form-check-inline" style="width: 2%; float: left;"type="checkbox" name="ingredient_check1" id="ingredient_check1"/> 
+                                <input class="form-control form-check-inline" style="width: 2%; float: left;"type="checkbox" name="ingredient_check1" id="ingredient_check1"/>
                             </div>
                             <button id="b1" class="btn btn-primary add-more-ingredient" style="float: right; margin: 2px;" type="button">+</button>
                         </div>
