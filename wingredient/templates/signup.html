@@ -3,6 +3,7 @@
 <!--
 Python variables that need to be passed in for this template to render correctly:
 - error: error str to display
+- pw_min_len: The minimum length (int) a password is allowed to be
 -->
 
 <!--
@@ -38,7 +39,12 @@ Names of input fields to recieve in the Python backend:
     <br>
 
     <!-- Signup form -->
-    <form method="POST" class="justify-content-center">
+    <form method="POST" class="justify-content-center"
+    oninput="password_duplicate.setCustomValidity(password_duplicate.value != password.value ? 'Passwords do not match' : '')">
+    <!--
+    This ^ oninput part checks that the 2 passwords match, and prevents submission
+    if they dont.
+    -->
 
       <!-- Username field -->
       <div class="input-group input-group-lg">
@@ -50,10 +56,15 @@ Names of input fields to recieve in the Python backend:
         <input id="username-box" name="username" placeholder="Username"
         pattern="[a-zA-Z0-9-_]+" class="form-control" aria-label="Large"
         aria-describedby="username-help-block" required>
+        <!--
+        "[a-zA-Z0-9-_]+" is the regex the username must match
+        (allowed characters: a-z, A-Z, 0-9, '-', '_')
+        The "+" means there must be at least 1 character.
+        -->
       </div>
 
       <small id="username-help-block" class="form-text text-muted">
-        Your username can only contain letters, numbers, -, and _
+        Username may contain only letters, numbers, dashes, and underscores.
       </small>
       <br>
 
@@ -66,9 +77,10 @@ Names of input fields to recieve in the Python backend:
           </span>
         </div>
         <input id="password-box" name="password" placeholder="Password"
-        type="password" minlength="2" class="form-control" aria-label="Large"
+        type="password" minlength="${pw_min_len}" class="form-control" aria-label="Large"
         aria-describedby="password-help-block" required>
       </div>
+
 
       <!-- Confirm password field -->
       <div class="input-group input-group-lg">
@@ -78,14 +90,15 @@ Names of input fields to recieve in the Python backend:
           </span>
         </div>
         <input id="confirm-password-box" name="password_duplicate"
-        placeholder="Confirm password" type="password" minlength="2"
+        placeholder="Confirm password" type="password" minlength="${pw_min_len}"
         class="form-control" aria-label="Large"
         aria-describedby="inputGroup-sizing-sm" required>
       </div>
 
       <small id="password-help-block" class="form-text text-muted">
-        Your password must be at least 2 characters long
+        Password must be at least ${pw_min_len} characters long.
       </small>
+
 
       <!-- Error message -->
       % if error != None:

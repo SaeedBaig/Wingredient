@@ -476,29 +476,16 @@ def signup():
         password = request.form["password"]
         password_duplicate = request.form["password_duplicate"]
 
-        # first check that the username has only allowed characters
-        # username allowed characters: a-z, A-Z, 0-9, '-', '_'
+        # The checks that the username has only allowed characters, that the
+        # password is at least pw_min_len characters long, and that the 2
+        # passwords match is all done on the front end.
+
         #  capitalisation is preserved for a given user,
         #  but duplicate username check is case insensitive
 
-        allowed_chars = set(
-            string.ascii_lowercase + string.ascii_uppercase + string.digits + "-" + "_"
-        )
-
-        if not (set(username).issubset(allowed_chars)):
-            error = "Usernames may contain only letters, numbers, dashes, and underscores."
-
         # Check that the username is not already in use
-        elif load_user(username) != None:
+        if load_user(username) != None:
             error = "Username already in use."
-
-        # Check that the password is long enough
-        elif len(password) < pw_min_len:
-            error = "Password must be at least %d characters long." % (pw_min_len)
-
-        # Check that the two passwords given match
-        elif password != password_duplicate:
-            error = "Passwords do not match."
 
         # No error, add the user to the database and sign in
         if error == None:
@@ -510,7 +497,7 @@ def signup():
             return redirect(url_for("search"))
 
     template = LOOKUP.get_template("signup.html")
-    return template.render(error=error)
+    return template.render(error=error, pw_min_len=pw_min_len)
 
 
 ###################
@@ -582,9 +569,9 @@ def pantry():
             query = "SELECT name, measurement_type FROM ingredient ORDER BY name;"   # query for ingredient ids
             cursor.execute(query)
             all_ingredients_results = cursor.fetchall()
-                
+
     ires = ([(i[0], format_m_type(i[1])) for i in all_ingredients_results])
- 
+
 
     ingredient_results = list(map(" ".join,ires))
     results = get_ingredients(current_user.get_id())
