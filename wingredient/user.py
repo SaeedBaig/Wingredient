@@ -100,7 +100,7 @@ class User:
             with db.getconn() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(
-                        '''INSERT INTO Favourites VALUES (%s, %s);''',
+                        '''INSERT INTO Favourites VALUES (%s, %s) ON CONFLICT DO NOTHING;''',
                         (self.username, recipe_id)
                     )
                     conn.commit()
@@ -128,7 +128,10 @@ class User:
             with db.getconn() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(
-                        '''INSERT INTO Recipe_Votes VALUES (%s, %s, %s);''',
+                        '''
+                        INSERT INTO Recipe_Votes VALUES (%s, %s, %s)
+                        ON CONFLICT (account, recipe) DO UPDATE SET is_like = excluded.is_like
+                        ''',
                         (self.username, recipe_id, True)
                     )
                     conn.commit()
@@ -157,7 +160,10 @@ class User:
             with db.getconn() as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(
-                        '''INSERT INTO Recipe_Votes VALUES (%s, %s, %s);''',
+                        '''
+                        INSERT INTO Recipe_Votes VALUES (%s, %s, %s)
+                        ON CONFLICT (account, recipe) DO UPDATE SET is_like = excluded.is_like
+                        ''',
                         (self.username, recipe_id, False)
                     )
                     conn.commit()
