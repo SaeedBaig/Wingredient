@@ -37,10 +37,13 @@ Python variables that need to be passed in for this template to render correctly
 <body>
   <center>
     <%include file="/navbar.html"/>
-
-    <!-- Recipe Title -->
+    <!-- Shopping List Title -->
     <h1>Shopping List</h1>
-
-  <h2>Items</h2>
+      <ul>
+        % for ingredient in shopping_list_ingredients:
+          <li>${ingredient}</li>
+        % endfor
+      </ul>
+      <br>
 </body>
 </html>
