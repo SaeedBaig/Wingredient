@@ -136,7 +136,7 @@ def results():
         dietary_tags=[r[7] for r in _results],
         missing_ingredients=[r[9] for r in _results],
         matched_ingredients=[r[10] for r in _results],
-        default="alphabetical"
+        default="relevance"
     )
 
 @app.route("/results", methods=['POST'])
@@ -152,11 +152,13 @@ def results_post():
     sort_option = request.form['sorting_options']
     print(sort_option)
     if sort_option == "rating":
-        pass
+        _results.sort(key=lambda a: a[8], reverse=True)
     elif sort_option == "cooking-time":
-        _results = sorted(_results, key = lambda a : a[2])   # sort results by cooking time
+        _results.sort(key=lambda a: a[2])
     elif sort_option == "alphabetical":
-        _results = sorted(_results, key = lambda a : a[1])   # sort results by cooking time
+        _results.sort(key=lambda a: a[1].lower())
+    elif sort_option == "relevance":
+        _results.sort(key=lambda a: a[11], reverse=True)
 
     return template.render(
         titles=[r[1] for r in _results],  #name from recipe
