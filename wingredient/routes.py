@@ -258,7 +258,7 @@ def get_search():
 
             min_rating = request.args.get("min_rating", default=0, type=int)
             if min_rating:
-                where_clauses.append("(rr.rating ISNULL OR rr.rating >= %(min_rating)s)")
+                where_clauses.append("rr.rating >= %(min_rating)s")
                 query_args["min_rating"] = min_rating / 100
 
             search_terms = request.args.get("terms", default="", type=str)
@@ -828,6 +828,34 @@ def recipe_favourite(recipe_id):
 def recipe_autopantry(recipe_id):
     if not current_user.is_authenticated:
         return 'You must log in first', 403
-    print("POST AUTOPANTRY")
+
+    user_id = current_user.get_id()
+
+    pantry_ingredients = get_ingredients(user_id)
+
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                '''SELECT ingredient, quantity FROM RecipeToIngredient WHERE recipe=%s;''',
+                (recipe_id,)
+            )
+            recipe_ingredients = cursor.fetchall()
+
+            for ri in recipe_ingredients:
+                for pi in pantry_ingredients:
+                    if ri[0] == pi[0]:
+                        if pi[1] > ri[1]:
+                            cursor.execute(
+                                '''UPDATE Pantry SET quantity=%s WHERE account=%s AND ingredient=%s;''',
+                                (pi[1] - ri[1], user_id, pi[0],)
+                            )
+                        else:
+                            cursor.execute(
+                                '''DELETE FROM Pantry WHERE account=%s AND ingredient=%s;''',
+                                (user_id, pi[0],)
+                            )
+            conn.commit()
+
     return ''
+    
 
