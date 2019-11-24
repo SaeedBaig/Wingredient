@@ -277,7 +277,7 @@ def get_search():
                 search_term_pattern = "(" + "|".join(search_terms.lower().split(" ")) + ")"
                 matched_search_terms_expr = "term_matches.count"
                 extra_joins.append(
-                    """
+                    f"""
                     NATURAL JOIN LATERAL (
                       SELECT count(matches) AS count
                       FROM regexp_matches(
