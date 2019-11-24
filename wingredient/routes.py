@@ -109,7 +109,7 @@ def search():
 ###########################
 ### SEARCH RESULTS PAGE ###
 ###########################
-@app.route("/results",)
+@app.route("/results", methods=["POST", "GET"])
 def results():
     template = LOOKUP.get_template("search-results.html")
 
@@ -119,12 +119,24 @@ def results():
     print(request.args.get("num_servings"))
     # Process the variables in whatever way you need to fetch the correct
     # search results
-
     _results = get_search()
     if _results == -1:
         return template.render(
             titles=""
         )
+    if request.method == "POST":
+        sort_option = request.form['sorting_options']
+        print(sort_option)
+        if sort_option == "rating":
+            _results.sort(key=lambda a: a[8] or 0, reverse=True)
+        elif sort_option == "cooking-time":
+            _results.sort(key=lambda a: a[2])
+        elif sort_option == "alphabetical":
+            _results.sort(key=lambda a: a[1].lower())
+        elif sort_option == "relevance":
+            _results.sort(key=lambda a: a[11], reverse=True)
+        elif sort_option == "difficulty":
+            _results.sort(key=lambda a: difficulty_map(a[6]))
 
     return template.render(
         titles=[r[1] for r in _results],  #name from recipe
@@ -148,43 +160,6 @@ def difficulty_map(difficulty):
     elif difficulty == "Hard":
         return 3
     return 0
-
-@app.route("/results", methods=['POST'])
-def results_post():
-    template = LOOKUP.get_template("search-results.html")
-
-    _results = get_search()
-    if _results == -1:
-        return template.render(
-            titles=""
-        )
-
-    sort_option = request.form['sorting_options']
-    print(sort_option)
-    if sort_option == "rating":
-        _results.sort(key=lambda a: a[8] or 0, reverse=True)
-    elif sort_option == "cooking-time":
-        _results.sort(key=lambda a: a[2])
-    elif sort_option == "alphabetical":
-        _results.sort(key=lambda a: a[1].lower())
-    elif sort_option == "relevance":
-        _results.sort(key=lambda a: a[11], reverse=True)
-    elif sort_option == "difficulty":
-        _results.sort(key=lambda a: difficulty_map(a[6]))
-
-    return template.render(
-        titles=[r[1] for r in _results],  #name from recipe
-        image_paths=[r[4] for r in _results],    # imageRef from recipe
-        image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[r[8] if r[8] is None else int(r[8] * 100) for r in _results],
-        cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
-        recipe_ids=[r[0] for r in _results],
-        difficulties=[r[6] for r in _results],
-        dietary_tags=[r[7] for r in _results],
-        missing_ingredients=[r[9] for r in _results],
-        matched_ingredients=[r[10] for r in _results],
-        default=sort_option
-    )
 
 
 def get_search():
