@@ -4,8 +4,9 @@
 }
 ul {
   list-style-type: none;
+  font-size: 20px;
   display: inline-block;
-  max-width: 50%;
+  max-width: 75%;
   word-break: break-all;
   border: 5px solid black;
 }
@@ -17,4 +18,12 @@ ul li {
 
 ul li:last-child {
   border-bottom: none
+}
+
+.button-class {
+    color: black;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    text-color: black;
 }

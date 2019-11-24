@@ -39,17 +39,14 @@ Python variables that need to be passed in for this template to render correctly
   <center>
     <%include file="/navbar.html"/>
     <!-- Shopping List Title -->
-    <h1>Shopping List</h1>
-    <br>
-    <div>
-      <h2>Recipes</h2> 
       <ul>
         % for recipe in shopping_list_recipes:
+        <h2>Recipes</h2>
           <li>
               ${recipe}
-            <button> 
+              <button type="submit" class="button-class" name="button" value="delete_recipe"></i> Delete
+              </button>
           </li>
-        
         % endfor
       </ul>
       <br>

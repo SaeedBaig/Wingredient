@@ -545,7 +545,6 @@ def shoppinglist():
             #shopping_list_recipe_count = s_recipe_count_res,
             shopping_list_recipes = [r[0] for r in s_recipe_names],
             shopping_list_ingredients = shopping_list_ingredient_results
-
     ) 
 
 
