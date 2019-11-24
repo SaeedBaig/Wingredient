@@ -82,6 +82,16 @@ Python variables that need to be passed in for this template to render correctly
               <div class="card-body">
                 <h5 class="card-title">${titles[i]}</h5>
                 <ul class="list-group list-group-flush">
+                  % if missing_ingredients[i] > 0:
+                    <li class="list-group-item text-danger">
+                      You're missing ${missing_ingredients[i]} required ingredients.
+                    </li>
+                  % else:
+                    <li class="list-group-item text-success">
+                      You have all required ingredients!
+                    </li>
+                  % endif
+
                   <li class="list-group-item">
                     % if ratings[i] == None:
                     No Rating
@@ -118,24 +128,14 @@ Python variables that need to be passed in for this template to render correctly
                   <li class="list-group-item" style="color: ${difficulty_color};">
                     ${difficulties[i]}
                   </li>
-                  % if missing_ingredients[i] > 0:
-                    <li class="list-group-item" style="color: red">
-                      Missing non-optional ingredients: ${missing_ingredients[i]}
-                    </li>
-                  % else:
-                    <li class="list-group-item" style="color: green">
-                      You have all required ingredients!
-                    </li>
-                  % endif
-                  <li class="list-group-item" style="color: blue">
-                    Ingredients you have: ${matched_ingredients[i]}
-                  </li>
+
+
 
                   % if len(dietary_tags[i]) > 0:
                     <li class="list-group-item">
                       % for tag in dietary_tags[i]:
                         <h5 style="display: inline;">
-                          <span class="badge badge-success">
+                          <span class="badge badge-secondary">
                             ${tag}
                           </span>
                         </h5>

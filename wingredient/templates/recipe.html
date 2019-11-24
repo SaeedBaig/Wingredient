@@ -73,9 +73,9 @@ Python variables that need to be passed in for this template to render correctly
 
     <!-- Recipe photo -->
     <img src="/${image_path}" width="500" alt="${image_alt}">
-    <br>
+    <br><br>
 
-    <!-- Cooking time & difficulty -->
+    <!-- Info bar -->
     <div class="d-flex justify-content-around">
       <!-- Cooking time -->
       <div class="p-2 bd-highlight">
@@ -83,6 +83,17 @@ Python variables that need to be passed in for this template to render correctly
           <i class="fa fa-clock-o" aria-hidden="true"></i>
           ${cooking_time_in_minutes} minutes
         </h5>
+      </div>
+
+      <!-- Dietary restrictions -->
+      <div class="p-2 bd-highlight">
+        % for tag in dietary_tags:
+          <h5 style="display: inline;">
+            <span class="badge badge-secondary">
+              ${tag}
+            </span>
+          </h5>
+        % endfor
       </div>
 
       <!-- Difficulty -->
