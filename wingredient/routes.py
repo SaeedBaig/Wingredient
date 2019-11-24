@@ -261,6 +261,15 @@ def get_search():
                 where_clauses.append("rr.rating >= %(min_rating)s")
                 query_args["min_rating"] = min_rating / 100
 
+            max_difficulty = request.args.get("max_difficulty", default="Hard", type=str)
+            if max_difficulty == "Intermediate":
+                where_clauses.append("(r.difficulty=%(easy_str)s OR r.difficulty=%(intermediate_str)s)")
+                query_args["easy_str"] = "Easy"
+                query_args["intermediate_str"] = "Intermediate"
+            elif max_difficulty == "Easy":
+                where_clauses.append("r.difficulty=%(easy_str)s")
+                query_args["easy_str"] = "Easy"
+
             search_terms = request.args.get("terms", default="", type=str)
             if search_terms:
                 search_term_pattern = "(" + "|".join(search_terms.lower().split(" ")) + ")"
@@ -416,7 +425,7 @@ def recipe(recipe_id):
         image_path=results[5],
         image_alt=results[4],
         cooking_time_in_minutes=results[1],
-        difficulty=results[2],  # can be 'Easy', 'Medium', or 'Hard'
+        difficulty=results[2],  # can be 'Easy', 'Intermediate', or 'Hard'
         dietary_tags=diet_bits_to_short_names(results[6]),
         ingredients=ingredient_results,
         equipment=equipment_names,
