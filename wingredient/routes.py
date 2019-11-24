@@ -545,7 +545,8 @@ def pantry():
     if request.method == "POST":
         if 'pantry-add' in request.form:
             ingredient = request.form['ingredient_input']
-            ingredient = ingredient.split(' ')[0]
+            ingredient = ingredient.split('(')[0]
+            ingredient = ingredient.rstrip()
             ingredient_index = get_ingredient_info_from_name(ingredient)
             quantity = request.form['quantity']
             if quantity == '':
