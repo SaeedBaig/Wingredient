@@ -39,26 +39,48 @@ Python variables that need to be passed in for this template to render correctly
   <center>
     <%include file="/navbar.html"/>
     <!-- Shopping List Title -->
-      <ul>
-        <h2>Recipes</h2>
-        % for i in range(len(shopping_list_recipe_names)):
-        <form method="POST">
-          <li>
-              ${shopping_list_recipe_names[i]}:
-              <button type="submit" class="button-class" name="delete_recipe" value=${shopping_list_recipe_ids[i]}></i> Delete
+<form method="POST">
+<table class="table table-striped" style="max-width: 600px; text-align: center;">
+  <thead>
+    <tr>
+        <th scope="col"> <h2>Recipes</h2></th>
+    </tr>
+  </thead>
+  <tbody>
+    % for i in range(len(shopping_list_recipe_names)):
+    <tr>
+      <th scope="row">${shopping_list_recipe_names[i]}
+          <button type="submit" style="float: right;" class="btn btn-danger" name="delete_recipe" value=${shopping_list_recipe_ids[i]}></i> 
+<i class="fa fa-trash" aria-hidden="true"></i>
               </button>
-          </li>
-        % endfor
-      </ul>
-      </form>
-      <br>
-      <h2>Ingredients</h2>
-      <ul>
-        % for ingredient in shopping_list_ingredients:
-          <li>${ingredient}</li>
-        % endfor
-      </ul>
-        </div>
-      <br>
+      </th>
+
+    </tr>
+    % endfor
+  </tbody>
+</table>
+    % if len(shopping_list_recipe_names) == 0:
+        <br> 
+        <h4> Your shopping list is empty</h4>
+    % endif
+</form>
+<br>
+<br>
+
+<table class="table table-striped" style="max-width: 600px; text-align: center;">
+  <thead>
+    <tr>
+        <th scope="col"><h2>Ingredients</h2></th>
+    </tr>
+  </thead>
+  <tbody>
+    % for ingredient in shopping_list_ingredients:
+    <tr>
+      <th scope="row">${ingredient}
+      </th>
+    </tr>
+    % endfor
+  </tbody>
+</table>
 </body>
 </html>
