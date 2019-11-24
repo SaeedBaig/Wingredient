@@ -258,7 +258,7 @@ def get_search():
 
             min_rating = request.args.get("min_rating", default=0, type=int)
             if min_rating:
-                where_clauses.append("(rr.rating ISNULL OR rr.rating >= %(min_rating)s)")
+                where_clauses.append("rr.rating >= %(min_rating)s")
                 query_args["min_rating"] = min_rating / 100
 
             search_terms = request.args.get("terms", default="", type=str)
