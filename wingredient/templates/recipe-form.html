@@ -23,7 +23,8 @@ Names of input fields to recieve in the Python backend:
 
   <!-- Non-Mako dependent styling from this file -->
   <link rel="stylesheet" href="../static/search.css">
-  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">
+  <!--<link rel="stylesheet" href="../static/recipe-form.css"-->
+  <!--<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">-->
   <!--<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>-->
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
@@ -65,23 +66,35 @@ Names of input fields to recieve in the Python backend:
         </div>
       </div>
 
-      <div class="form-row">
+    <div class="row">
         <!-- Serving size -->
-        <div class="form-group col-md-6">
-          <label for="serving_size" style="align-items: left;" class="col-sm-6 col-form-label">
-            Serving Size<span class="required_star">*</span>
-          </label>
-          <input type="number" name="serving_size" min="1" style="height: 30px;" id="serving_size" class="form-control col-sm-3" required>    <!--serving size-->
+        <div class="col-5">
+            <div class="row">
+                <div class="col">
+                    <label for="serving_size" style="align-items: left;" class="col-form-label">
+                        Serving Size<span class="required_star">*</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <input type="number" name="serving_size" min="1" style="height: 30px;" id="serving_size" class="form-control" required>    <!--serving size-->
+                </div>
+            </div>
         </div>
 
         <!-- Cooking time -->
-        <div class="form-group col-md-6">
-          <label for="cooking_time" class="col-sm-8 col-form-label">
-            Cooking Time (mins)<span class="required_star">*</span>
-          </label>
-          <input type="number" class="form-control col-sm-3" style="height: 30px;" name="cooking_time" min="0" id="cooking_time" required>    <!-- cooking time-->
+        <div class="col form-group row">
+            <div class="row">
+                <div class="col">
+                    <label for="cooking_time" class="col-form-label">
+                        Cooking Time (mins)<span class="required_star">*</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" style="height: 30px;" name="cooking_time" min="0" id="cooking_time" required>    <!-- cooking time-->
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
 
       <!-- Difficulty -->
       <div class="form-group row">
@@ -176,10 +189,10 @@ Names of input fields to recieve in the Python backend:
                     <option value="${all_ingredients[i]}">${all_ingredients[i]} (${m_types[i]})</option>
                     % endfor
                   </select>
-                  <input type="number" style="height: 38px; width: 40%; float: left;" class="form-control input-lg" min="0" step="1" name="ingredient-quantity1" id="ingredient-quantity1" placeholder="Quantity" required/>
-                  <input class="form-control form-check-inline" style="width: 2%; float: left;"type="checkbox" name="ingredient_check1" id="ingredient_check1"/>
+                  <input type="number" style="height: 38px; width: 30%; float: left;" class="form-control input-lg" min="0" step="1" name="ingredient-quantity1" id="ingredient-quantity1" placeholder="Quantity" required/>
+                  <input class="form-control form-check-inline" style="width: 2%; margin-left: 20px; float: left;"type="checkbox" name="ingredient_check1" id="ingredient_check1"/>
                 </div>
-                <button id="b1" class="btn btn-primary add-more-ingredient" style="float: right; margin: 2px;" type="button">+</button>
+                <button id="b1" class="btn btn-primary add-more-ingredient" style="float: left; margin: 2px;" type="button">+</button>
               </div>
               <br>
             </div>
@@ -199,7 +212,7 @@ Names of input fields to recieve in the Python backend:
         </script>
       </div>
       <br>
-      <input type="submit" class = "btn btn-primary" value="Submit Recipe"/>
+      <input type="submit" class = "btn btn-outline-success" value="Submit Recipe"/>
     </form>
 
 
