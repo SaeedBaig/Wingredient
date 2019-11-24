@@ -124,6 +124,8 @@ def results():
         return template.render(
             titles=""
         )
+
+    sort_option = "relevance"
     if request.method == "POST":
         sort_option = request.form['sorting_options']
         print(sort_option)
@@ -149,7 +151,7 @@ def results():
         dietary_tags=[diet_bits_to_short_names(r[7]) for r in _results],
         missing_ingredients=[r[9] for r in _results],
         matched_ingredients=[r[10] for r in _results],
-        default="relevance"
+        default=sort_option if sort_option != None else "relevance"
     )
 
 def difficulty_map(difficulty):
@@ -362,9 +364,11 @@ def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
+            query = "SELECT name, time, difficulty, method, description, imageRef, dietary_tags FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
             cursor.execute(query, (recipe_id,))
             results = cursor.fetchone()
+            for i in range(100):
+                print(type(results[6]))
 
             #query = "SELECT ingredient FROM recipetoingredient WHERE recipe = %s;"
             #cursor.execute(query, (recipe_id,))
@@ -413,6 +417,7 @@ def recipe(recipe_id):
         image_alt=results[4],
         cooking_time_in_minutes=results[1],
         difficulty=results[2],  # can be 'Easy', 'Medium', or 'Hard'
+        dietary_tags=diet_bits_to_short_names(results[6]),
         ingredients=ingredient_results,
         equipment=equipment_names,
         method=method,
