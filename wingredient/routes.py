@@ -847,6 +847,34 @@ def recipe_favourite(recipe_id):
 def recipe_autopantry(recipe_id):
     if not current_user.is_authenticated:
         return 'You must log in first', 403
-    print("POST AUTOPANTRY")
+
+    user_id = current_user.get_id()
+
+    pantry_ingredients = get_ingredients(user_id)
+
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                '''SELECT ingredient, quantity FROM RecipeToIngredient WHERE recipe=%s;''',
+                (recipe_id,)
+            )
+            recipe_ingredients = cursor.fetchall()
+
+            for ri in recipe_ingredients:
+                for pi in pantry_ingredients:
+                    if ri[0] == pi[0]:
+                        if pi[1] > ri[1]:
+                            cursor.execute(
+                                '''UPDATE Pantry SET quantity=%s WHERE account=%s AND ingredient=%s;''',
+                                (pi[1] - ri[1], user_id, pi[0],)
+                            )
+                        else:
+                            cursor.execute(
+                                '''DELETE FROM Pantry WHERE account=%s AND ingredient=%s;''',
+                                (user_id, pi[0],)
+                            )
+            conn.commit()
+
     return ''
+    
 
