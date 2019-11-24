@@ -203,16 +203,10 @@ Python variables that need to be passed in for this template to render correctly
 			<div class="row">
 				<div class="col-5">
 					<div>
-						<div class="d-flex flex-row" style="padding-left: 100px">
-							<div class="p-2"><h2>Ingredients</h2></div>
-							<div class="p-2">
-								<i class="fa fa-check" style="color: green;" aria-hidden="true"></i>
-								<span>: In Pantry</span>
-							</div>
-						</div>
+						<h2>Ingredients</h2>
 						<ul>
 							% for i in range(len(ingredients)):
-							<li style="list-style: none;">
+							<li style="list-style: none; text-align: left">
 								<div class="custom-control custom-checkbox mb-3">
 									<input type="checkbox" id=${i} class="custom-control-input">
 									<label class="custom-control-label" for=${i}>${ingredients[i]}</label>
@@ -225,8 +219,13 @@ Python variables that need to be passed in for this template to render correctly
 							</li>
 							% endfor
 						</ul>
+						
 					</div>
-					<div class="d-flex flex-row" style="padding-left: 100px">
+					<div style="padding-left: 20%;">
+						<i class="fa fa-check" style="color: green;" aria-hidden="true"></i>
+						<span>: In Pantry</span>
+					</div>
+					<div class="d-flex flex-row" style="padding-left: 20%">
 						<!-- Autopantry button -->
 						<div class="p-2">
 							<button type="submit"
@@ -248,7 +247,7 @@ Python variables that need to be passed in for this template to render correctly
 								disabled
 								% endif
 								>
-								<span id="shopping-button-value">Add to shopping list</span>
+								<span id="shopping-button-value">Add To Shopping List</span>
 							</button>
 						</div>
 					</div>
