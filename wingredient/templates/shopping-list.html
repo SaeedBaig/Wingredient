@@ -40,15 +40,17 @@ Python variables that need to be passed in for this template to render correctly
     <%include file="/navbar.html"/>
     <!-- Shopping List Title -->
       <ul>
-        % for recipe in shopping_list_recipes:
         <h2>Recipes</h2>
+        % for i in range(len(shopping_list_recipe_names)):
+        <form method="POST">
           <li>
-              ${recipe}
-              <button type="submit" class="button-class" name="button" value="delete_recipe"></i> Delete
+              ${shopping_list_recipe_names[i]}:
+              <button type="submit" class="button-class" name="delete_recipe" value=${shopping_list_recipe_ids[i]}></i> Delete
               </button>
           </li>
         % endfor
       </ul>
+      </form>
       <br>
       <h2>Ingredients</h2>
       <ul>
