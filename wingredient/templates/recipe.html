@@ -125,6 +125,20 @@ Python variables that need to be passed in for this template to render correctly
     <span>: In Pantry</span>
     <br>
 
+    <center>
+      <!-- Autopantry button -->
+      <button type="submit"
+      name="button" value="autopantry" id="autopantry-button"
+      class="btn btn-primary"
+      % if context.username == None:
+        hidden disabled
+      % endif
+      >
+        <span id="autopantry-button-value">Remove Ingredients From Pantry</span>
+      </button>
+    </center>
+
+
     <h2>Equipment</h2>
     <ul>
       % for item in equipment:
@@ -252,6 +266,17 @@ Python variables that need to be passed in for this template to render correctly
             favButton.setAttribute('data-active', 'true');
             favButton.setAttribute('class', 'btn btn-danger');
           }
+        });
+
+        autopantryButton = document.getElementById('autopantry-button');
+        autopantrySpan = document.getElementById('autopantry-button-value');
+        autopantryButton.addEventListener('click', async _ => {
+          //if (!autopantryButton.getAttribute('disabled')) {
+            await fetch('${recipe_id}/autopantry', {method: 'post'});
+            autopantryButton.setAttribute('class', 'btn btn-outline-primary');
+            autopantryButton.setAttribute('disabled', 'disabled');
+            autopantrySpan.innerHTML = 'Pantry Updated Successfully!';
+          //}
         });
       </script>
 
