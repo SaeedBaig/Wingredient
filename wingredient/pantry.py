@@ -7,7 +7,12 @@ def insert_ingredient(account, ingredient, quantity):
         with conn.cursor() as cursor:
             # insert ingredient into db
             #INSERT INTO users (id, level) VALUES (1, 0) ON CONFLICT DO UPDATE SET level = users.level + 1;
-            query = "INSERT INTO Pantry (account, ingredient, quantity) VALUES (%s, %s, %s) ON CONFLICT (ingredient) DO UPDATE SET quantity = pantry.quantity + EXCLUDED.quantity;"   # query for ingredient ids
+            query = """
+            INSERT INTO Pantry (account, ingredient, quantity)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (account, ingredient) DO UPDATE SET
+                quantity = pantry.quantity + EXCLUDED.quantity;
+            """
             cursor.execute(query, (account, ingredient, quantity))
             conn.commit()
 

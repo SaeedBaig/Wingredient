@@ -100,7 +100,6 @@ CREATE TABLE Pantry (
     account     varchar(32) references Account(username),
     ingredient  integer references Ingredient(id),
     quantity    integer,
-    UNIQUE (ingredient),
     primary key (account, ingredient)
 );
 
