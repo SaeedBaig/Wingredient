@@ -130,6 +130,19 @@ Python variables that need to be passed in for this template to render correctly
                   <li class="list-group-item" style="color: blue">
                     Ingredients you have: ${matched_ingredients[i]}
                   </li>
+
+                  % if len(dietary_tags[i]) > 0:
+                    <li class="list-group-item">
+                      % for tag in dietary_tags[i]:
+                        <h5 style="display: inline;">
+                          <span class="badge badge-success">
+                            ${tag}
+                          </span>
+                        </h5>
+                      % endfor
+                    </li>
+                  % endif
+
                 </ul>
               </div>
             </div>

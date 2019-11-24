@@ -7,6 +7,7 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 from mako.runtime import Context
 from os.path import abspath
+from .dietinfo import diet_bits_to_short_names
 
 import os
 
@@ -133,7 +134,7 @@ def results():
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
         difficulties=[r[6] for r in _results],
-        dietary_tags=[r[7] for r in _results],
+        dietary_tags=[diet_bits_to_short_names(r[7]) for r in _results],
         missing_ingredients=[r[9] for r in _results],
         matched_ingredients=[r[10] for r in _results],
         default="relevance"
