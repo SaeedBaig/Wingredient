@@ -5,8 +5,8 @@ import psycopg2.extras
 from flask import Flask, request, redirect, url_for, session, flash
 from mako.template import Template
 from mako.lookup import TemplateLookup
-from mako.runtime import Context
 from os.path import abspath
+from .dietinfo import diet_bits_to_short_names
 
 import os
 
@@ -37,6 +37,9 @@ login_manager.init_app(app)
 # must import User after initialising login manager
 from .user import User, create_account, load_user, pw_min_len
 
+def get_username():
+    return current_user.get_id() if current_user.is_authenticated else None
+
 #################
 ### HOME PAGE ###
 #################
@@ -50,7 +53,10 @@ def search():
         # All of these are str
         # No user input = empty string
         url_args = {}
-        for input_field in ("terms", "num_servings", "min_rating", "max_difficulty", "max_time"):
+        fields_to_copy = (
+            "terms", "fuzzyness", "num_servings", "min_rating", "max_difficulty", "max_time"
+        )
+        for input_field in fields_to_copy:
             if request.form[input_field]:
                 url_args[input_field] = request.form[input_field]
 
@@ -87,14 +93,10 @@ def search():
 
     print("user: %s, auth: %r" % (current_user.get_id(), current_user.is_authenticated))
 
-    # Make the username a global object (so we don't have to pass it in manually
-    # for every single template.render())
-    # (Don't worry it gets updated automatically as )
-    Context.username = current_user.get_id() if current_user.is_authenticated else None
-
     current_diets = current_user.get_diets() if current_user.is_authenticated else []
 
     return template.render(
+        username=get_username(),
         ingredients=[r[0] for r in results],
         allowed_diets = allowed_diets,
         current_diets = current_diets
@@ -105,7 +107,7 @@ def search():
 ###########################
 ### SEARCH RESULTS PAGE ###
 ###########################
-@app.route("/results",)
+@app.route("/results", methods=["POST", "GET"])
 def results():
     template = LOOKUP.get_template("search-results.html")
 
@@ -115,14 +117,30 @@ def results():
     print(request.args.get("num_servings"))
     # Process the variables in whatever way you need to fetch the correct
     # search results
-
     _results = get_search()
     if _results == -1:
         return template.render(
+            username=get_username(),
             titles=""
         )
 
+    sort_option = "relevance"
+    if request.method == "POST":
+        sort_option = request.form['sorting_options']
+        print(sort_option)
+        if sort_option == "rating":
+            _results.sort(key=lambda a: a[8] or 0, reverse=True)
+        elif sort_option == "cooking-time":
+            _results.sort(key=lambda a: a[2])
+        elif sort_option == "alphabetical":
+            _results.sort(key=lambda a: a[1].lower())
+        elif sort_option == "relevance":
+            _results.sort(key=lambda a: a[11], reverse=True)
+        elif sort_option == "difficulty":
+            _results.sort(key=lambda a: difficulty_map(a[6]))
+
     return template.render(
+        username=get_username(),
         titles=[r[1] for r in _results],  #name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
@@ -130,60 +148,39 @@ def results():
         cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
         recipe_ids=[r[0] for r in _results],
         difficulties=[r[6] for r in _results],
-        dietary_tags=[r[7] for r in _results],
+        dietary_tags=[diet_bits_to_short_names(r[7]) for r in _results],
         missing_ingredients=[r[9] for r in _results],
         matched_ingredients=[r[10] for r in _results],
-        default="alphabetical"
+        default=sort_option if sort_option != None else "relevance"
     )
 
-@app.route("/results", methods=['POST'])
-def results_post():
-    template = LOOKUP.get_template("search-results.html")
-
-    _results = get_search()
-    if _results == -1:
-        return template.render(
-            titles=""
-        )
-
-    sort_option = request.form['sorting_options']
-    print(sort_option)
-    if sort_option == "rating":
-        pass
-    elif sort_option == "cooking-time":
-        _results = sorted(_results, key = lambda a : a[2])   # sort results by cooking time
-    elif sort_option == "alphabetical":
-        _results = sorted(_results, key = lambda a : a[1])   # sort results by cooking time
-
-    return template.render(
-        titles=[r[1] for r in _results],  #name from recipe
-        image_paths=[r[4] for r in _results],    # imageRef from recipe
-        image_alts=[r[3] for r in _results],  # set to description from recipe
-        ratings=[r[8] if r[8] is None else int(r[8] * 100) for r in _results],
-        cooking_times_in_minutes=[r[2] for r in _results],                   #time from recipe
-        recipe_ids=[r[0] for r in _results],
-        difficulties=[r[6] for r in _results],
-        dietary_tags=[r[7] for r in _results],
-        missing_ingredients=[r[9] for r in _results],
-        matched_ingredients=[r[10] for r in _results],
-        default=sort_option
-    )
+def difficulty_map(difficulty):
+    if difficulty == "Easy":
+        return 1
+    elif difficulty == "Intermediate":
+        return 2
+    elif difficulty == "Hard":
+        return 3
+    return 0
 
 
 def get_search():
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            whereclauses = []
+            where_clauses = []
             extra_joins = []
+            having_clauses = []
             query_args = {}
+            relevance_score_expr = "0"
 
             # Create the expressions and arguments to match the search filters
 
             # Filter favourites
             if request.args.get("favs_only"):
-                whereclauses.append(
-                    f"EXISTS (SELECT * FROM Favourites as f WHERE f.account = \'{current_user.get_id()}\' AND f.recipe = r.id)"
+                extra_joins.append(
+                    "JOIN Favourites f ON f.account = %(cur_user_id)s AND f.recipe = r.id"
                 )
+                query_args["cur_user_id"] = current_user.get_id()
 
             ingredients = request.args.getlist("ingredients")
             use_pantry = request.args.get("pantry_only")
@@ -237,38 +234,79 @@ def get_search():
                     "ic.compulsory_ingredient_count - sum((ci.name IS NOT NULL)::int)"
                 )
                 matched_ingredient_count_expr = "sum((ci_optional.name IS NOT NULL)::int)"
+                relevance_score_expr += f" + {matched_ingredient_count_expr}"
             else:
                 missing_ingredient_count_expr = "ic.compulsory_ingredient_count"
                 matched_ingredient_count_expr = "0"
 
             dietary_tags = request.args.get("dietary_tags", default=0, type=int)
             if dietary_tags:
-                whereclauses.append(
+                where_clauses.append(
                     "r.dietary_tags & %(dietary_tags)s::bit(4) = %(dietary_tags)s::bit(4)"
                 )
                 query_args["dietary_tags"] = dietary_tags
 
             max_time = request.args.get("max_time", default=0, type=int)
             if max_time:
-                whereclauses.append("r.time <= %(max_time)s")
+                where_clauses.append("r.time <= %(max_time)s")
                 query_args["max_time"] = max_time
 
             num_servings = request.args.get("num_servings", default=0, type=int)
             if num_servings:
-                whereclauses.append("r.serving >= %(num_servings)s")
+                where_clauses.append("r.serving >= %(num_servings)s")
                 query_args["num_servings"] = num_servings
 
             min_rating = request.args.get("min_rating", default=0, type=int)
             if min_rating:
-                whereclauses.append("(rr.rating ISNULL OR rr.rating >= %(min_rating)s)")
+                where_clauses.append("rr.rating >= %(min_rating)s")
                 query_args["min_rating"] = min_rating / 100
+
+            max_difficulty = request.args.get("max_difficulty", default="Hard", type=str)
+            if max_difficulty == "Intermediate":
+                where_clauses.append("(r.difficulty=%(easy_str)s OR r.difficulty=%(intermediate_str)s)")
+                query_args["easy_str"] = "Easy"
+                query_args["intermediate_str"] = "Intermediate"
+            elif max_difficulty == "Easy":
+                where_clauses.append("r.difficulty=%(easy_str)s")
+                query_args["easy_str"] = "Easy"
+
+            search_terms = request.args.get("terms", default="", type=str)
+            if search_terms:
+                search_term_pattern = "(" + "|".join(search_terms.lower().split(" ")) + ")"
+                matched_search_terms_expr = "term_matches.count"
+                extra_joins.append(
+                    f"""
+                    NATURAL JOIN LATERAL (
+                      SELECT count(matches) AS count
+                      FROM regexp_matches(
+                        concat(r.name, r.description, r.method), %(search_term_pattern)s, 'ig'
+                      ) matches
+                    ) term_matches
+                    """
+                )
+                query_args["search_term_pattern"] = search_term_pattern
+                where_clauses.append(
+                    "term_matches.count > 0"
+                )
+                relevance_score_expr += f" + {matched_search_terms_expr}"
+            else:
+                matched_search_terms_expr = "1"
+
+            fuzzyness = request.args.get("fuzzyness", default=None, type=int)
+            if fuzzyness is not None:
+                having_clauses.append(f"{missing_ingredient_count_expr} <= %(fuzzyness)s")
+                query_args["fuzzyness"] = fuzzyness
 
             # Format the expressions into a single "WHERE <expr>" string
             extra_joinclause = " ".join(extra_joins)
-            if whereclauses:
-                whereclause = "WHERE " + " AND ".join(whereclauses)
+            if where_clauses:
+                where_clause = "WHERE " + " AND ".join(where_clauses)
             else:
-                whereclause = ""
+                where_clause = ""
+            if having_clauses:
+                having_clause = "HAVING " + " AND ".join(having_clauses)
+            else:
+                having_clause = ""
 
             query = f"""
                 SELECT
@@ -282,19 +320,24 @@ def get_search():
                   r.dietary_tags,
                   rr.rating,
                   {missing_ingredient_count_expr} AS missing_compulsory_ingredient_count,
-                  {matched_ingredient_count_expr} AS matched_ingredient_count
-                FROM recipe r                 JOIN ingredient_counts ic ON r.id = ic.recipe
+                  {matched_ingredient_count_expr} AS matched_ingredient_count,
+                  {matched_search_terms_expr} AS matched_search_terms_count,
+                  {relevance_score_expr} AS relevance_score
+                FROM recipe r
+                JOIN ingredient_counts ic ON r.id = ic.recipe
                 LEFT OUTER JOIN recipe_rating rr ON r.id = rr.recipe
                 {extra_joinclause}
-                {whereclause}
+                {where_clause}
                 GROUP BY
                   r.id,
                   ic.compulsory_ingredient_count,
-                  rr.rating
+                  rr.rating,
+                  matched_search_terms_count
+                {having_clause}
                 ORDER BY
-                  missing_compulsory_ingredient_count,
-                  matched_ingredient_count DESC,
-                  r.name
+                  relevance_score DESC,
+                  rr.rating DESC NULLS LAST,
+                  r.name ASC
             """
             print(query)
             cursor.execute(query, query_args)
@@ -328,49 +371,47 @@ def add_to_shopping_list(recipe_id):
             query = "INSERT INTO shoppinglist (account, recipe, ingredient, quantity) select a.username, rti.recipe, i.id, rti.quantity from account a, recipetoingredient rti, ingredient i where rti.recipe = %s AND rti.ingredient = i.id AND a.username iLIKE %s ON CONFLICT DO NOTHING;"
 
             cursor.execute(query, (str(recipe_id), current_user.get_id(),))
-        #cursor.execute(query, (recipe_id,))
+            #cursor.execute(query, (recipe_id,))
             conn.commit()
-@app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
+
+def format_optional(optional):
+    optional_check = ""
+    if optional:
+        optional_check = " (optional)"
+    return optional_check
+
+@app.route("/recipe/<int:recipe_id>", methods=["GET"])
 def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
-    # Handle the like, dislike, and fav buttons
-    if request.method == "POST" and current_user.is_authenticated:
-        if request.form["button"] == "shopping":
-            add_to_shopping_list(recipe_id)
-        if request.form["button"] == "favourite":
-            if current_user.is_fav(recipe_id):
-                current_user.del_fav(recipe_id)
-            else:
-                current_user.add_fav(recipe_id)
-
-        elif request.form["button"] == "like":
-            if current_user.is_like(recipe_id):
-                current_user.del_vote(recipe_id)
-            else:
-                if current_user.is_dislike(recipe_id):
-                    current_user.del_vote(recipe_id)
-                current_user.add_like(recipe_id)
-
-        elif request.form["button"] == "dislike":
-            if current_user.is_dislike(recipe_id):
-                current_user.del_vote(recipe_id)
-            else:
-                if current_user.is_like(recipe_id):
-                    current_user.del_vote(recipe_id)
-                current_user.add_dislike(recipe_id)
-
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-
-            query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
+            query = "SELECT name, time, difficulty, method, description, imageRef, dietary_tags FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
             cursor.execute(query, (recipe_id,))
             results = cursor.fetchone()
+            for i in range(100):
+                print(type(results[6]))
 
-            query = "SELECT (COALESCE(rti.r_quantity, rti.quantity)) as quantity, (COALESCE(rti.r_measurement_type::text, i.measurement_type::text)) as measurement_type, i.name FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = %s;"
+            #query = "SELECT ingredient FROM recipetoingredient WHERE recipe = %s;"
+            #cursor.execute(query, (recipe_id,))
+            #ingredient_index_tuple = tuple([i[0] for i in cursor.fetchall()])   # tuple of ingredient indexes in recipe
+
+
+# SELECT i.name, rti.quantity, rti.r_quantity, (CASE WHEN (rti.r_quantity IS NULL) THEN rti.quantity ELSE rti.r_quantity END) as modified_quantity FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = 1;
+            query = "SELECT (COALESCE(rti.r_quantity, rti.quantity)) as quantity, (COALESCE(rti.r_measurement_type::text, i.measurement_type::text)) as measurement_type, i.name, rti.optional FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = %s;"
+            #query = "SELECT rti.quantity, i.measurement_type, rti.r_quantity, rti.r_measurement_type, i.name FROM ingredient i, recipetoingredient rti WHERE i.id = rti.ingredient AND rti.recipe = %s;"
             cursor.execute(query, (recipe_id,))
-            ires = cursor.fetchall() 
-            ires = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in ires])  
+            #ir = for row in cursor.fetchall()
+            ires = cursor.fetchall()
+            ires = ([(format_quantity(i[0]), format_measurement(i[1]), i[2], format_optional(i[3])) for i in ires])
             ingredient_results = list(map(" ".join,ires))
+
+            query = "SELECT i.name FROM Pantry p, Ingredient i WHERE p.ingredient = i.id AND p.account = %s;"
+            cursor.execute(query, (current_user.get_id(),))
+            pantry_res = cursor.fetchall()
+            pantry_results = [r[0] for r in pantry_res]
+           # ingredient_results = list(map(" ".join, ([(str(i[0]), i[1], i[2]) for i in ires])))
+            #for x in ingredient_results:
+            #    print(x[0], x[1])
 
             query = "SELECT equipment FROM recipetoequipment WHERE recipe = %s;"
             cursor.execute(query, (recipe_id,))
@@ -392,11 +433,13 @@ def recipe(recipe_id):
     is_dislike   = current_user.is_dislike(recipe_id) if current_user.is_authenticated else False
 
     return template.render(
+        username=get_username(),
         title=results[0],
         image_path=results[5],
         image_alt=results[4],
         cooking_time_in_minutes=results[1],
-        difficulty=results[2],  # can be 'Easy', 'Medium', or 'Hard'
+        difficulty=results[2],  # can be 'Easy', 'Intermediate', or 'Hard'
+        dietary_tags=diet_bits_to_short_names(results[6]),
         ingredients=ingredient_results,
         equipment=equipment_names,
         method=method,
@@ -405,7 +448,9 @@ def recipe(recipe_id):
         rating=get_rating(recipe_id),
         is_favourite=is_favourite,
         is_like=is_like,
-        is_dislike=is_dislike
+        is_dislike=is_dislike,
+        recipe_id=recipe_id,
+        pantry=pantry_results
     )
 
 
@@ -427,7 +472,10 @@ def login():
             error = "Incorrect username or password."
 
     template = LOOKUP.get_template("login.html")
-    return template.render(error=error)
+    return template.render(
+            username=get_username(),
+            error=error
+    )
 
 
 ###################
@@ -445,29 +493,16 @@ def signup():
         password = request.form["password"]
         password_duplicate = request.form["password_duplicate"]
 
-        # first check that the username has only allowed characters
-        # username allowed characters: a-z, A-Z, 0-9, '-', '_'
+        # The checks that the username has only allowed characters, that the
+        # password is at least pw_min_len characters long, and that the 2
+        # passwords match is all done on the front end.
+
         #  capitalisation is preserved for a given user,
         #  but duplicate username check is case insensitive
 
-        allowed_chars = set(
-            string.ascii_lowercase + string.ascii_uppercase + string.digits + "-" + "_"
-        )
-
-        if not (set(username).issubset(allowed_chars)):
-            error = "Usernames may contain only letters, numbers, dashes, and underscores."
-
         # Check that the username is not already in use
-        elif load_user(username) != None:
+        if load_user(username) != None:
             error = "Username already in use."
-
-        # Check that the password is long enough
-        elif len(password) < pw_min_len:
-            error = "Password must be at least %d characters long." % (pw_min_len)
-
-        # Check that the two passwords given match
-        elif password != password_duplicate:
-            error = "Passwords do not match."
 
         # No error, add the user to the database and sign in
         if error == None:
@@ -479,7 +514,12 @@ def signup():
             return redirect(url_for("search"))
 
     template = LOOKUP.get_template("signup.html")
-    return template.render(error=error)
+    return template.render(
+            username = get_username(),
+            error=error, 
+            pw_min_len=pw_min_len
+    )
+
 
 
 ###################
@@ -506,6 +546,7 @@ def delete_recipe_ingredients(delete_recipe_id):
 def format_count(sl_recipe_count):
     sl_recipe_count = str((sl_recipe_count))
     return sl_recipe_count
+
 @app.route("/shoppinglist", methods=["GET", "POST"])
 def shoppinglist():
         #shoppinglist = addtoshoppinglist
@@ -532,11 +573,15 @@ def shoppinglist():
 
             print(shopping_list_ingredient_results)
     return template.render(
+            username=get_username(),
             shopping_list_recipe_names = [r[0] for r in s_recipes],
             shopping_list_recipe_ids = [r[1] for r in s_recipes],
             shopping_list_ingredients = shopping_list_ingredient_results
     ) 
 
+
+def format_m_type(val):
+    return "(" + val + ")"
 
 ###################
 ### PANTRY PAGE ###
@@ -548,7 +593,9 @@ def pantry():
     template = LOOKUP.get_template("pantry.html")
     if request.method == "POST":
         if 'pantry-add' in request.form:
-            ingredient = request.form['ingredients']
+            ingredient = request.form['ingredient_input']
+            ingredient = ingredient.split('(')[0]
+            ingredient = ingredient.rstrip()
             ingredient_index = get_ingredient_info_from_name(ingredient)
             quantity = request.form['quantity']
             if quantity == '':
@@ -565,6 +612,10 @@ def pantry():
             cursor.execute(query)
             all_ingredients_results = cursor.fetchall()
 
+    ires = ([(i[0], format_m_type(i[1])) for i in all_ingredients_results])
+
+
+    ingredient_results = list(map(" ".join,ires))
     results = get_ingredients(current_user.get_id())
 
 
@@ -578,14 +629,13 @@ def pantry():
         ingredient_info = []
 
     return template.render(
+        username=get_username(),
         error="none",
-        all_ingredients = [r[0] for r in all_ingredients_results],
+        all_ingredients = ingredient_results,
         ingredients=[r[0] for r in ingredient_info],
         ingredient_ids = ingredient_ids,
         quantities=quantities,
         pantry_types=[r[1] for r in ingredient_info],
-        m_types=[r[1] for r in all_ingredients_results],
-        username=current_user.get_id() if current_user.is_authenticated else None
     )
 
 
@@ -644,6 +694,7 @@ def profile():
     current_diets = current_user.get_diets()
 
     return template.render(
+        username      = get_username(),
         open_forms    = open_forms,
         allowed_diets = allowed_diets,
         current_diets = current_diets,
@@ -683,10 +734,10 @@ def recipe_form():
                 recipe_ingredients.append(request.form['ingredient' + str(i)])
             if ('ingredient-quantity' + str(i)) in request.form:
                 ingredient_quantities.append(request.form['ingredient-quantity' + str(i)])
-            if ('ingredient_check' + str(i)) in request.form:
-                ingredient_checks.append(False)
-            else:
+            if ('ingredient_check' + str(i)) in request.form:   # optionality checkbox is ticked
                 ingredient_checks.append(True)
+            else:
+                ingredient_checks.append(False)
         session['recipe_ingredients'] = recipe_ingredients
         session['ingredient_quantities'] = ingredient_quantities
         session['ingredient_checks'] = ingredient_checks
@@ -705,12 +756,12 @@ def recipe_form():
             dietary_tags = dietary_tags | 0b0100
         if dairy_check:
             dietary_tags = dietary_tags | 0b1000
-        
+
         session['dietary_tags'] = dietary_tags
-        
+
 
         return redirect(url_for('recipe_confirm'))
-        
+
 
     with db.getconn() as conn:
         with conn.cursor() as cursor:
@@ -720,11 +771,11 @@ def recipe_form():
     equipment = get_all_equipment()
     #print(equipment)
     return template.render(
+        username=get_username(),
         error="none",
         all_ingredients=[r[0] for r in all_ingredients_results],
         m_types=[r[1] for r in all_ingredients_results],
         equipment=get_all_equipment(),
-        username=current_user.get_id() if current_user.is_authenticated else None
     )
 
 @app.route("/confirm-recipe", methods=["POST", "GET"])
@@ -744,6 +795,11 @@ def recipe_confirm():
     ingredient_checks = session.get("ingredient_checks", None)
     cuisine_tags = session.get("cuisine_tags", None)
     recipe_equipment = recipe_equipment.split(',')
+    vegetarian_check = 0b0001 & dietary_tags
+    vegan_check = 0b0011 & dietary_tags
+    gluten_check = 0b0100 & dietary_tags
+    dairy_check = 0b1000 & dietary_tags
+    display_method = recipe_method.split('|')
     if request.method == "POST":
         # take file input
         if 'recipe_image' in request.files:
@@ -766,6 +822,7 @@ def recipe_confirm():
     print(session.get("recipe_name", None))
 
     return template.render(
+        username=get_username(),
         recipe_name=recipe_name,
         recipe_time=recipe_time,
         recipe_difficulty=recipe_difficulty,
@@ -775,8 +832,86 @@ def recipe_confirm():
         recipe_equipment=recipe_equipment,
         recipe_ingredients=recipe_ingredients,
         ingredient_quantities=ingredient_quantities,
-        recipe_method=recipe_method,
-        dietary_tags = dietary_tags
+        recipe_method=display_method,
+        vegetarian=vegetarian_check,
+        vegan=vegan_check,
+        gluten_free=gluten_check,
+        dairy_free=dairy_check,
+        cuisine_tags = cuisine_tags
     #   error="none",
-    #   username=current_user.get_id() if current_user.is_authenticated else None
     )
+
+
+@app.route('/recipe/<int:recipe_id>/like', methods=['POST', 'DELETE'])
+@app.route('/recipe/<int:recipe_id>/dislike', methods=['POST', 'DELETE'])
+def recipe_vote(recipe_id):
+    if not current_user.is_authenticated:
+        return 'You must log in first', 403
+
+    if request.method == "POST":
+        # Add like or dislike
+        if request.path.endswith('/like'):
+            current_user.add_like(recipe_id)
+        elif request.path.endswith('/dislike'):
+            current_user.add_dislike(recipe_id)
+        else:
+            # Should never happen
+            return 'Invalid path', 400
+    elif request.method == "DELETE":
+        # Remove like or dislike
+        current_user.del_vote(recipe_id)
+    return ''
+
+
+@app.route('/recipe/<int:recipe_id>/favourite', methods=['POST', 'DELETE'])
+def recipe_favourite(recipe_id):
+    if not current_user.is_authenticated:
+        return 'You must log in first', 403
+
+    if request.method == "POST":
+        current_user.add_fav(recipe_id)
+    elif request.method == "DELETE":
+        current_user.del_fav(recipe_id)
+    return ''
+
+@app.route('/recipe/<int:recipe_id>/autopantry', methods=['POST'])
+def recipe_autopantry(recipe_id):
+    if not current_user.is_authenticated:
+        return 'You must log in first', 403
+
+    user_id = current_user.get_id()
+
+    pantry_ingredients = get_ingredients(user_id)
+
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                '''SELECT ingredient, quantity FROM RecipeToIngredient WHERE recipe=%s;''',
+                (recipe_id,)
+            )
+            recipe_ingredients = cursor.fetchall()
+
+            for ri in recipe_ingredients:
+                for pi in pantry_ingredients:
+                    if ri[0] == pi[0]:
+                        if pi[1] > ri[1]:
+                            cursor.execute(
+                                '''UPDATE Pantry SET quantity=%s WHERE account=%s AND ingredient=%s;''',
+                                (pi[1] - ri[1], user_id, pi[0],)
+                            )
+                        else:
+                            cursor.execute(
+                                '''DELETE FROM Pantry WHERE account=%s AND ingredient=%s;''',
+                                (user_id, pi[0],)
+                            )
+            conn.commit()
+    return ''
+
+@app.route('/recipe/<int:recipe_id>/add_shopping', methods=['POST'])
+def add_shopping(recipe_id):
+    if not current_user.is_authenticated:
+        return 'You must log in first', 403
+
+    if request.method == "POST":
+        add_to_shopping_list(recipe_id)
+    return ''

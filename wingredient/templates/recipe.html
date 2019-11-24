@@ -73,9 +73,9 @@ Python variables that need to be passed in for this template to render correctly
 
     <!-- Recipe photo -->
     <img src="/${image_path}" width="500" alt="${image_alt}">
-    <br>
+    <br><br>
 
-    <!-- Cooking time & difficulty -->
+    <!-- Info bar -->
     <div class="d-flex justify-content-around">
       <!-- Cooking time -->
       <div class="p-2 bd-highlight">
@@ -83,6 +83,17 @@ Python variables that need to be passed in for this template to render correctly
           <i class="fa fa-clock-o" aria-hidden="true"></i>
           ${cooking_time_in_minutes} minutes
         </h5>
+      </div>
+
+      <!-- Dietary restrictions -->
+      <div class="p-2 bd-highlight">
+        % for tag in dietary_tags:
+          <h5 style="display: inline;">
+            <span class="badge badge-secondary">
+              ${tag}
+            </span>
+          </h5>
+        % endfor
       </div>
 
       <!-- Difficulty -->
@@ -101,11 +112,38 @@ Python variables that need to be passed in for this template to render correctly
 
     <h2>Ingredients</h2>
     <ul>
-      % for ingredient in ingredients:
-        <li>${ingredient}</li>
+      % for i in range(len(ingredients)):
+        <li style="list-style: none;">
+          <div class="custom-control custom-checkbox mb-3">
+            <input type="checkbox" id=${i} class="custom-control-input">
+            <label class="custom-control-label" for=${i}>${ingredients[i]}</label>
+          % for item in pantry:
+            % if item in ingredients[i]:
+            <i class="fa fa-check" style="color: green;" aria-hidden="true"></i>
+            % endif
+          % endfor
+        </div>
+
+        </li>
       % endfor
     </ul>
+    <i class="fa fa-check" style="color: green;" aria-hidden="true"></i>
+    <span>: In Pantry</span>
     <br>
+
+    <center>
+      <!-- Autopantry button -->
+      <button type="submit"
+      name="button" value="autopantry" id="autopantry-button"
+      class="btn btn-primary"
+      % if username == None:
+        hidden disabled
+      % endif
+      >
+        <span id="autopantry-button-value">Remove Ingredients From Pantry</span>
+      </button>
+    </center>
+
 
     <h2>Equipment</h2>
     <ul>
@@ -124,67 +162,144 @@ Python variables that need to be passed in for this template to render correctly
     <br>
 
     <center>
-        <form method="POST">
-        
-        <button type="submit"
-        % if is_like:
-          class="btn btn-primary"
-        % else:
-          class="btn btn-outline-primary"
-        % endif
-        name="button" value="shopping"
-        % if context.username == None:
-          disabled
-        % endif
-        >
-          Add to shopping list 
-        </button>
-        <!-- Like button -->
-        <button type="submit"
-        % if is_like:
-          class="btn btn-primary"
-        % else:
-          class="btn btn-outline-primary"
-        % endif
-        name="button" value="like"
-        % if context.username == None:
-          disabled
-        % endif
-        >
-          <i class="fa fa-thumbs-up" aria-hidden="true"></i> ${num_likes}
-        </button>
+      <button type="submit"
+      class="btn btn-primary"
+      name="button" value="shopping" id="shopping-button"
+      % if username == None:
+        disabled
+      % endif
+      >
+        Add to shopping list 
+      </button>
 
-        <!-- Dislike button -->
-        <button type="submit"
-        % if is_dislike:
-          class="btn btn-primary"
-        % else:
-          class="btn btn-outline-primary"
-        % endif
-        name="button" value="dislike"
-        % if context.username == None:
-          disabled
-        % endif
-        >
-          <i class="fa fa-thumbs-down" aria-hidden="true"></i> ${num_dislikes}
-        </button>
+      <!-- Like button -->
+      <button type="submit"
+      name="button" value="like" id="like-button"
+      % if is_like:
+        class="btn btn-primary"
+        data-active="true"
+      % else:
+        class="btn btn-outline-primary"
+        data-active="false"
+      % endif
+      % if username == None:
+        disabled
+      % endif
+      >
+        <i class="fa fa-thumbs-up" aria-hidden="true"></i> <span id="like-button-value">${num_likes}</span>
+      </button>
 
-        <!-- Favourites button -->
-        <button type="submit"
-        % if is_favourite:
-          class="btn btn-danger"
-        % else:
-          class="btn btn-outline-danger"
-        % endif
-        name="button" value="favourite"
-        % if context.username == None:
-          disabled
-        % endif
-        >
-          <i class="fa fa-heart" aria-hidden="true"></i>
-        </button>
+      <!-- Dislike button -->
+      <button type="submit"
+      name="button" value="dislike" id="dislike-button"
+      % if is_dislike:
+        class="btn btn-primary"
+        data-active="true"
+      % else:
+        class="btn btn-outline-primary"
+        data-active="false"
+      % endif
+      % if username == None:
+        disabled
+      % endif
+      >
+        <i class="fa fa-thumbs-down" aria-hidden="true"></i> <span id="dislike-button-value">${num_dislikes}</span>
+      </button>
 
-      </form>
+      <!-- Favourites button -->
+      <button type="submit"
+      name="button" value="favourite" id="favourite-button"
+      % if is_favourite:
+        class="btn btn-danger"
+        data-active="true"
+      % else:
+        class="btn btn-outline-danger"
+        data-active="false"
+      % endif
+      % if username == None:
+        disabled
+      % endif
+      >
+        <i class="fa fa-heart" aria-hidden="true"></i>
+      </button>
+
+      <script>
+        likeButton = document.getElementById('like-button');
+        dislikeButton = document.getElementById('dislike-button');
+        likeSpan = document.getElementById('like-button-value');
+        dislikeSpan = document.getElementById('dislike-button-value');
+
+        likeButton.addEventListener('click', async _ => {
+          try {
+            if (likeButton.getAttribute('data-active') === 'true') {
+              await fetch('${recipe_id}/like', {method: 'delete'});
+              likeButton.setAttribute('data-active', 'false');
+              likeButton.setAttribute('class', 'btn btn-outline-primary');
+              likeSpan.innerHTML = (parseInt(likeSpan.innerHTML) - 1).toString();
+            } else {
+              await fetch('${recipe_id}/like', {method: 'post'});
+              likeButton.setAttribute('data-active', 'true');
+              likeButton.setAttribute('class', 'btn btn-primary');
+              likeSpan.innerHTML = (parseInt(likeSpan.innerHTML) + 1).toString();
+              if (dislikeButton.getAttribute('data-active') === 'true') {
+                dislikeButton.setAttribute('data-active', 'false');
+                dislikeButton.setAttribute('class', 'btn btn-outline-primary');
+                dislikeSpan.innerHTML = (parseInt(dislikeSpan.innerHTML) - 1).toString();
+              }
+            }
+          } catch(err) {
+            console.error(`Error: ${{err}}`);
+          }
+        });
+
+        dislikeButton.addEventListener('click', async _ => {
+          if (dislikeButton.getAttribute('data-active') === 'true') {
+            await fetch('${recipe_id}/dislike', {method: 'delete'});
+            dislikeButton.setAttribute('data-active', 'false');
+            dislikeButton.setAttribute('class', 'btn btn-outline-primary');
+            dislikeSpan.innerHTML = (parseInt(dislikeSpan.innerHTML) - 1).toString();
+          } else {
+            await fetch('${recipe_id}/dislike', {method: 'post'});
+            dislikeButton.setAttribute('data-active', 'true');
+            dislikeButton.setAttribute('class', 'btn btn-primary');
+            dislikeSpan.innerHTML = (parseInt(dislikeSpan.innerHTML) + 1).toString();
+            if (likeButton.getAttribute('data-active') === 'true') {
+              likeButton.setAttribute('data-active', 'false');
+              likeButton.setAttribute('class', 'btn btn-outline-primary');
+              likeSpan.innerHTML = (parseInt(likeSpan.innerHTML) - 1).toString();
+            }
+          }
+        });
+
+        favButton = document.getElementById('favourite-button');
+        favButton.addEventListener('click', async _ => {
+          if (favButton.getAttribute('data-active') === 'true') {
+            await fetch('${recipe_id}/favourite', {method: 'delete'});
+            favButton.setAttribute('data-active', 'false');
+            favButton.setAttribute('class', 'btn btn-outline-danger');
+          } else {
+            await fetch('${recipe_id}/favourite', {method: 'post'});
+            favButton.setAttribute('data-active', 'true');
+            favButton.setAttribute('class', 'btn btn-danger');
+          }
+        });
+
+        autopantryButton = document.getElementById('autopantry-button');
+        autopantrySpan = document.getElementById('autopantry-button-value');
+        autopantryButton.addEventListener('click', async _ => {
+          //if (!autopantryButton.getAttribute('disabled')) {
+            await fetch('${recipe_id}/autopantry', {method: 'post'});
+            autopantryButton.setAttribute('class', 'btn btn-outline-primary');
+            autopantryButton.setAttribute('disabled', 'disabled');
+            autopantrySpan.innerHTML = 'Pantry Updated Successfully!';
+          //}
+        });
+
+        shoppingButton = document.getElementById('shopping-button');
+        shoppingButton.addEventListener('click', async _ => {
+          await fetch('${recipe_id}/add_shopping', {method: 'post'});
+        });
+      </script>
     </center>
 
     <br>

@@ -3,6 +3,7 @@
 <!--
 Python variables that need to be passed in for this template to render correctly:
 - error: error str to display
+- pw_min_len: The minimum length (int) a password is allowed to be
 -->
 
 <!--
@@ -38,48 +39,71 @@ Names of input fields to recieve in the Python backend:
     <br>
 
     <!-- Signup form -->
-    <form method="POST" class="justify-content-center">
+    <form method="POST" class="justify-content-center"
+    oninput="password_duplicate.setCustomValidity(password_duplicate.value != password.value ? 'Passwords do not match' : '')">
+    <!--
+    This ^ oninput part checks that the 2 passwords match, and prevents submission
+    if they dont.
+    -->
 
       <!-- Username field -->
-      <div class="form-group row">
-        <label for="username-box" class="col-sm-5 col-form-label">
-          <h5>
-            <i class="fa fa-user" aria-hidden="true"></i> Username:
-          </h5>
-        </label>
-        <div class="col-sm-5">
-          <input name="username" type="text" class="form-control" id="username-box" required>
+      <div class="input-group input-group-lg">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-lg">
+            <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+          </span>
         </div>
+        <input id="username-box" name="username" placeholder="Username"
+        pattern="[a-zA-Z0-9-_]+" class="form-control" aria-label="Large"
+        aria-describedby="username-help-block" required>
+        <!--
+        "[a-zA-Z0-9-_]+" is the regex the username must match
+        (allowed characters: a-z, A-Z, 0-9, '-', '_')
+        The "+" means there must be at least 1 character.
+        -->
       </div>
+
+      <small id="username-help-block" class="form-text text-muted">
+        Username may contain only letters, numbers, dashes, and underscores.
+      </small>
+      <br>
+
 
       <!-- Password field -->
-      <div class="form-group row">
-        <label for="password-box" class="col-sm-5 col-form-label">
-          <h5>
-            <i class="fa fa-lock" aria-hidden="true"></i> Password:
-          </h5>
-        </label>
-        <div class="col-sm-5">
-          <input name="password" type="password" class="form-control" id="password-box" required>
+      <div class="input-group input-group-lg">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-lg">
+            <i class="fa fa-lock fa-fw" aria-hidden="true"></i>
+          </span>
         </div>
+        <input id="password-box" name="password" placeholder="Password"
+        type="password" minlength="${pw_min_len}" class="form-control" aria-label="Large"
+        aria-describedby="password-help-block" required>
       </div>
 
+
       <!-- Confirm password field -->
-      <div class="form-group row">
-        <label for="confirm-password-box" class="col-sm-5 col-form-label">
-          <h5>
-            <i class="fa fa-lock" aria-hidden="true"></i> Confirm Password:
-          </h5>
-        </label>
-        <div class="col-sm-5">
-          <input name="password_duplicate" type="password" class="form-control" id="confirm-password-box" required>
+      <div class="input-group input-group-lg">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-lg">
+            <i class="fa fa-lock fa-fw" aria-hidden="true"></i>
+          </span>
         </div>
+        <input id="confirm-password-box" name="password_duplicate"
+        placeholder="Confirm password" type="password" minlength="${pw_min_len}"
+        class="form-control" aria-label="Large"
+        aria-describedby="inputGroup-sizing-sm" required>
       </div>
+
+      <small id="password-help-block" class="form-text text-muted">
+        Password must be at least ${pw_min_len} characters long.
+      </small>
+
 
       <!-- Error message -->
       % if error != None:
-      <br>
-      <p>${error}</p>
+        <br>
+        <p class="text-danger">${error}</p>
       % endif
 
       <!-- Submit button -->

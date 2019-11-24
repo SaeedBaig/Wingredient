@@ -7,8 +7,6 @@ Python variables that need to be passed in for this template to render correctly
 
 <!--
 Names of input fields to recieve in the Python backend:
-- username
-- password
 -->
 
 <!--Defines main language used by site (English)-->
@@ -22,61 +20,89 @@ Names of input fields to recieve in the Python backend:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Non-Mako dependent styling from this file -->
-  <link rel="stylesheet" href="../static/search.css">
+  <link rel="stylesheet" href="../static/pantry.css">
+
+  <script type="text/javascript" src="../static/ingredient_autocomplete.js"></script>
 
   <%include file="/site_wide.html"/>
 
-  <title>${context.username}'s Pantry - Wingredient</title>
+  <title>${username}'s Pantry - Wingredient</title>
 </head>
 
 <body>
   <center>
     <%include file="/navbar.html"/>
 
-    <h1>Pantry</h1>
+    <h1>Your Pantry</h1>
     <br>
-    <div>
-      <form method="POST">
-        <div class="form-group">
-          <div class="input-group mb-3">
-            <select name="ingredients" id="ingredients" class="form-control">
-              % for i in range(len(all_ingredients)):
-              <option value="${all_ingredients[i]}">${all_ingredients[i]} (${m_types[i]})</option>
-              % endfor
-            </select>
-            <input type="number" class="form-control" min="0" step="1" name="quantity" id="quantity" placeholder="Quantity" required/>
-            <!-- <input type="submit" name="pantry-add" value="Add to pantry" class="btn btn-primary" id="add"/> -->
-            <button class="btn btn-primary" name="pantry-add" id="add" type="submit">
-              <i class="fa fa-plus" aria-hidden="true"></i>
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
+
+    <table id="pantry" class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Ingredient</th>
+          <th scope="col">Quantity</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <!-- Add new ingredient to pantry -->
+        <tr>
+          <form autocomplete="off" method="POST">
+            <th scope="row">
+              <div class="autocomplete">
+                  <input id="ingredient_input" class="form-control" type="text"
+                  name="ingredient_input" placeholder="Ingredient" required>
+              </div>
+            </th>
+            <td>
+              <div class="input-group mb-3">
+                <input type="number" class="form-control" min="0" step="1"
+                name="quantity" id="quantity" placeholder="Quantity" required>
+
+                <button style="float: right;" class="btn btn-primary"
+                name="pantry-add" id="add" type="submit">
+                  <i class="fa fa-plus" aria-hidden="true"></i>
+                </button>
+              </div>
+            </td>
+          </form>
+        </tr>
+
+        <form method="POST">
+          % for i in range(len(ingredients)):
+            <tr>
+              <th scope="row">${ingredients[i]}</th>
+              <td>
+                % if pantry_types[i] != 'Count':
+                  ${quantities[i]}${pantry_types[i]}
+                % else:
+                  ${quantities[i]}
+                % endif
+
+                <button type="submit" name="pantry-delete" class="btn btn-danger"
+                style="float: right" value="${ingredient_ids[i]}"
+                onclick="return confirm('Are you sure you want to delete this item from your pantry?');">
+                  <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+              </td>
+            </tr>
+          % endfor
+        </form>
+      </tbody>
+    </table>
 
     % if len(ingredients) == 0:
       <br>
       <h4>Your pantry's looking pretty empty. Why not add something to it!</h4>
-    % else:
-    <form method="POST">
-        <div class="card mb-3">
-            <ul class="list-group list-group-flush">
-                % for i in range(len(ingredients)):
-                    <li class="list-group-item">
-                        ${ingredients[i]}: ${quantities[i]} (${pantry_types[i]})
-                        <button type="submit" name="pantry-delete" class="btn btn-danger"
-                        style="float: right" value=${ingredient_ids[i]}
-                        onclick="return confirm('Are you sure you want to delete this item from your pantry?');">
-                            <i class="fa fa-trash" aria-hidden="true"></i>
-                        </button>
-                    </li>
-                % endfor
-            </ul>
-        </div>
-    </form>
     % endif
 
-
+    <script>
+        var all_ingredients = ${all_ingredients}
+        console.log(all_ingredients)
+        var elem = document.getElementById("ingredient_input")
+        console.log(elem)
+        autocomplete(document.getElementById("ingredient_input"), all_ingredients);
+    </script>
   </center>
   <br>
 </body>

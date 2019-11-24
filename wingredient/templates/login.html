@@ -40,33 +40,34 @@ Names of input fields to recieve in the Python backend:
     <form method="POST" class="justify-content-center">
 
       <!-- Username field -->
-      <div class="form-group row">
-        <label for="username-box" class="col-sm-5 col-form-label">
-          <h5>
-            <i class="fa fa-user" aria-hidden="true"></i> Username:
-          </h5>
-        </label>
-        <div class="col-sm-5">
-          <input name="username" type="text" class="form-control" id="username-box" required>
+      <div class="input-group input-group-lg">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-lg">
+            <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+          </span>
         </div>
+        <input id="username-box" name="username" placeholder="Username"
+        type="text" class="form-control" aria-label="Large"
+        aria-describedby="inputGroup-sizing-sm" required>
       </div>
+      <br>
 
       <!-- Password field -->
-      <div class="form-group row">
-        <label for="password-box" class="col-sm-5 col-form-label">
-          <h5>
-            <i class="fa fa-lock" aria-hidden="true"></i> Password:
-          </h5>
-        </label>
-        <div class="col-sm-5">
-          <input name="password" type="password" class="form-control" id="password-box" required>
+      <div class="input-group input-group-lg">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-lg">
+            <i class="fa fa-lock fa-fw" aria-hidden="true"></i>
+          </span>
         </div>
+        <input id="password-box" name="password" placeholder="Password"
+        type="password" class="form-control" aria-label="Large"
+        aria-describedby="inputGroup-sizing-sm" required>
       </div>
 
       <!-- Error message -->
       % if error != None:
-      <br>
-      <p>${error}</p>
+        <br>
+        <p class="text-danger">${error}</p>
       % endif
 
       <!-- Submit button -->

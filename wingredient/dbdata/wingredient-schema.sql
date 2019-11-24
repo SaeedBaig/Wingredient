@@ -134,13 +134,16 @@ from recipetoingredient
 where optional = 'false'
 ;
 
-
-CREATE OR REPLACE VIEW ingredient_counts as
-select
-  recipe,
-  count(recipe) AS compulsory_ingredient_count
-from compulsory_recipetoingredient
-group by recipe
+DROP VIEW IF EXISTS ingredient_counts;
+CREATE VIEW ingredient_counts AS
+SELECT
+  rtoi.recipe,
+  count(rtoi.recipe) AS ingredient_count,
+  count(rtoi.recipe) - sum(rtoi.optional::int) AS compulsory_ingredient_count
+FROM
+  recipetoingredient rtoi
+GROUP BY
+  rtoi.recipe
 ;
 
 CREATE OR REPLACE VIEW recipe_rating AS

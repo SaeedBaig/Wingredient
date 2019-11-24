@@ -38,39 +38,39 @@ Python variables that need to be passed in for this template to render correctly
     % if len(titles) == 0:
       <h3>Sorry, no recipes found matching your search</h3>
     % else:
-      <!-- Sort Results By -->
-      <form class="form-inline justify-content-center", method="POST">
-        <div class="form-group">
-          <label for="sorting_options">
-            <h3>
-              <i class="fa fa-sort" aria-hidden="true"></i> Sort results by&nbsp;
-            </h3>
-          </label>
-          <select name="sorting_options" id="sorting_options" class="form-control form-control-lg">
-            <option value="alphabetical"
-              % if default=='alphabetical':
-                selected
-              % endif
-            >Alphabetical order</option>
-            <option value="cooking-time"
-              % if default=='cooking-time':
-                selected
-              % endif
-            >Cooking time</option>
-            <option value="rating"
-              % if default=='rating':
-                selected
-              % endif
-            >Rating</option>
-          </select>
-          &nbsp;
-          <input class="btn btn-primary" type="submit" value="Sort">
+      <h3>Sort by</h3>
+      <form class="form-inline justify-content-center" method="POST">
+
+        <!--
+        Mako function to generate a sort button. Takes:
+        val - The value tag of the button (either relevance, cooking-time, alphabetical, or rating)
+        label_text - Text that appears on the button
+        icon_name - The name of the FontAwesome icon to appear before the label_text (if empty string, no icon)
+        -->
+        <%def name="make_sort_button(val, label_text, icon_name)">
+          <button name="sorting_options" type="submit" value="${val}"
+          % if default == val:
+            class="btn btn-primary active"
+          % else:
+            class="btn btn-primary"
+          % endif
+          >
+            <i class="fa ${icon_name}" aria-hidden="true"></i> &nbsp; ${label_text}
+          </button>
+        </%def>
+
+        <div class="btn-group btn-group-lg" role="group" aria-label="Basic example">
+          ${make_sort_button('relevance', 'Relevance', 'fa-check-square-o')}
+          ${make_sort_button('cooking-time', 'Cooking time', 'fa-clock-o')}
+          ${make_sort_button('alphabetical', 'Alphabetical order', 'fa-sort-alpha-asc')}
+          ${make_sort_button('rating', 'Rating', 'fa-thumbs-up')}
+          ${make_sort_button('difficulty', 'Difficulty', 'fa-signal')}
         </div>
       </form>
-    <br>
+      <br>
 
 
-    <!-- Search results -->
+      <!-- Search results -->
       % for i in range(len(titles)):
         <div class="card border-secondary mb-3">
           <div class="row no-gutters">
@@ -82,6 +82,16 @@ Python variables that need to be passed in for this template to render correctly
               <div class="card-body">
                 <h5 class="card-title">${titles[i]}</h5>
                 <ul class="list-group list-group-flush">
+                  % if missing_ingredients[i] > 0:
+                    <li class="list-group-item text-danger">
+                      You're missing ${missing_ingredients[i]} required ingredients.
+                    </li>
+                  % else:
+                    <li class="list-group-item text-success">
+                      You have all required ingredients!
+                    </li>
+                  % endif
+
                   <li class="list-group-item">
                     % if ratings[i] == None:
                     No Rating
@@ -118,25 +128,21 @@ Python variables that need to be passed in for this template to render correctly
                   <li class="list-group-item" style="color: ${difficulty_color};">
                     ${difficulties[i]}
                   </li>
-                  <script>
-                    % if missing_ingredients[i] > 0:
-                    <%
-                      missing_colour="red"
-                    %>
-                    % else:
-                    <%
-                      ## It should never be black, but this is here just to prevent the
-                      ## page from crashing
-                      missing_colour="green"
-                    %>
-                    % endif
-                  </script>
-                  <li class="list-group-item" style="color: ${missing_colour}">
-                    Missing non-optional ingredients: ${missing_ingredients[i]}
-                  </li>
-                  <li class="list-group-item" style="color: blue">
-                    Ingredients you have: ${matched_ingredients[i]}
-                  </li>
+
+
+
+                  % if len(dietary_tags[i]) > 0:
+                    <li class="list-group-item">
+                      % for tag in dietary_tags[i]:
+                        <h5 style="display: inline;">
+                          <span class="badge badge-secondary">
+                            ${tag}
+                          </span>
+                        </h5>
+                      % endfor
+                    </li>
+                  % endif
+
                 </ul>
               </div>
             </div>

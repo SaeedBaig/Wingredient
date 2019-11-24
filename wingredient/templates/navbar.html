@@ -16,7 +16,7 @@
     else:
       Display account button
     -->
-    % if context.username == None:
+    % if username == None:
       <!-- Login button -->
       <a class="btn btn-primary" href="/login" role="button">
         <i class="fa fa-sign-in" aria-hidden="true"></i> Login
@@ -31,7 +31,7 @@
       <!-- Account dropdown button -->
       <div class="dropdown">
         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fa fa-user-circle-o" aria-hidden="true"></i> ${context.username}
+          <i class="fa fa-user-circle-o" aria-hidden="true"></i> ${username}
         </button>
 
         <!-- Menu items -->

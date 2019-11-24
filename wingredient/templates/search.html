@@ -91,18 +91,18 @@ Names of input fields to recieve in the Python backend:
       </div>
 
       <!-- Pantry only -->
-      % if context.username == None:
+      % if username == None:
         <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="right" title="Login to use pantry and favourites">
           <div class="form-group custom-control custom-checkbox">
             <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only" disabled>
             <label class="custom-control-label" for="pantry_only">
-              Include ingredients from pantry
+              Include ingredients from pantry <i class="fa fa-columns" aria-hidden="true"></i>
             </label>
           </div>
           <div class="form-group custom-control custom-checkbox">
             <input name="favs_only" type="checkbox" class="custom-control-input" id="favs_only" disabled>
             <label class="custom-control-label" for="favs_only">
-              Search my favourites only
+              Search my favourites only <i class="fa fa-heart" aria-hidden="true"></i>
             </label>
           </div>
         </span>
@@ -110,13 +110,13 @@ Names of input fields to recieve in the Python backend:
         <div class="form-group custom-control custom-checkbox">
           <input name="pantry_only" type="checkbox" class="custom-control-input" id="pantry_only">
           <label class="custom-control-label" for="pantry_only">
-            Include ingredients from pantry
+            Include ingredients from pantry <i class="fa fa-columns" aria-hidden="true"></i>
           </label>
         </div>
         <div class="form-group custom-control custom-checkbox">
           <input name="favs_only" type="checkbox" class="custom-control-input" id="favs_only">
           <label class="custom-control-label" for="favs_only">
-            Search my favourites only
+            Search my favourites only <i class="fa fa-heart" aria-hidden="true"></i>
           </label>
         </div>
       % endif
@@ -125,6 +125,13 @@ Names of input fields to recieve in the Python backend:
       ${collapsible_form('Search terms', '<i class="fa fa-book" aria-hidden="true"></i>', """
         <div class='col-sm-5'>
           <input name='terms' type='search' class='form-control' id='search-box' placeholder='e.g. soup'>
+        </div>
+      """)}
+
+      <!-- Search fuzzyness -->
+      ${collapsible_form('Max missing ingredients', '<i class="fa fa-columns" aria-hidden="true"></i>', """
+        <div class='col-sm-5'>
+          <input name='fuzzyness' type='number' class='form-control' id='fuzzyness' min="0" max="100">
         </div>
       """)}
 
@@ -157,7 +164,7 @@ Names of input fields to recieve in the Python backend:
         <div class="col-sm-5">
           <select name="max_difficulty" class="form-control" id="max-difficulty">
             <option>Easy</option>
-            <option>Medium</option>
+            <option>Intermediate</option>
             <option selected>Hard</option>
           </select>
         </div>
