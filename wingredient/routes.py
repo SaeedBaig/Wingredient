@@ -124,6 +124,8 @@ def results():
         return template.render(
             titles=""
         )
+
+    sort_option = "relevance"
     if request.method == "POST":
         sort_option = request.form['sorting_options']
         print(sort_option)
@@ -149,7 +151,7 @@ def results():
         dietary_tags=[diet_bits_to_short_names(r[7]) for r in _results],
         missing_ingredients=[r[9] for r in _results],
         matched_ingredients=[r[10] for r in _results],
-        default="relevance"
+        default=sort_option if sort_option != None else "relevance"
     )
 
 def difficulty_map(difficulty):
