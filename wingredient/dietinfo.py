@@ -15,12 +15,13 @@ allowed_diets_short = {
 
 
 def diet_bits_to_names(dietary_tags):
-    bitstring = 1
+    tags = int(dietary_tags)
+    bitmask = 1
     active_diets = []
     for diet in allowed_diets:
-        if bitstring & dietary_tags:
+        if bitmask & tags:
             active_diets.append(diet)
-        bitstring = bitstring << 1
+        bitmask = bitmask << 1
     return active_diets
 
 def diet_bits_to_short_names(dietary_tags):
