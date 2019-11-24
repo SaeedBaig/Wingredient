@@ -61,168 +61,219 @@ Python variables that need to be passed in for this template to render correctly
       color: ${difficulty_color};
     }
   </style>
+  <script>
+	// Necessary for tooltips to work
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
+	</script>
 
 </head>
 
 <body>
-  <center>
-    <%include file="/navbar.html"/>
+	<%include file="/navbar.html"/>
+	
+	<center>
+		<br>	
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<!-- Recipe photo -->
+					<img src="/${image_path}" width="500" alt="${image_alt}">
+				</div>
+				<div class="col">
+					<!-- Recipe Title -->
+					<h1>${title}</h1>
+					<div class="row">
+						<div class="col">
+					<!-- Dietary restrictions -->
+							<div class="d-inline-flex justify-content-start">
+								% for tag in dietary_tags:
+								<div class="p-2">
+									<h5 style="display: inline;">
+										<span class="badge badge-secondary">
+										${tag}
+										</span>
+									</h5>
+								</div>
+								% endfor
+							</div>
+						</div>
+						<div class="col">
+							<div style="padding-top: 5px;">
+								<!-- Like button -->
+								<button type="submit"
+								name="button" value="like" id="like-button"
+								% if is_like:
+									class="btn btn-primary"
+									data-active="true"
+								% else:
+									class="btn btn-outline-primary"
+									data-active="false"
+								% endif
+								% if username == None:
+									disabled
+								% endif
+								>
+									<i class="fa fa-thumbs-up" aria-hidden="true"></i> <span id="like-button-value">${num_likes}</span>
+								</button>
+							
+								<!-- Dislike button -->
+								<button type="submit"
+								name="button" value="dislike" id="dislike-button"
+								% if is_dislike:
+									class="btn btn-primary"
+									data-active="true"
+								% else:
+									class="btn btn-outline-primary"
+									data-active="false"
+								% endif
+								% if username == None:
+									disabled
+								% endif
+								>
+									<i class="fa fa-thumbs-down" aria-hidden="true"></i> <span id="dislike-button-value">${num_dislikes}</span>
+								</button>
+							
+								<!-- Favourites button -->
+								<button type="submit"
+								name="button" value="favourite" id="favourite-button"
+								% if is_favourite:
+									class="btn btn-danger"
+									data-active="true"
+								% else:
+									class="btn btn-outline-danger"
+									data-active="false"
+								% endif
+								% if username == None:
+									disabled
+								% endif
+								>
+									<i class="fa fa-heart" aria-hidden="true"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+					<hr>
+					<div class="d-flex flex-wrap">
+						${image_alt}	<!-- Description-->
+					</div>
+					<hr>
+					<!-- Info bar -->
+					<div class="d-flex justify-content-around">
+						<!-- Cooking time -->
+						<div class="p-2 bd-highlight">
+							<h5>
+							<i class="fa fa-clock-o" aria-hidden="true"></i>
+							${cooking_time_in_minutes} minutes
+							</h5>
+						</div>
+					
+						<!-- Serving Size-->
+						<div class="p-2 bd-highlight">
+							<h5>
+							<b>Serves: </b> ${servings}
+							</h5>
+						</div>
+						<!-- Difficulty -->
+						<div class="p-2 bd-highlight">
+							<h5>
+								<b>Difficulty: </b> <i id="difficulty">${difficulty}</i>
+							</h5>
+						</div>
+					</div>
+					<hr>
+					<div>
+						<i class="fa fa-tag" style="color: forestgreen;" aria-hidden="true"></i>
+						% for tag in cuisine_tags:
+						<h5 style="display: inline;">
+							<span class="badge badge-secondary">
+							${tag}
+							</span>
+						</h5>
+						% endfor
+					</div>
+					<hr>
+				</div>
+			</div>
+		</div>
+	</center>
+	<br>
+		<div class="container">
+			<div class="row">
+				<div class="col-5">
+					<div>
+						<div class="d-flex flex-row" style="padding-left: 100px">
+							<div class="p-2"><h2>Ingredients</h2></div>
+							<div class="p-2">
+								<i class="fa fa-check" style="color: green;" aria-hidden="true"></i>
+								<span>: In Pantry</span>
+							</div>
+						</div>
+						<ul>
+							% for i in range(len(ingredients)):
+							<li style="list-style: none;">
+								<div class="custom-control custom-checkbox mb-3">
+									<input type="checkbox" id=${i} class="custom-control-input">
+									<label class="custom-control-label" for=${i}>${ingredients[i]}</label>
+									% for item in pantry:
+										% if item in ingredients[i]:
+											<i class="fa fa-check" style="color: green;" aria-hidden="true"></i>
+										% endif
+									% endfor
+								</div>
+							</li>
+							% endfor
+						</ul>
+					</div>
+					<div class="d-flex flex-row" style="padding-left: 100px">
+						<!-- Autopantry button -->
+						<div class="p-2">
+							<button type="submit"
+							name="button" value="autopantry" id="autopantry-button"
+							class="btn btn-primary"
+							% if username == None:
+								hidden disabled
+							% endif
+							>
+								<span id="autopantry-button-value">Remove Ingredients From Pantry</span>
+							</button>
+						</div>
+						<!-- Shopping list button-->
+						<div class="p-2">
+							<button type="submit"
+								class="btn btn-primary"
+								name="button" value="shopping" id="shopping-button"
+								% if username == None:
+								disabled
+								% endif
+								>
+								Add to shopping list 
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-7">
+					<h2 style="text-align: left;">Method</h2>
+					<ol>
+						% for step in method:
+						<li>${step}</li>
+						% endfor
+					</ol>
+					<br>
+					<h2 style="text-align: left;">Equipment</h2>
+					<ol style="text-align: left;">
+					  % for item in equipment:
+						<li style="list-style: square">${item}</li>
+					  % endfor
+					</ol>
+				</div>
+			</div>
+		</div>
 
-    <!-- Recipe Title -->
-    <h1>${title}</h1>
-
-    <!-- Recipe photo -->
-    <img src="/${image_path}" width="500" alt="${image_alt}">
-    <br><br>
-
-    <!-- Info bar -->
-    <div class="d-flex justify-content-around">
-      <!-- Cooking time -->
-      <div class="p-2 bd-highlight">
-        <h5>
-          <i class="fa fa-clock-o" aria-hidden="true"></i>
-          ${cooking_time_in_minutes} minutes
-        </h5>
-      </div>
-
-      <!-- Dietary restrictions -->
-      <div class="p-2 bd-highlight">
-        % for tag in dietary_tags:
-          <h5 style="display: inline;">
-            <span class="badge badge-secondary">
-              ${tag}
-            </span>
-          </h5>
-        % endfor
-      </div>
-
-      <!-- Difficulty -->
-      <div class="p-2 bd-highlight">
-        <h5>
-          Difficulty: <i id="difficulty">${difficulty}</i>
-        </h5>
-      </div>
-    </div>
-  </center>
-  <br>
-
-  
-
-  <div class="container">
-
-    <h2>Ingredients</h2>
-    <ul>
-      % for i in range(len(ingredients)):
-        <li style="list-style: none;">
-          <div class="custom-control custom-checkbox mb-3">
-            <input type="checkbox" id=${i} class="custom-control-input">
-            <label class="custom-control-label" for=${i}>${ingredients[i]}</label>
-          % for item in pantry:
-            % if item in ingredients[i]:
-            <i class="fa fa-check" style="color: green;" aria-hidden="true"></i>
-            % endif
-          % endfor
-        </div>
-
-        </li>
-      % endfor
-    </ul>
-    <i class="fa fa-check" style="color: green;" aria-hidden="true"></i>
-    <span>: In Pantry</span>
-    <br>
-
-    <center>
-      <!-- Autopantry button -->
-      <button type="submit"
-      name="button" value="autopantry" id="autopantry-button"
-      class="btn btn-primary"
-      % if username == None:
-        hidden disabled
-      % endif
-      >
-        <span id="autopantry-button-value">Remove Ingredients From Pantry</span>
-      </button>
-    </center>
-
-
-    <h2>Equipment</h2>
-    <ul>
-      % for item in equipment:
-        <li>${item}</li>
-      % endfor
-    </ul>
-    <br>
-
-    <h2>Recipe</h2>
-    <ol>
-      % for step in method:
-        <li>${step}</li>
-      % endfor
-    </ol>
-    <br>
-
-    <center>
-      <button type="submit"
-      class="btn btn-primary"
-      name="button" value="shopping" id="shopping-button"
-      % if username == None:
-        disabled
-      % endif
-      >
-        Add to shopping list 
-      </button>
-
-      <!-- Like button -->
-      <button type="submit"
-      name="button" value="like" id="like-button"
-      % if is_like:
-        class="btn btn-primary"
-        data-active="true"
-      % else:
-        class="btn btn-outline-primary"
-        data-active="false"
-      % endif
-      % if username == None:
-        disabled
-      % endif
-      >
-        <i class="fa fa-thumbs-up" aria-hidden="true"></i> <span id="like-button-value">${num_likes}</span>
-      </button>
-
-      <!-- Dislike button -->
-      <button type="submit"
-      name="button" value="dislike" id="dislike-button"
-      % if is_dislike:
-        class="btn btn-primary"
-        data-active="true"
-      % else:
-        class="btn btn-outline-primary"
-        data-active="false"
-      % endif
-      % if username == None:
-        disabled
-      % endif
-      >
-        <i class="fa fa-thumbs-down" aria-hidden="true"></i> <span id="dislike-button-value">${num_dislikes}</span>
-      </button>
-
-      <!-- Favourites button -->
-      <button type="submit"
-      name="button" value="favourite" id="favourite-button"
-      % if is_favourite:
-        class="btn btn-danger"
-        data-active="true"
-      % else:
-        class="btn btn-outline-danger"
-        data-active="false"
-      % endif
-      % if username == None:
-        disabled
-      % endif
-      >
-        <i class="fa fa-heart" aria-hidden="true"></i>
-      </button>
-
+	
+	<div class="container">
+    
       <script>
         likeButton = document.getElementById('like-button');
         dislikeButton = document.getElementById('dislike-button');
