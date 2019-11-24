@@ -128,7 +128,7 @@ def results():
     sort_option = "relevance"
     if request.method == "POST":
         sort_option = request.form['sorting_options']
-        print(sort_option)
+
         if sort_option == "rating":
             _results.sort(key=lambda a: a[8] or 0, reverse=True)
         elif sort_option == "cooking-time":
@@ -139,7 +139,7 @@ def results():
             _results.sort(key=lambda a: a[11], reverse=True)
         elif sort_option == "difficulty":
             _results.sort(key=lambda a: difficulty_map(a[6]))
-
+ 
     return template.render(
         titles=[r[1] for r in _results],  #name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
@@ -364,11 +364,9 @@ def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            query = "SELECT name, time, difficulty, method, description, imageRef, dietary_tags FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
+            query = "SELECT name, time, difficulty, method, description, imageRef, dietary_tags, cuisine_tags, serving FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
             cursor.execute(query, (recipe_id,))
             results = cursor.fetchone()
-            for i in range(100):
-                print(type(results[6]))
 
             #query = "SELECT ingredient FROM recipetoingredient WHERE recipe = %s;"
             #cursor.execute(query, (recipe_id,))
@@ -402,10 +400,8 @@ def recipe(recipe_id):
                 cursor.execute(query, (equipment_index_tuple,))
                 equipment_names = tuple([e[0] for e in cursor.fetchall()])
 
-    print(results)
 
     method = str.split(results[3], "|")
-    print(method)
 
     is_favourite = current_user.is_fav(recipe_id) if current_user.is_authenticated else False
     is_like      = current_user.is_like(recipe_id) if current_user.is_authenticated else False
@@ -428,6 +424,8 @@ def recipe(recipe_id):
         is_like=is_like,
         is_dislike=is_dislike,
         recipe_id=recipe_id,
+        cuisine_tags=results[7].split(','),
+        servings=results[8],
         pantry=pantry_results
     )
 
