@@ -15,6 +15,8 @@ SQLCOPY2 = DBDATA_DIR / "ingredient.csv"
 SQLCOPY3 = DBDATA_DIR / "recipeToIngredient.csv"
 SQLCOPY4 = DBDATA_DIR / "equipment.csv"
 SQLCOPY5 = DBDATA_DIR / "recipeToEquipment.csv"
+SQLCOPY6 = DBDATA_DIR / "users.csv"
+SQLCOPY7 = DBDATA_DIR / "recipe_votes.csv"
 
 pool = cast(psycopg2.pool.ThreadedConnectionPool, None)
 
@@ -37,6 +39,10 @@ def init_db() -> int:
                 cu.copy_expert("COPY equipment FROM stdin DELIMITER ',' CSV HEADER", f)
             with open(SQLCOPY5, 'r', encoding='utf-8') as f:
                 cu.copy_expert("COPY recipeToEquipment FROM stdin DELIMITER ',' CSV HEADER", f)
+            with open(SQLCOPY6, 'r', encoding='utf-8') as f:
+                cu.copy_expert("COPY account FROM stdin DELIMITER ',' CSV HEADER", f)
+            with open(SQLCOPY7, 'r', encoding='utf-8') as f:
+                cu.copy_expert("COPY recipe_votes FROM stdin DELIMITER ',' CSV HEADER", f)
             #with DATA_SCRIPT.open() as f:
             #    cu.execute(f.read())
 
