@@ -1,7 +1,7 @@
 # List of allowed diets
 allowed_diets = [
-    "Vegan", 
-    "Vegetarian", 
+    "Vegan",
+    "Vegetarian",
     "Dairy-Free",
     "Gluten-Free"
 ]
@@ -24,4 +24,4 @@ def diet_bits_to_names(dietary_tags):
     return active_diets
 
 def diet_bits_to_short_names(dietary_tags):
-    return list(map(lambda x: allowed_diets_short[x], diet_bits_to_names(dietary_tags))
+    return list(map(lambda x: allowed_diets_short[x], diet_bits_to_names(dietary_tags)))
