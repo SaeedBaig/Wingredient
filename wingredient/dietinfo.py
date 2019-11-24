@@ -20,7 +20,7 @@ def diet_bits_to_names(dietary_tags):
     for diet in allowed_diets:
         if bitstring & dietary_tags:
             active_diets.append(diet)
-        bitstring << 1
+        bitstring = bitstring << 1
     return active_diets
 
 def diet_bits_to_short_names(dietary_tags):
