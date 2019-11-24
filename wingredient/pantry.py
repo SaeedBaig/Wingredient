@@ -57,4 +57,5 @@ def get_ingredient_info_from_name(name):
             query = "SELECT id FROM ingredient WHERE name = %s;"   # query for ingredient ids
             cursor.execute(query, (name,))
             result = cursor.fetchone()
-            return result[0]
+            if result:
+                return result[0]

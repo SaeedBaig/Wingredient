@@ -138,7 +138,7 @@ def results():
             _results.sort(key=lambda a: a[11], reverse=True)
         elif sort_option == "difficulty":
             _results.sort(key=lambda a: difficulty_map(a[6]))
- 
+
     return template.render(
         username=get_username(),
         titles=[r[1] for r in _results],  #name from recipe
@@ -514,7 +514,7 @@ def signup():
     template = LOOKUP.get_template("signup.html")
     return template.render(
             username = get_username(),
-            error=error, 
+            error=error,
             pw_min_len=pw_min_len
     )
 
@@ -549,24 +549,24 @@ def format_count(sl_recipe_count):
 def shoppinglist():
         #shoppinglist = addtoshoppinglist
     if request.method == "POST" and current_user.is_authenticated:
-        if 'delete_recipe' in request.form: 
-            delete_recipe_id = request.form["delete_recipe"] 
-            delete_recipe_ingredients(delete_recipe_id) 
+        if 'delete_recipe' in request.form:
+            delete_recipe_id = request.form["delete_recipe"]
+            delete_recipe_ingredients(delete_recipe_id)
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             template = LOOKUP.get_template("shopping-list.html")
-            
+
             query = "select distinct r.name, r.id from recipe r, shoppinglist s where r.id = s.recipe AND s.account = %s;"
             cursor.execute(query, (current_user.get_id(),) )
             s_recipes = cursor.fetchall()
 
             #Gets required ingredients minus those that are in pantry
-            query = "select distinct MIN(CASE WHEN r.ingredient = sss.ingredient AND sss.quantity > 1 THEN 1 ELSE sss.quantity END) as quantity, sss.measurement_type, sss.name from recipetoingredient r, (select ss.ingredient, ss.account, (CASE WHEN ss.ingredient = p.ingredient THEN ss.quantity-p.quantity ELSE ss.quantity END) as quantity, ss.measurement_type, ss.name from (select s.account, s.ingredient, (SUM(s.quantity)) as quantity, i.measurement_type, i.name from shoppinglist s join ingredient i on i.id = s.ingredient group by i.measurement_type, i.name, s.ingredient, s. account) AS ss left join pantry p on p.ingredient = ss.ingredient GROUP BY ss.quantity, ss.measurement_type, ss.name, ss.ingredient, p.ingredient, p.quantity, ss.account) AS sss where sss.quantity > 0 and r_quantity IS NOT NULL and sss.account iLIKE %s group by sss.ingredient, sss.measurement_type, sss.name;"            
+            query = "select distinct MIN(CASE WHEN r.ingredient = sss.ingredient AND sss.quantity > 1 THEN 1 ELSE sss.quantity END) as quantity, sss.measurement_type, sss.name from recipetoingredient r, (select ss.ingredient, ss.account, (CASE WHEN ss.ingredient = p.ingredient THEN ss.quantity-p.quantity ELSE ss.quantity END) as quantity, ss.measurement_type, ss.name from (select s.account, s.ingredient, (SUM(s.quantity)) as quantity, i.measurement_type, i.name from shoppinglist s join ingredient i on i.id = s.ingredient group by i.measurement_type, i.name, s.ingredient, s. account) AS ss left join pantry p on p.ingredient = ss.ingredient GROUP BY ss.quantity, ss.measurement_type, ss.name, ss.ingredient, p.ingredient, p.quantity, ss.account) AS sss where sss.quantity > 0 and r_quantity IS NOT NULL and sss.account iLIKE %s group by sss.ingredient, sss.measurement_type, sss.name;"
 
             ##CHANGE TO SPECIFY EXACT COLUMNS), )
             cursor.execute(query, (current_user.get_id(),) )
             slres = cursor.fetchall()
-            slres = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in slres])  
+            slres = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in slres])
             shopping_list_ingredient_results = list(map(" ".join, slres))
 
             print(shopping_list_ingredient_results)
@@ -575,7 +575,7 @@ def shoppinglist():
             shopping_list_recipe_names = [r[0] for r in s_recipes],
             shopping_list_recipe_ids = [r[1] for r in s_recipes],
             shopping_list_ingredients = shopping_list_ingredient_results
-    ) 
+    )
 
 
 def format_m_type(val):
@@ -588,6 +588,7 @@ def format_m_type(val):
 @login_required
 def pantry():
     # template = Template(filename=f"{TEMPLATE_DIR}/pantry.html")
+    error = "none"
     template = LOOKUP.get_template("pantry.html")
     if request.method == "POST":
         if 'pantry-add' in request.form:
@@ -595,10 +596,13 @@ def pantry():
             ingredient = ingredient.split('(')[0]
             ingredient = ingredient.rstrip()
             ingredient_index = get_ingredient_info_from_name(ingredient)
-            quantity = request.form['quantity']
-            if quantity == '':
-                quantity = 1
-            insert_ingredient(current_user.get_id(), ingredient_index, quantity)
+            if ingredient_index is None:
+                error = "That's not a valid ingredient!"
+            else:
+                quantity = request.form['quantity']
+                if quantity == '':
+                    quantity = 1
+                insert_ingredient(current_user.get_id(), ingredient_index, quantity)
         else:
             remove_id = request.form["pantry-delete"]
             print(remove_id)
@@ -628,7 +632,7 @@ def pantry():
 
     return template.render(
         username=get_username(),
-        error="none",
+        error=error,
         all_ingredients = ingredient_results,
         ingredients=[r[0] for r in ingredient_info],
         ingredient_ids = ingredient_ids,

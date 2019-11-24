@@ -36,6 +36,12 @@ Names of input fields to recieve in the Python backend:
     <h1>Your Pantry</h1>
     <br>
 
+    <!-- Error message -->
+    % if error != "none":
+      <br>
+      <p class="text-danger">${error}</p>
+    % endif
+
     <table id="pantry" class="table table-striped">
       <thead>
         <tr>
