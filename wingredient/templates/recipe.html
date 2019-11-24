@@ -110,14 +110,18 @@ Python variables that need to be passed in for this template to render correctly
 
     <h2>Ingredients</h2>
     <ul>
-      % for ingredient in ingredients:
-        <li>
-          ${ingredient}
+      % for i in range(len(ingredients)):
+        <li style="list-style: none;">
+          <div class="custom-control custom-checkbox mb-3">
+            <input type="checkbox" id=${i} class="custom-control-input">
+            <label class="custom-control-label" for=${i}>${ingredients[i]}</label>
           % for item in pantry:
-            % if item in ingredient:
+            % if item in ingredients[i]:
             <i class="fa fa-check" style="color: green;" aria-hidden="true"></i>
             % endif
           % endfor
+        </div>
+
         </li>
       % endfor
     </ul>
