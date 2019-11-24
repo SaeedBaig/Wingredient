@@ -823,3 +823,11 @@ def recipe_favourite(recipe_id):
     elif request.method == "DELETE":
         current_user.del_fav(recipe_id)
     return ''
+
+@app.route('/recipe/<int:recipe_id>/autopantry', methods=['POST'])
+def recipe_autopantry(recipe_id):
+    if not current_user.is_authenticated:
+        return 'You must log in first', 403
+    print("POST AUTOPANTRY")
+    return ''
+
