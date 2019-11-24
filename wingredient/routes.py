@@ -139,6 +139,15 @@ def results():
         default="relevance"
     )
 
+def difficulty_map(difficulty):
+    if difficulty == "Easy":
+        return 1
+    elif difficulty == "Intermediate":
+        return 2
+    elif difficulty == "Hard":
+        return 3
+    return 0
+
 @app.route("/results", methods=['POST'])
 def results_post():
     template = LOOKUP.get_template("search-results.html")
@@ -159,6 +168,8 @@ def results_post():
         _results.sort(key=lambda a: a[1].lower())
     elif sort_option == "relevance":
         _results.sort(key=lambda a: a[11], reverse=True)
+    elif sort_option == "difficulty":
+        _results.sort(key=lambda a: difficulty_map(a[6]))
 
     return template.render(
         titles=[r[1] for r in _results],  #name from recipe
