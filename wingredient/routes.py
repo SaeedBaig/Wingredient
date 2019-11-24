@@ -329,15 +329,12 @@ def add_to_shopping_list(recipe_id):
 
             cursor.execute(query, (str(recipe_id), current_user.get_id(),))
         #cursor.execute(query, (recipe_id,))
-            print('\n\n\n SHOPPING LIST UPDATED!!!! \n\n\n')
             conn.commit()
 @app.route("/recipe/<int:recipe_id>", methods=["GET", "POST"])
 def recipe(recipe_id):
     template = LOOKUP.get_template("recipe.html")
-    shopping_list_request = False
     # Handle the like, dislike, and fav buttons
     if request.method == "POST" and current_user.is_authenticated:
-        print ("111Trying to add to shopping list!!!!!") 
         if request.form["button"] == "shopping":
             add_to_shopping_list(recipe_id)
         if request.form["button"] == "favourite":
@@ -364,20 +361,13 @@ def recipe(recipe_id):
 
     with db.getconn() as conn:
         with conn.cursor() as cursor:
-            if shopping_list_request == True:
 
-                query = "INSERT INTO shoppinglist (account, ingredient, quantity) select a.username, i.id, rti.quantity from account a, recipetoingredient rti, ingredient i where rti.recipe = 1 AND rti.ingredient = i.id AND a.username iLIKE 'jeff';"
-                cursor.execute(query)
-            #cursor.execute(query, (recipe_id,))
-                print('\n\n\n SHOPPING LIST UPDATED!!!! \n\n\n')
             query = "SELECT name, time, difficulty, method, description, imageRef FROM recipe WHERE id = %s;"   #CHANGE TO SPECIFY EXACT COLUMNS
             cursor.execute(query, (recipe_id,))
             results = cursor.fetchone()
 
             query = "SELECT (COALESCE(rti.r_quantity, rti.quantity)) as quantity, (COALESCE(rti.r_measurement_type::text, i.measurement_type::text)) as measurement_type, i.name FROM recipetoingredient rti, ingredient i where i.id = rti.ingredient AND rti.recipe = %s;"
-            
             cursor.execute(query, (recipe_id,))
-            #ir = for row in cursor.fetchall()
             ires = cursor.fetchall() 
             ires = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in ires])  
             ingredient_results = list(map(" ".join,ires))
@@ -505,34 +495,90 @@ def logout():
 ###################
 ### Shopping List ###
 ###################
+def delete_recipe_ingredients():
+    with db.getconn() as conn:
+        with conn.cursor() as cursor:
+        # Change to proper values
+            query = "DELETE from shoppinglist where account = 'jeff' AND recipe = 1;"
+            cursor.execute(query, (str(recipe_id), current_user.get_id(),))
+            conn.commit()
+
+def format_count(sl_recipe_count):
+    sl_recipe_count = str((sl_recipe_count))
+    return sl_recipe_count
 @app.route("/shoppinglist", methods=["GET", "POST"])
 def shoppinglist():
         #shoppinglist = addtoshoppinglist
+    if request.method == "POST" and current_user.is_authenticated:
+        if request.form["button"] == "delete_recipe":
+            delete_recipe_ingredients() 
+
     with db.getconn() as conn:
         with conn.cursor() as cursor:
             template = LOOKUP.get_template("shopping-list.html")
-
-            query = "select distinct MIN(CASE WHEN r.ingredient = sss.ingredient AND sss.quantity > 1 THEN 1 ELSE sss.quantity END) as quantity, sss.measurement_type, sss.name from recipetoingredient r, (select ss.ingredient, ss.account, (CASE WHEN ss.ingredient = p.ingredient THEN ss.quantity-p.quantity ELSE ss.quantity END) as quantity, ss.measurement_type, ss.name from (select s.account, s.ingredient, (SUM(s.quantity)) as quantity, i.measurement_type, i.name from shoppinglist s join ingredient i on i.id = s.ingredient group by i.measurement_type, i.name, s.ingredient, s. account) AS ss left join pantry p on p.ingredient = ss.ingredient GROUP BY ss.quantity, ss.measurement_type, ss.name, ss.ingredient, p.ingredient, p.quantity, ss.account) AS sss where sss.quantity > 0 and r_quantity IS NOT NULL and sss.account iLIKE %s group by sss.ingredient, sss.measurement_type, sss.name;"            
-           # query = "select distinct (CASE WHEN r.ingredient = sss.ingredient THEN 1 ELSE sss.quantity END) as quantity, sss.measurement_type, sss.name from recipetoingredient r, (select ss.ingredient, ss.account, (CASE WHEN ss.ingredient = p.ingredient THEN ss.quantity-p.quantity ELSE ss.quantity END) as quantity, ss.measurement_type, ss.name from (select s.account, s.ingredient, (SUM(s.quantity)) as quantity, i.measurement_type, i.name from shoppinglist s join ingredient i on i.id = s.ingredient group by i.measurement_type, i.name, s.ingredient, s. account) AS ss left join pantry p on p.ingredient = ss.ingredient GROUP BY ss.quantity, ss.measurement_type, ss.name, ss.ingredient, p.ingredient, p.quantity, ss.account) AS sss where sss.quantity > 0 and r_quantity IS NOT NULL and sss.account iLIKE %s;"
             
+            # query for getting recipe count to get buttons
+            #query = "select count(distinct recipe) from shoppinglist s where s.account iLIKE %s;"
+            #cursor.execute(query, (current_user.get_id(),) )
+            #s_recipe_count = cursor.fetchone()
+            #s_recipe_count = ([(format_count(i[0])) for i in s_recipe_count])  
+            #s_recipe_count_res = list(map(" ".join, s_recipe_count))
+           
+            ## query for getting recipe names to display
+            query = "select distinct r.name from recipe r, shoppinglist s where r.id = s.recipe AND s.account = %s;"
+            cursor.execute(query, (current_user.get_id(),) )
+            s_recipe_names = cursor.fetchall()
 
-            #query = "select SUM(s.quantity) as quantity, i.measurement_type, i.name from shoppinglist s, ingredient i where i.id = s.ingredient AND s.account = %s GROUP BY i.measurement_type, i.name MINUS SELECT;"
+            #Gets required ingredients minus those that are in pantry
+            query = "select distinct MIN(CASE WHEN r.ingredient = sss.ingredient AND sss.quantity > 1 THEN 1 ELSE sss.quantity END) as quantity, sss.measurement_type, sss.name from recipetoingredient r, (select ss.ingredient, ss.account, (CASE WHEN ss.ingredient = p.ingredient THEN ss.quantity-p.quantity ELSE ss.quantity END) as quantity, ss.measurement_type, ss.name from (select s.account, s.ingredient, (SUM(s.quantity)) as quantity, i.measurement_type, i.name from shoppinglist s join ingredient i on i.id = s.ingredient group by i.measurement_type, i.name, s.ingredient, s. account) AS ss left join pantry p on p.ingredient = ss.ingredient GROUP BY ss.quantity, ss.measurement_type, ss.name, ss.ingredient, p.ingredient, p.quantity, ss.account) AS sss where sss.quantity > 0 and r_quantity IS NOT NULL and sss.account iLIKE %s group by sss.ingredient, sss.measurement_type, sss.name;"            
+
             ##CHANGE TO SPECIFY EXACT COLUMNS), )
             cursor.execute(query, (current_user.get_id(),) )
             slres = cursor.fetchall()
-
             ##print(format_quantity(i[0]))), print((format_measurement(i[1])), print(i[2])) for i in slres 
             slres = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in slres])  
             shopping_list_ingredient_results = list(map(" ".join, slres))
+
             print(shopping_list_ingredient_results)
+            print (s_recipe_names)
     return template.render(
-            shopping_list_ingredients = shopping_list_ingredient_results,
+            #shopping_list_recipe_count = s_recipe_count_res,
+            shopping_list_recipes = [r[0] for r in s_recipe_names],
+            shopping_list_ingredients = shopping_list_ingredient_results
+
     ) 
 
 
-            # Remove from shopping list
-            #query = "DELETE from shoppinglist where account = 'jeff';"
-
+#@app.route("/shoppinglist", methods=["GET", "POST"])
+#def shoppinglist():
+#        #shoppinglist = addtoshoppinglist
+#    with db.getconn() as conn:
+#        with conn.cursor() as cursor:
+#            template = LOOKUP.get_template("shopping-list.html")
+#
+#            query = "select distinct MIN(CASE WHEN r.ingredient = sss.ingredient AND sss.quantity > 1 THEN 1 ELSE sss.quantity END) as quantity, sss.measurement_type, sss.name from recipetoingredient r, (select ss.ingredient, ss.account, (CASE WHEN ss.ingredient = p.ingredient THEN ss.quantity-p.quantity ELSE ss.quantity END) as quantity, ss.measurement_type, ss.name from (select s.account, s.ingredient, (SUM(s.quantity)) as quantity, i.measurement_type, i.name from shoppinglist s join ingredient i on i.id = s.ingredient group by i.measurement_type, i.name, s.ingredient, s. account) AS ss left join pantry p on p.ingredient = ss.ingredient GROUP BY ss.quantity, ss.measurement_type, ss.name, ss.ingredient, p.ingredient, p.quantity, ss.account) AS sss where sss.quantity > 0 and r_quantity IS NOT NULL and sss.account iLIKE %s group by sss.ingredient, sss.measurement_type, sss.name;"            
+#           # query = "select distinct (CASE WHEN r.ingredient = sss.ingredient THEN 1 ELSE sss.quantity END) as quantity, sss.measurement_type, sss.name from recipetoingredient r, (select ss.ingredient, ss.account, (CASE WHEN ss.ingredient = p.ingredient THEN ss.quantity-p.quantity ELSE ss.quantity END) as quantity, ss.measurement_type, ss.name from (select s.account, s.ingredient, (SUM(s.quantity)) as quantity, i.measurement_type, i.name from shoppinglist s join ingredient i on i.id = s.ingredient group by i.measurement_type, i.name, s.ingredient, s. account) AS ss left join pantry p on p.ingredient = ss.ingredient GROUP BY ss.quantity, ss.measurement_type, ss.name, ss.ingredient, p.ingredient, p.quantity, ss.account) AS sss where sss.quantity > 0 and r_quantity IS NOT NULL and sss.account iLIKE %s;"
+#            
+#
+#            #query = "select SUM(s.quantity) as quantity, i.measurement_type, i.name from shoppinglist s, ingredient i where i.id = s.ingredient AND s.account = %s GROUP BY i.measurement_type, i.name MINUS SELECT;"
+#            ##CHANGE TO SPECIFY EXACT COLUMNS), )
+#            cursor.execute(query, (current_user.get_id(),) )
+#            slres = cursor.fetchall()
+#
+#            ##print(format_quantity(i[0]))), print((format_measurement(i[1])), print(i[2])) for i in slres 
+#            slres = ([(format_quantity(i[0]), format_measurement(i[1]), i[2]) for i in slres])  
+#            shopping_list_ingredient_results = list(map(" ".join, slres))
+#            print(shopping_list_ingredient_results)
+#    return template.render(
+#            shopping_list_ingredients = shopping_list_ingredient_results,
+#    ) 
+#
+#
+#            # Remove from shopping list
+#            #query = "DELETE from shoppinglist where account = 'jeff';"
+#
+#
+#
 
 ###################
 ### PANTRY PAGE ###

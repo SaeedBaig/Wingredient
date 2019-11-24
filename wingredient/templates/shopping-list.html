@@ -42,7 +42,18 @@ Python variables that need to be passed in for this template to render correctly
     <h1>Shopping List</h1>
     <br>
     <div>
-
+      <h2>Recipes</h2> 
+      <ul>
+        % for recipe in shopping_list_recipes:
+          <li>
+              ${recipe}
+            <button> 
+          </li>
+        
+        % endfor
+      </ul>
+      <br>
+      <h2>Ingredients</h2>
       <ul>
         % for ingredient in shopping_list_ingredients:
           <li>${ingredient}</li>
