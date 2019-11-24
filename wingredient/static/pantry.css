@@ -1,3 +1,7 @@
+/* Non-Mako dependant styling for pantry.html */
+#pantry {
+    max-width: 600px;
+}
 
 .autocomplete {
   /*the container must be positioned relative:*/
@@ -30,11 +34,4 @@
   /*when navigating through the items using the arrow keys:*/
   background-color: DodgerBlue !important;
   color: #ffffff;
-}
-
-/* Non-Mako dependant styling for search.html */
-
-/* Control width of form */
-form {
-    max-width: 600px;
 }
