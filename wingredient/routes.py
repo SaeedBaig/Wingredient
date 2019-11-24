@@ -5,7 +5,6 @@ import psycopg2.extras
 from flask import Flask, request, redirect, url_for, session, flash
 from mako.template import Template
 from mako.lookup import TemplateLookup
-from mako.runtime import Context
 from os.path import abspath
 from .dietinfo import diet_bits_to_short_names
 
@@ -37,6 +36,9 @@ login_manager.init_app(app)
 
 # must import User after initialising login manager
 from .user import User, create_account, load_user, pw_min_len
+
+def get_username():
+    return current_user.get_id() if current_user.is_authenticated else None
 
 #################
 ### HOME PAGE ###
@@ -91,14 +93,10 @@ def search():
 
     print("user: %s, auth: %r" % (current_user.get_id(), current_user.is_authenticated))
 
-    # Make the username a global object (so we don't have to pass it in manually
-    # for every single template.render())
-    # (Don't worry it gets updated automatically as )
-    Context.username = current_user.get_id() if current_user.is_authenticated else None
-
     current_diets = current_user.get_diets() if current_user.is_authenticated else []
 
     return template.render(
+        username=get_username(),
         ingredients=[r[0] for r in results],
         allowed_diets = allowed_diets,
         current_diets = current_diets
@@ -122,6 +120,7 @@ def results():
     _results = get_search()
     if _results == -1:
         return template.render(
+            username=get_username(),
             titles=""
         )
 
@@ -141,6 +140,7 @@ def results():
             _results.sort(key=lambda a: difficulty_map(a[6]))
 
     return template.render(
+        username=get_username(),
         titles=[r[1] for r in _results],  #name from recipe
         image_paths=[r[4] for r in _results],    # imageRef from recipe
         image_alts=[r[3] for r in _results],  # set to description from recipe
@@ -421,6 +421,7 @@ def recipe(recipe_id):
     is_dislike   = current_user.is_dislike(recipe_id) if current_user.is_authenticated else False
 
     return template.render(
+        username=get_username(),
         title=results[0],
         image_path=results[5],
         image_alt=results[4],
@@ -459,7 +460,10 @@ def login():
             error = "Incorrect username or password."
 
     template = LOOKUP.get_template("login.html")
-    return template.render(error=error)
+    return template.render(
+            username=get_username(),
+            error=error
+    )
 
 
 ###################
@@ -498,7 +502,12 @@ def signup():
             return redirect(url_for("search"))
 
     template = LOOKUP.get_template("signup.html")
-    return template.render(error=error, pw_min_len=pw_min_len)
+    return template.render(
+            username = get_username(),
+            error=error, 
+            pw_min_len=pw_min_len
+    )
+
 
 
 ###################
@@ -525,7 +534,7 @@ def logout():
 #            #results = cursor.fetchone()
 #
 #    template = LOOKUP.get_template("shopping-list.html")
-#    return template.render()
+#    return template.render(username=get_username())
 #
 #
 #@app.route("/addtoshoppinglist")
@@ -589,13 +598,13 @@ def pantry():
         ingredient_info = []
 
     return template.render(
+        username=get_username(),
         error="none",
         all_ingredients = ingredient_results,
         ingredients=[r[0] for r in ingredient_info],
         ingredient_ids = ingredient_ids,
         quantities=quantities,
         pantry_types=[r[1] for r in ingredient_info],
-        username=current_user.get_id() if current_user.is_authenticated else None
     )
 
 
@@ -654,6 +663,7 @@ def profile():
     current_diets = current_user.get_diets()
 
     return template.render(
+        username      = get_username(),
         open_forms    = open_forms,
         allowed_diets = allowed_diets,
         current_diets = current_diets,
@@ -730,11 +740,11 @@ def recipe_form():
     equipment = get_all_equipment()
     #print(equipment)
     return template.render(
+        username=get_username(),
         error="none",
         all_ingredients=[r[0] for r in all_ingredients_results],
         m_types=[r[1] for r in all_ingredients_results],
         equipment=get_all_equipment(),
-        username=current_user.get_id() if current_user.is_authenticated else None
     )
 
 @app.route("/confirm-recipe", methods=["POST", "GET"])
@@ -781,6 +791,7 @@ def recipe_confirm():
     print(session.get("recipe_name", None))
 
     return template.render(
+        username=get_username(),
         recipe_name=recipe_name,
         recipe_time=recipe_time,
         recipe_difficulty=recipe_difficulty,
@@ -797,7 +808,6 @@ def recipe_confirm():
         dairy_free=dairy_check,
         cuisine_tags = cuisine_tags
     #   error="none",
-    #   username=current_user.get_id() if current_user.is_authenticated else None
     )
 
 
