@@ -110,7 +110,7 @@ Python variables that need to be passed in for this template to render correctly
 									class="btn btn-outline-primary"
 									data-active="false"
 								% endif
-								% if context.username == None:
+								% if username == None:
 									disabled
 								% endif
 								>
@@ -127,7 +127,7 @@ Python variables that need to be passed in for this template to render correctly
 									class="btn btn-outline-primary"
 									data-active="false"
 								% endif
-								% if context.username == None:
+								% if username == None:
 									disabled
 								% endif
 								>
@@ -144,7 +144,7 @@ Python variables that need to be passed in for this template to render correctly
 									class="btn btn-outline-danger"
 									data-active="false"
 								% endif
-								% if context.username == None:
+								% if username == None:
 									disabled
 								% endif
 								>
@@ -230,7 +230,7 @@ Python variables that need to be passed in for this template to render correctly
 						<button type="submit"
 						name="button" value="autopantry" id="autopantry-button"
 						class="btn btn-primary"
-						% if context.username == None:
+						% if username == None:
 							hidden disabled
 						% endif
 						>
@@ -258,13 +258,6 @@ Python variables that need to be passed in for this template to render correctly
 
 	
 	<div class="container">
-    <center>
-      
-    </center>
-
-
-   
-
     
       <script>
         likeButton = document.getElementById('like-button');
@@ -297,12 +290,12 @@ Python variables that need to be passed in for this template to render correctly
 
         dislikeButton.addEventListener('click', async _ => {
           if (dislikeButton.getAttribute('data-active') === 'true') {
-            await fetch('${recipe_id}/like', {method: 'delete'});
+            await fetch('${recipe_id}/dislike', {method: 'delete'});
             dislikeButton.setAttribute('data-active', 'false');
             dislikeButton.setAttribute('class', 'btn btn-outline-primary');
             dislikeSpan.innerHTML = (parseInt(dislikeSpan.innerHTML) - 1).toString();
           } else {
-            await fetch('${recipe_id}/like', {method: 'post'});
+            await fetch('${recipe_id}/dislike', {method: 'post'});
             dislikeButton.setAttribute('data-active', 'true');
             dislikeButton.setAttribute('class', 'btn btn-primary');
             dislikeSpan.innerHTML = (parseInt(dislikeSpan.innerHTML) + 1).toString();
