@@ -1,5 +1,7 @@
 # Python executable name
-PYTHON ?= python3.7
+# Set to whatever version of Python you use
+# Anything >= python3.7 should be fine
+PYTHON ?= python3
 
 # Style
 # reformat:  # Project-wide reformat
