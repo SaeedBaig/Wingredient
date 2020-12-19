@@ -1,6 +1,65 @@
 # Wingredient
 Project for COMP4920 - Management and Ethics.
 
+## Screenshots
+<p align="center">
+    <img src="screenshots/home.png" alt="Search"/>
+    <br>
+    <i>Search for recipes based on what ingredients you have and refine your search with (optional) filters</i>
+</p>
+<br>
+
+<p align="center">
+    <img src="screenshots/recipe_list.png" alt="Recipes Listing"/>
+    <br>
+    <i>Browse through results displaying the recipes' like rate, preparation time & difficulty, and any tags</i>
+</p>
+<p align="center">
+    <img src="screenshots/recipe.png" alt="Recipe"/>
+</p>
+<br>
+
+<p align="center">
+    <img src="screenshots/signup.png" alt="Signup"/>
+    <br>
+    <i>Users can create an account on the site to get access to extra features like...</i>
+</p>
+<br>
+
+<p align="center">
+    <img src="screenshots/pantry.png" alt="Pantry"/>
+    <br>
+    <i>A virtual pantry where you can record what ingredients you have at home (for expediant searching)</i>
+</p>
+<br>
+
+<p align="center">
+    <img src="screenshots/account_perks.png" alt="Signup"/>
+    <br>
+    <i>Ability to like/dislike/favourite recipes, and remove its ingredients from your pantry (or add them to your virtual shopping list)</i>
+</p>
+<br>
+<p align="center">
+    <img src="screenshots/shopping_list.png" alt="Shopping list"/>
+    <br>
+    <i>(le Virtual Shopping List)</i>
+</p>
+<br>
+
+<p align="center">
+    <img src="screenshots/create_recipes.png" alt="Create recipe"/>
+    <br>
+    <i>And logged-in users can submit their own recipes to the site!</i>
+</p>
+<br>
+
+<p align="center">
+    <img src="screenshots/profile.png" alt="Profile"/>
+    <br>
+    <i>User settings can be changed on the profile page</i>
+</p>
+<br>
+
 ## Project Structure
 The *wingredient* directory is our main Python package. This is strucured like a very basic Flask app for now.
 
