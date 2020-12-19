@@ -2,10 +2,10 @@
 PYTHON ?= python3.7
 
 # Style
-reformat:  # Project-wide reformat
-	$(PYTHON) -m black -l 99 --target-version py37 `git ls-files "*.py"`
-stylecheck:  # Check if any files would be reformatted by `make reformat`
-	$(PYTHON) -m black --check -l 99 --target-version py37 `git ls-files "*.py"`
+# reformat:  # Project-wide reformat
+# 	$(PYTHON) -m black -l 99 --target-version py37 `git ls-files "*.py"`
+# stylecheck:  # Check if any files would be reformatted by `make reformat`
+# 	$(PYTHON) -m black --check -l 99 --target-version py37 `git ls-files "*.py"`
 
 # Management of virtual environment
 VENV_PATH ?= .venv
