@@ -1,6 +1,18 @@
 # Wingredient
 Project for COMP4920 - Management and Ethics.
 
+## Contents
+- [Screenshots](#Screenshots)
+- [Project Structure](#ProjectStructure)
+- [Developing](#Developing)
+    - [Setting Up](#SettingUp)
+    - [Running the Web App](#RunningTheWebApp)
+        - [Setting up the database](#SettingUpTheDatabase)
+        - [Running the app](#RunningTheApp)
+        - [Troubleshooting install](#TroubleshootingInstall)
+
+<a name="Screenshots"/>
+
 ## Screenshots
 <p align="center">
     <img src="screenshots/home.png" alt="Search"/>
@@ -60,10 +72,17 @@ Project for COMP4920 - Management and Ethics.
 </p>
 <br>
 
+<a name="ProjectStructure"/>
+
 ## Project Structure
 The *wingredient* directory is our main Python package. This is strucured like a very basic Flask app for now.
 
+<a name="Developing"/>
+
 ## Developing
+
+<a name="SettingUp"/>
+
 ### Setting up
 1. Make sure you have Python 3.7 installed. On Debian/Ubuntu, you'll need the `python3.7-venv` package as well. If you're on an Ubuntu version lower than 18.04, add the [deadsnakes apt repository](https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa).
 2. Create a Python virtual environment
@@ -75,7 +94,11 @@ The *wingredient* directory is our main Python package. This is strucured like a
     - PyCharm: Go to *File* -> *Settings* -> *Project* -> *Project Interpreter*, add a Python interpreter, select *Existing environment*, and set the path to the python executable as above, in the VS Code instructions, where `${workspaceFolder}` is the project root directory.
     - Other editors: Probably a similar process to above, you simply need to tell the editor where to find the Python interpreter executable for this project.
 
+<a name="RunningTheWebApp"/>
+
 ### Running the Web App
+
+<a name="SettingUpTheDatabase"/>
 
 #### Setting up the database
 Make sure your user account has privileges on the database you're connecting to.
@@ -100,11 +123,15 @@ Now, populate the database with the command:
 $ wingredient-initdb
 ```
 
+<a name="RunningTheApp"/>
+
 #### Running the app
 
 If the command isn't found, run `make syncenv` again.
 
 Provided that you set up as described above, can simply run the web app with the `wingredient` command, in an activated terminal. At the moment it just runs on localhost:5000, but this will probably change at some point.
+
+<a name="TroubleshootingInstall"/>
 
 #### Troubleshooting install
 If you get an error along the lines of `pg_config executable not found`, you need to install the `postgresql` package (which contains it). 
