@@ -105,3 +105,12 @@ $ wingredient-initdb
 If the command isn't found, run `make syncenv` again.
 
 Provided that you set up as described above, can simply run the web app with the `wingredient` command, in an activated terminal. At the moment it just runs on localhost:5000, but this will probably change at some point.
+
+#### Troubleshooting install
+If you get an error along the lines of `pg_config executable not found`, you need to install the `postgresql` package (which contains it). 
+This can be installed on Debian/Ubuntu with `sudo apt install postgresql` ([StackOverflow thread on the error](https://stackoverflow.com/questions/11618898/pg-config-executable-not-found)).
+<p align="center">
+    <img src="https://i.imgur.com/ss5iWaO.png" alt="Console Error"/>
+</p>
+
+If you then get an error along the lines of `fatal error: libpq-fe.h: No such file or directory #include <libpq-fe.h>`, it can be found in the `libpq-dev` package, which can be installed with `sudo apt install libpq-dev` ([StackOverflow thread on the error](https://unix.stackexchange.com/questions/345814/gcc-error-installing-psycopg2-package-for-python3-on-centos-7-3)).
