@@ -98,6 +98,19 @@ The *wingredient* directory is our main Python package. This is strucured like a
 
 ### Running the Web App
 
+#### Short version
+
+##### If running for the first time
+In the project root:
+1. `make`
+2. `make newenv`
+3. `source .venv/bin/activate`
+4. `wingredient-initdb` (make sure your user was added to the DB beforehand)
+5. `wingredient`
+
+##### If not running for the first time
+`source .venv/bin/activate` and `wingredient` are sufficient.
+
 <a name="SettingUpTheDatabase"/>
 
 #### Setting up the database
