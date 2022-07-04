@@ -1,5 +1,9 @@
 # Wingredient
-Project for COMP4920 - Management and Ethics.
+Recipe search app where you input what ingredients you have, and it searches for recipes you can make with them.
+
+Uses Bootstrap & Mako for frontend, and Flask & PostgreSQL for backend.
+
+Uni project for COMP4920 "Management and Ethics"
 
 ## Contents
 - [Screenshots](#Screenshots)
